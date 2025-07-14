@@ -9,14 +9,14 @@ import {
   DollarSign, 
   Settings, 
   LogOut, 
-  Menu, 
-  X,
-  User
+  User,
+  ChevronLeft,
+  ChevronRight
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 
 const Layout = ({ children }) => {
-  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
@@ -41,121 +41,81 @@ const Layout = ({ children }) => {
   );
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Mobile sidebar */}
-      <div className={`fixed inset-0 z-50 lg:hidden ${sidebarOpen ? 'block' : 'hidden'}`}>
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-75" onClick={() => setSidebarOpen(false)} />
-        <div className="fixed inset-y-0 left-0 flex w-64 flex-col bg-white">
-          <div className="flex h-16 items-center justify-between px-4">
-            <h1 className="text-xl font-bold text-gray-900">POS System</h1>
-            <button
-              onClick={() => setSidebarOpen(false)}
-              className="text-gray-400 hover:text-gray-600"
-            >
-              <X size={24} />
-            </button>
-          </div>
-          <nav className="flex-1 space-y-1 px-2 py-4">
-            {filteredNavigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    isActive
-                      ? 'bg-blue-100 text-blue-900'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
-                  }`}
-                  onClick={() => setSidebarOpen(false)}
-                >
-                  <item.icon
-                    className={`mr-3 h-5 w-5 ${
-                      isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
-                    }`}
-                  />
-                  {item.name}
-                </Link>
-              );
-            })}
-          </nav>
+    <div className="min-h-screen bg-gray-50 flex flex-row">
+      {/* Sidebar always visible */}
+      <div className={`flex flex-col h-screen bg-white border-r border-gray-200 shadow-lg transition-all duration-300 ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
+        <div className="flex items-center justify-between h-16 px-4 border-b">
+          <span className={`text-xl font-bold text-blue-700 flex items-center gap-2 transition-all duration-300 ${sidebarCollapsed ? 'justify-center w-full' : ''}`}>
+            <LayoutDashboard className="text-blue-500" />
+            {!sidebarCollapsed && 'POS System'}
+          </span>
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="text-gray-400 hover:text-blue-500 ml-2"
+            aria-label="Toggle sidebar"
+          >
+            {sidebarCollapsed ? <ChevronRight size={20} /> : <ChevronLeft size={20} />}
+          </button>
         </div>
-      </div>
-
-      {/* Desktop sidebar */}
-      <div className="hidden lg:fixed lg:inset-y-0 lg:flex lg:w-64 lg:flex-col">
-        <div className="flex flex-col flex-grow bg-white border-r border-gray-200">
-          <div className="flex h-16 items-center px-4">
-            <h1 className="text-xl font-bold text-gray-900">POS System</h1>
-          </div>
-          <nav className="flex-1 space-y-1 px-2 py-4">
-            {filteredNavigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    isActive
-                      ? 'bg-blue-100 text-blue-900'
-                      : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+        <nav className="flex-1 space-y-1 px-2 py-4">
+          {filteredNavigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={`group flex items-center ${sidebarCollapsed ? 'justify-center' : ''} px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ${
+                  isActive
+                    ? 'bg-blue-100 text-blue-900 shadow'
+                    : 'text-gray-700 hover:bg-blue-50 hover:text-blue-900'
+                }`}
+                title={sidebarCollapsed ? item.name : undefined}
+              >
+                <item.icon
+                  className={`h-5 w-5 ${
+                    isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-blue-500'
                   }`}
-                >
-                  <item.icon
-                    className={`mr-3 h-5 w-5 ${
-                      isActive ? 'text-blue-500' : 'text-gray-400 group-hover:text-gray-500'
-                    }`}
-                  />
-                  {item.name}
-                </Link>
-              );
-            })}
-          </nav>
+                />
+                {!sidebarCollapsed && <span className="ml-3">{item.name}</span>}
+              </Link>
+            );
+          })}
+        </nav>
+        <div className="px-2 pb-4">
+          <button
+            onClick={handleLogout}
+            className={`flex items-center gap-2 px-3 py-2 text-sm font-medium text-red-600 hover:bg-red-50 rounded-md w-full ${sidebarCollapsed ? 'justify-center' : ''}`}
+          >
+            <LogOut size={18} />
+            {!sidebarCollapsed && 'Logout'}
+          </button>
         </div>
       </div>
 
       {/* Main content */}
-      <div className="lg:pl-64">
+      <div className="flex-1 flex flex-col min-h-screen">
         {/* Top bar */}
         <div className="sticky top-0 z-40 flex h-16 shrink-0 items-center gap-x-4 border-b border-gray-200 bg-white px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
-          <button
-            type="button"
-            className="-m-2.5 p-2.5 text-gray-700 lg:hidden"
-            onClick={() => setSidebarOpen(true)}
-          >
-            <Menu size={24} />
-          </button>
-
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1" />
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               {/* User menu */}
               <div className="relative">
                 <div className="flex items-center gap-x-2">
-                  <div className="flex items-center gap-x-2">
-                    <User size={20} className="text-gray-400" />
-                    <span className="text-sm font-medium text-gray-900">
-                      {user?.username}
-                    </span>
-                    <span className="text-xs text-gray-500 capitalize">
-                      ({user?.role})
-                    </span>
-                  </div>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-x-1 text-sm text-gray-500 hover:text-gray-700"
-                  >
-                    <LogOut size={16} />
-                    Logout
-                  </button>
+                  <User size={20} className="text-gray-400" />
+                  <span className="text-sm font-medium text-gray-900">
+                    {user?.username}
+                  </span>
+                  <span className="text-xs text-gray-500 capitalize">
+                    ({user?.role})
+                  </span>
                 </div>
               </div>
             </div>
           </div>
         </div>
-
         {/* Page content */}
-        <main className="py-6">
+        <main className="py-6 flex-1">
           <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
             {children}
           </div>

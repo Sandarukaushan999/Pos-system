@@ -7,307 +7,372 @@ import {
   DollarSign,
   ShoppingCart,
   Users,
-  Clock
+  Clock,
+  ChevronRight,
+  BarChart3,
+  PieChart,
+  Activity
 } from 'lucide-react';
-import { reportsAPI } from '../services/api';
-import { Line, Bar, Doughnut } from 'react-chartjs-2';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend,
-} from 'chart.js';
-
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  BarElement,
-  ArcElement,
-  Title,
-  Tooltip,
-  Legend
-);
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  // Mock data for demonstration
   useEffect(() => {
-    fetchDashboardData();
-  }, []);
-
-  const fetchDashboardData = async () => {
-    try {
-      setLoading(true);
-      const response = await reportsAPI.getDashboard();
-      if (response.data.success) {
-        setDashboardData(response.data.dashboard);
-      }
-    } catch (error) {
-      console.error('Error fetching dashboard data:', error);
-    } finally {
+    setTimeout(() => {
+      setDashboardData({
+        today: {
+          revenue: 2847.50,
+          expensesAmount: 1234.75
+        },
+        month: {
+          totalItems: 1250,
+          totalUsers: 89,
+          dailySales: [
+            { date: '2025-07-01', total: 1200 },
+            { date: '2025-07-02', total: 1500 },
+            { date: '2025-07-03', total: 1800 },
+            { date: '2025-07-04', total: 1300 },
+            { date: '2025-07-05', total: 2200 },
+            { date: '2025-07-06', total: 1900 },
+            { date: '2025-07-07', total: 2400 }
+          ],
+          salesByPayment: [
+            { payment_type: 'Credit Card', total: 15420 },
+            { payment_type: 'Cash', total: 8930 },
+            { payment_type: 'Digital', total: 5670 },
+            { payment_type: 'Check', total: 2340 }
+          ]
+        },
+        alerts: {
+          lowStock: 23,
+          expired: 5,
+          pending: 12
+        },
+        recentSales: [
+          { id: 1, invoice_number: 'INV-2024-001', cashier_name: 'Sarah Johnson', total_amount: 145.50, payment_type: 'card', created_at: '2025-07-14T10:30:00Z' },
+          { id: 2, invoice_number: 'INV-2024-002', cashier_name: 'Mike Chen', total_amount: 89.25, payment_type: 'cash', created_at: '2025-07-14T10:15:00Z' },
+          { id: 3, invoice_number: 'INV-2024-003', cashier_name: 'Emma Davis', total_amount: 234.80, payment_type: 'digital', created_at: '2025-07-14T10:00:00Z' },
+          { id: 4, invoice_number: 'INV-2024-004', cashier_name: 'Alex Smith', total_amount: 67.40, payment_type: 'cash', created_at: '2025-07-14T09:45:00Z' }
+        ],
+        topItems: [
+          { name: 'Coffee Beans', total_quantity: 245 },
+          { name: 'Wireless Headphones', total_quantity: 189 },
+          { name: 'Notebook Set', total_quantity: 156 },
+          { name: 'Phone Case', total_quantity: 134 },
+          { name: 'Water Bottle', total_quantity: 98 }
+        ]
+      });
       setLoading(false);
-    }
-  };
+    }, 1000);
+  }, []);
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center h-64">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+      <div className="bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center min-h-[300px]">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
+          <p className="text-slate-600 text-lg">Loading dashboard...</p>
+        </div>
       </div>
     );
   }
 
   if (!dashboardData) {
     return (
-      <div className="text-center py-12">
-        <p className="text-gray-500">Failed to load dashboard data</p>
+      <div className="bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center min-h-[300px]">
+        <div className="text-center p-8 bg-white rounded-2xl shadow-lg">
+          <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
+          <p className="text-slate-600 text-lg">Failed to load dashboard data</p>
+        </div>
       </div>
     );
   }
 
   const { today, month, alerts, recentSales, topItems } = dashboardData;
 
-  // Chart data
-  const salesChartData = {
-    labels: month.dailySales?.map(sale => sale.date) || [],
-    datasets: [
-      {
-        label: 'Daily Sales',
-        data: month.dailySales?.map(sale => sale.total) || [],
-        borderColor: 'rgb(59, 130, 246)',
-        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-        tension: 0.1,
-      },
-    ],
-  };
+  const StatCard = ({ title, value, change, icon: Icon, color = 'blue', trend }) => {
+    const colorClasses = {
+      blue: 'from-blue-500 to-blue-600 bg-blue-50 text-blue-600',
+      red: 'from-red-500 to-red-600 bg-red-50 text-red-600',
+      green: 'from-green-500 to-green-600 bg-green-50 text-green-600',
+      purple: 'from-purple-500 to-purple-600 bg-purple-50 text-purple-600',
+      amber: 'from-amber-500 to-amber-600 bg-amber-50 text-amber-600'
+    };
 
-  const paymentChartData = {
-    labels: month.salesByPayment?.map(payment => payment.payment_type) || [],
-    datasets: [
-      {
-        data: month.salesByPayment?.map(payment => payment.total) || [],
-        backgroundColor: [
-          '#3B82F6',
-          '#10B981',
-          '#F59E0B',
-          '#EF4444',
-        ],
-      },
-    ],
-  };
-
-  const topItemsChartData = {
-    labels: topItems?.map(item => item.name) || [],
-    datasets: [
-      {
-        label: 'Quantity Sold',
-        data: topItems?.map(item => item.total_quantity) || [],
-        backgroundColor: 'rgba(59, 130, 246, 0.8)',
-      },
-    ],
-  };
-
-  const chartOptions = {
-    responsive: true,
-    plugins: {
-      legend: {
-        position: 'top',
-      },
-    },
-    scales: {
-      y: {
-        beginAtZero: true,
-      },
-    },
-  };
-
-  const StatCard = ({ title, value, change, icon: Icon, color = 'blue' }) => (
-    <div className="bg-white overflow-hidden shadow rounded-lg">
-      <div className="p-5">
-        <div className="flex items-center">
-          <div className="flex-shrink-0">
-            <Icon className={`h-6 w-6 text-${color}-600`} />
-          </div>
-          <div className="ml-5 w-0 flex-1">
-            <dl>
-              <dt className="text-sm font-medium text-gray-500 truncate">{title}</dt>
-              <dd className="text-lg font-medium text-gray-900">{value}</dd>
-            </dl>
-          </div>
-        </div>
-      </div>
-      {change && (
-        <div className={`bg-${color}-50 px-5 py-3`}>
-          <div className="text-sm">
-            <div className={`font-medium text-${color}-700`}>
-              {change > 0 ? '+' : ''}{change}% from last month
+    return (
+      <div className="group relative bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1 overflow-hidden">
+        <div className={`absolute inset-0 bg-gradient-to-r ${colorClasses[color].split(' ')[0]} ${colorClasses[color].split(' ')[1]} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+        
+        <div className="p-6 relative">
+          <div className="flex items-center justify-between">
+            <div className="flex-1">
+              <p className="text-sm font-medium text-slate-600 mb-1">{title}</p>
+              <p className="text-3xl font-bold text-slate-900">{value}</p>
+              {change && (
+                <div className="flex items-center mt-2">
+                  {change > 0 ? (
+                    <TrendingUp className="h-4 w-4 text-green-500 mr-1" />
+                  ) : (
+                    <TrendingDown className="h-4 w-4 text-red-500 mr-1" />
+                  )}
+                  <span className={`text-sm font-medium ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {change > 0 ? '+' : ''}{change}%
+                  </span>
+                  <span className="text-xs text-slate-500 ml-1">vs last month</span>
+                </div>
+              )}
+            </div>
+            <div className={`w-14 h-14 rounded-2xl ${colorClasses[color].split(' ')[2]} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+              <Icon className={`h-7 w-7 ${colorClasses[color].split(' ')[3]}`} />
             </div>
           </div>
         </div>
-      )}
-    </div>
-  );
+      </div>
+    );
+  };
 
-  const AlertCard = ({ title, count, icon: Icon, color = 'red' }) => (
-    <div className={`bg-${color}-50 border border-${color}-200 rounded-lg p-4`}>
-      <div className="flex items-center">
-        <Icon className={`h-5 w-5 text-${color}-600 mr-3`} />
-        <div>
-          <h3 className={`text-sm font-medium text-${color}-800`}>{title}</h3>
-          <p className={`text-2xl font-bold text-${color}-900`}>{count}</p>
+  const AlertCard = ({ title, count, icon: Icon, color = 'red' }) => {
+    const colorClasses = {
+      red: 'from-red-500 to-red-600 bg-red-50 text-red-600 border-red-200',
+      yellow: 'from-amber-500 to-amber-600 bg-amber-50 text-amber-600 border-amber-200',
+      blue: 'from-blue-500 to-blue-600 bg-blue-50 text-blue-600 border-blue-200'
+    };
+
+    return (
+      <div className={`group relative bg-white rounded-2xl ${colorClasses[color].split(' ')[4]} border-2 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden cursor-pointer`}>
+        <div className={`absolute inset-0 bg-gradient-to-r ${colorClasses[color].split(' ')[0]} ${colorClasses[color].split(' ')[1]} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
+        
+        <div className="p-6 relative">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center">
+              <div className={`w-12 h-12 rounded-xl ${colorClasses[color].split(' ')[2]} flex items-center justify-center mr-4`}>
+                <Icon className={`h-6 w-6 ${colorClasses[color].split(' ')[3]}`} />
+              </div>
+              <div>
+                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+                <p className="text-3xl font-bold text-slate-900">{count}</p>
+              </div>
+            </div>
+            <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+          </div>
         </div>
+      </div>
+    );
+  };
+
+  const ChartCard = ({ title, icon: Icon, children }) => (
+    <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+      <div className="p-6 border-b border-slate-100">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3">
+              <Icon className="h-5 w-5 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold text-slate-900">{title}</h3>
+          </div>
+        </div>
+      </div>
+      <div className="p-6">
+        {children}
       </div>
     </div>
   );
+
+  const PaymentMethodCard = ({ method, amount, percentage, color }) => (
+    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+      <div className="flex items-center">
+        <div className={`w-3 h-3 rounded-full ${color} mr-3`}></div>
+        <span className="font-medium text-slate-900">{method}</span>
+      </div>
+      <div className="text-right">
+        <p className="font-bold text-slate-900">${amount.toLocaleString()}</p>
+        <p className="text-sm text-slate-500">{percentage}%</p>
+      </div>
+    </div>
+  );
+
+  const TopItemCard = ({ item, index }) => (
+    <div className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+      <div className="flex items-center">
+        <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3">
+          <span className="text-white font-bold text-sm">#{index + 1}</span>
+        </div>
+        <span className="font-medium text-slate-900">{item.name}</span>
+      </div>
+      <div className="text-right">
+        <p className="font-bold text-slate-900">{item.total_quantity}</p>
+        <p className="text-sm text-slate-500">sold</p>
+      </div>
+    </div>
+  );
+
+  const total = month.salesByPayment?.reduce((sum, item) => sum + item.total, 0) || 0;
 
   return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Overview of your business performance
-        </p>
-      </div>
-
-      {/* Stats cards */}
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4">
-        <StatCard
-          title="Today's Sales"
-          value={`$${today.revenue.toFixed(2)}`}
-          icon={ShoppingCart}
-          color="blue"
-        />
-        <StatCard
-          title="Today's Expenses"
-          value={`$${today.expensesAmount.toFixed(2)}`}
-          icon={DollarSign}
-          color="red"
-        />
-        <StatCard
-          title="Total Items"
-          value={month.totalItems || 0}
-          icon={Package}
-          color="green"
-        />
-        <StatCard
-          title="Active Users"
-          value={month.totalUsers || 0}
-          icon={Users}
-          color="purple"
-        />
-      </div>
-
-      {/* Alerts */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-        <AlertCard
-          title="Low Stock Items"
-          count={alerts.lowStock}
-          icon={AlertTriangle}
-          color="yellow"
-        />
-        <AlertCard
-          title="Expired Items"
-          count={alerts.expired}
-          icon={Clock}
-          color="red"
-        />
-        <AlertCard
-          title="Pending Approval"
-          count={alerts.pending}
-          icon={Package}
-          color="blue"
-        />
-      </div>
-
-      {/* Charts */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Sales Trend */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Sales Trend</h3>
-          <Line data={salesChartData} options={chartOptions} />
+    <div className="bg-gradient-to-br from-slate-50 to-blue-50">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        {/* Header */}
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-4xl font-bold text-slate-900 mb-2">Dashboard</h1>
+              <p className="text-xl text-slate-600">
+                Welcome back! Here's what's happening with your business today.
+              </p>
+            </div>
+            <div className="text-right">
+              <p className="text-sm text-slate-500">Today</p>
+              <p className="text-2xl font-bold text-slate-900">{new Date().toLocaleDateString()}</p>
+            </div>
+          </div>
         </div>
 
-        {/* Payment Methods */}
-        <div className="bg-white shadow rounded-lg p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Payment Methods</h3>
-          <Doughnut data={paymentChartData} options={chartOptions} />
+        {/* Stats Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
+          <StatCard
+            title="Today's Revenue"
+            value={`$${today.revenue.toFixed(2)}`}
+            change={12.5}
+            icon={ShoppingCart}
+            color="blue"
+          />
+          <StatCard
+            title="Today's Expenses"
+            value={`$${today.expensesAmount.toFixed(2)}`}
+            change={-4.3}
+            icon={DollarSign}
+            color="red"
+          />
+          <StatCard
+            title="Total Items"
+            value={month.totalItems?.toLocaleString() || '0'}
+            change={8.2}
+            icon={Package}
+            color="green"
+          />
+          <StatCard
+            title="Active Users"
+            value={month.totalUsers?.toLocaleString() || '0'}
+            change={15.7}
+            icon={Users}
+            color="purple"
+          />
         </div>
-      </div>
 
-      {/* Top Items */}
-      <div className="bg-white shadow rounded-lg p-6">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">Top Selling Items</h3>
-        <Bar data={topItemsChartData} options={chartOptions} />
-      </div>
-
-      {/* Recent Sales */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">Recent Sales</h3>
+        {/* Alerts */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+          <AlertCard
+            title="Low Stock Alert"
+            count={alerts.lowStock}
+            icon={AlertTriangle}
+            color="yellow"
+          />
+          <AlertCard
+            title="Expired Items"
+            count={alerts.expired}
+            icon={Clock}
+            color="red"
+          />
+          <AlertCard
+            title="Pending Orders"
+            count={alerts.pending}
+            icon={Package}
+            color="blue"
+          />
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
-              <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Invoice
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Cashier
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Payment
-                </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                  Date
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {recentSales?.map((sale) => (
-                <tr key={sale.id}>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                    {sale.invoice_number}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {sale.cashier_name || 'Unknown'}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                    ${sale.total_amount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                      sale.payment_type === 'cash' 
-                        ? 'bg-green-100 text-green-800'
-                        : 'bg-blue-100 text-blue-800'
-                    }`}>
-                      {sale.payment_type}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {new Date(sale.created_at).toLocaleDateString()}
-                  </td>
-                </tr>
+
+        {/* Charts Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          {/* Sales Trend */}
+          <ChartCard title="Sales Trend" icon={Activity}>
+            <div className="h-64 flex items-center justify-center">
+              <div className="text-center">
+                <BarChart3 className="h-12 w-12 text-slate-300 mx-auto mb-4" />
+                <p className="text-slate-500">Sales trend visualization would go here</p>
+              </div>
+            </div>
+          </ChartCard>
+
+          {/* Payment Methods */}
+          <ChartCard title="Payment Methods" icon={PieChart}>
+            <div className="space-y-3">
+              {month.salesByPayment?.map((payment, index) => {
+                const colors = ['bg-blue-500', 'bg-green-500', 'bg-amber-500', 'bg-red-500'];
+                const percentage = ((payment.total / total) * 100).toFixed(1);
+                return (
+                  <PaymentMethodCard
+                    key={index}
+                    method={payment.payment_type}
+                    amount={payment.total}
+                    percentage={percentage}
+                    color={colors[index % colors.length]}
+                  />
+                );
+              })}
+            </div>
+          </ChartCard>
+        </div>
+
+        {/* Bottom Row */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Top Items */}
+          <ChartCard title="Top Selling Items" icon={TrendingUp}>
+            <div className="space-y-3">
+              {topItems?.map((item, index) => (
+                <TopItemCard key={index} item={item} index={index} />
               ))}
-            </tbody>
-          </table>
+            </div>
+          </ChartCard>
+
+          {/* Recent Sales */}
+          <div className="bg-white rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden">
+            <div className="p-6 border-b border-slate-100">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center">
+                  <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-green-500 to-blue-600 flex items-center justify-center mr-3">
+                    <Clock className="h-5 w-5 text-white" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900">Recent Sales</h3>
+                </div>
+                <button className="text-blue-600 hover:text-blue-800 font-medium text-sm">View All</button>
+              </div>
+            </div>
+            <div className="p-6">
+              <div className="space-y-4">
+                {recentSales?.map((sale) => (
+                  <div key={sale.id} className="flex items-center justify-between p-4 bg-slate-50 rounded-xl hover:bg-slate-100 transition-colors">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 rounded-xl bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3">
+                        <span className="text-white font-bold text-xs">{sale.invoice_number.slice(-3)}</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-slate-900">{sale.cashier_name}</p>
+                        <p className="text-sm text-slate-500">{sale.invoice_number}</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="font-bold text-slate-900">${sale.total_amount.toFixed(2)}</p>
+                      <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
+                        sale.payment_type === 'cash' 
+                          ? 'bg-green-100 text-green-800'
+                          : sale.payment_type === 'card'
+                          ? 'bg-blue-100 text-blue-800'
+                          : 'bg-purple-100 text-purple-800'
+                      }`}>
+                        {sale.payment_type}
+                      </span>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-export default Dashboard; 
+export default Dashboard;

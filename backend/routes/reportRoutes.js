@@ -486,69 +486,71 @@ router.get('/business/excel', authenticateToken, requireAuth, async (req, res) =
 });
 
 // Get dashboard statistics
-router.get('/dashboard', authenticateToken, requireAuth, (req, res) => {
+router.get('/dashboard', authenticateToken, requireAuth, async (req, res) => {
+  const { getDb, getAsync, allAsync } = require('../models/database');
+  const db = getDb();
   try {
     const today = moment().format('YYYY-MM-DD');
     const thisMonth = moment().format('YYYY-MM');
 
     // Today's sales
-    const todaySales = db.prepare(`
+    const todaySales = await getAsync(db, `
       SELECT COUNT(*) as count, SUM(total_amount) as total 
       FROM sales 
       WHERE DATE(created_at) = ?
-    `).get(today);
+    `, [today]);
 
     // This month's sales
-    const monthSales = db.prepare(`
+    const monthSales = await getAsync(db, `
       SELECT COUNT(*) as count, SUM(total_amount) as total 
       FROM sales 
       WHERE strftime('%Y-%m', created_at) = ?
-    `).get(thisMonth);
+    `, [thisMonth]);
 
     // Today's expenses
-    const todayExpenses = db.prepare(`
+    const todayExpenses = await getAsync(db, `
       SELECT COUNT(*) as count, SUM(amount) as total 
       FROM expenses 
       WHERE date = ?
-    `).get(today);
+    `, [today]);
 
     // This month's expenses
-    const monthExpenses = db.prepare(`
+    const monthExpenses = await getAsync(db, `
       SELECT COUNT(*) as count, SUM(amount) as total 
       FROM expenses 
       WHERE strftime('%Y-%m', date) = ?
-    `).get(thisMonth);
+    `, [thisMonth]);
 
     // Inventory alerts
-    const lowStockCount = db.prepare(`
+    const lowStockCount = await getAsync(db, `
       SELECT COUNT(*) as count 
       FROM stock_items 
       WHERE status = 'active' AND quantity <= reorder_level
-    `).get();
+    `);
 
-    const expiredCount = db.prepare(`
+    const expiredCount = await getAsync(db, `
       SELECT COUNT(*) as count 
       FROM stock_items 
       WHERE status = 'active' AND expiry_date < ?
-    `).get(today);
+    `, [today]);
 
-    const pendingCount = db.prepare(`
+    const pendingCount = await getAsync(db, `
       SELECT COUNT(*) as count 
       FROM stock_items 
       WHERE status = 'pending'
-    `).get();
+    `);
 
     // Recent sales (last 10)
-    const recentSales = db.prepare(`
+    const recentSales = await allAsync(db, `
       SELECT s.*, u.username as cashier_name 
       FROM sales s 
       LEFT JOIN users u ON s.cashier_id = u.id 
       ORDER BY s.created_at DESC 
       LIMIT 10
-    `).all();
+    `);
 
     // Top selling items (this month)
-    const topItems = db.prepare(`
+    const topItems = await allAsync(db, `
       SELECT 
         si.name,
         SUM(si.quantity) as total_quantity,
@@ -559,7 +561,37 @@ router.get('/dashboard', authenticateToken, requireAuth, (req, res) => {
       GROUP BY si.barcode, si.name
       ORDER BY total_quantity DESC
       LIMIT 5
-    `).all(thisMonth);
+    `, [thisMonth]);
+
+    // Total items (active)
+    const totalItems = await getAsync(db, `
+      SELECT COUNT(*) as count FROM stock_items WHERE status = 'active'
+    `);
+
+    // Total users
+    const totalUsers = await getAsync(db, `
+      SELECT COUNT(*) as count FROM users
+    `);
+
+    // Sales by payment type (this month)
+    const salesByPayment = await allAsync(db, `
+      SELECT payment_type, COUNT(*) as count, SUM(total_amount) as total
+      FROM sales
+      WHERE strftime('%Y-%m', created_at) = ?
+      GROUP BY payment_type
+    `, [thisMonth]);
+
+    // Daily sales (this month)
+    const dailySales = await allAsync(db, `
+      SELECT DATE(created_at) as date, SUM(total_amount) as total
+      FROM sales
+      WHERE strftime('%Y-%m', created_at) = ?
+      GROUP BY DATE(created_at)
+      ORDER BY date DESC
+      LIMIT 30
+    `, [thisMonth]);
+
+    db.close();
 
     res.json({
       success: true,
@@ -574,7 +606,11 @@ router.get('/dashboard', authenticateToken, requireAuth, (req, res) => {
           sales: monthSales.count || 0,
           revenue: monthSales.total || 0,
           expenses: monthExpenses.count || 0,
-          expensesAmount: monthExpenses.total || 0
+          expensesAmount: monthExpenses.total || 0,
+          totalItems: totalItems.count || 0,
+          totalUsers: totalUsers.count || 0,
+          salesByPayment: salesByPayment || [],
+          dailySales: dailySales || []
         },
         alerts: {
           lowStock: lowStockCount.count || 0,
@@ -586,6 +622,7 @@ router.get('/dashboard', authenticateToken, requireAuth, (req, res) => {
       }
     });
   } catch (error) {
+    db.close();
     res.status(500).json({ 
       success: false,
       error: 'Failed to get dashboard data' 
