@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { 
-  Barcode, 
+  Scan, 
   Plus, 
   Minus, 
   Trash2, 
@@ -178,7 +178,7 @@ const BillingScreen = () => {
               Scan Barcode
             </label>
             <div className="relative">
-              <Barcode className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Scan className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 ref={barcodeInputRef}
                 type="text"
@@ -244,7 +244,7 @@ const BillingScreen = () => {
         
         {cart.length === 0 ? (
           <div className="p-6 text-center text-gray-500">
-            <Barcode className="mx-auto h-12 w-12 text-gray-400" />
+            <Scan className="mx-auto h-12 w-12 text-gray-400" />
             <h3 className="mt-2 text-sm font-medium text-gray-900">No items in cart</h3>
             <p className="mt-1 text-sm text-gray-500">Start scanning items to add them to the cart.</p>
           </div>

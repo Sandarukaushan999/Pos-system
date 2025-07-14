@@ -7,7 +7,7 @@ import {
   AlertTriangle, 
   Clock,
   Package,
-  Barcode
+  Scan
 } from 'lucide-react';
 import { inventoryAPI } from '../services/api';
 
@@ -277,7 +277,7 @@ const InventoryManager = () => {
                       <div>
                         <div className="text-sm font-medium text-gray-900">{item.name}</div>
                         <div className="text-sm text-gray-500 flex items-center gap-1">
-                          <Barcode size={14} />
+                          <Scan size={14} />
                           {item.barcode}
                         </div>
                       </div>

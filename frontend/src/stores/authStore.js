@@ -2,7 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import api from '../services/api';
 
-const useAuthStore = create(
+export const useAuthStore = create(
   persist(
     (set, get) => ({
       // State
@@ -155,6 +155,4 @@ const useAuthStore = create(
       })
     }
   )
-);
-
-export default useAuthStore; 
+); 

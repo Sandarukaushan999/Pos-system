@@ -1,6 +1,6 @@
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcryptjs');
-const { db } = require('../models/database');
+const { getDb, getAsync, runAsync } = require('../models/database');
 
 const JWT_SECRET = process.env.JWT_SECRET || 'pos-system-secret-key-2024';
 
@@ -51,23 +51,19 @@ const requireAuth = (req, res, next) => {
   next();
 };
 
-// Login function
+// Login function (refactored for sqlite3 async)
 const login = async (username, password) => {
+  const db = getDb();
   try {
-    const user = db.prepare('SELECT * FROM users WHERE username = ?').get(username);
-    
+    const user = await getAsync(db, 'SELECT * FROM users WHERE username = ?', [username]);
     if (!user) {
       throw new Error('Invalid credentials');
     }
-
     const isValidPassword = await bcrypt.compare(password, user.password_hash);
-    
     if (!isValidPassword) {
       throw new Error('Invalid credentials');
     }
-
     const token = generateToken(user);
-    
     return {
       user: {
         id: user.id,
@@ -78,35 +74,35 @@ const login = async (username, password) => {
     };
   } catch (error) {
     throw error;
+  } finally {
+    db.close();
   }
 };
 
-// Register new user (admin only)
+// Register new user (admin only, refactored for sqlite3 async)
 const registerUser = async (username, password, role = 'cashier') => {
+  const db = getDb();
   try {
     // Check if user already exists
-    const existingUser = db.prepare('SELECT id FROM users WHERE username = ?').get(username);
-    
+    const existingUser = await getAsync(db, 'SELECT id FROM users WHERE username = ?', [username]);
     if (existingUser) {
       throw new Error('Username already exists');
     }
-
     // Hash password
     const passwordHash = await bcrypt.hash(password, 10);
-    
     // Insert new user
-    const result = db.prepare(`
+    await runAsync(db, `
       INSERT INTO users (username, password_hash, role) 
       VALUES (?, ?, ?)
-    `).run(username, passwordHash, role);
-
+    `, [username, passwordHash, role]);
     return {
-      id: result.lastInsertRowid,
       username,
       role
     };
   } catch (error) {
     throw error;
+  } finally {
+    db.close();
   }
 };
 

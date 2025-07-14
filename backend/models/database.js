@@ -1,35 +1,56 @@
-const Database = require('better-sqlite3');
+const sqlite3 = require('sqlite3').verbose();
 const path = require('path');
 const bcrypt = require('bcryptjs');
 
 // Database file path
 const dbPath = path.join(__dirname, '..', 'database.db');
-const db = new Database(dbPath);
 
-// Enable foreign keys
-db.pragma('foreign_keys = ON');
+// Function to get a new database connection
+function getDb() {
+  return new sqlite3.Database(dbPath);
+}
 
-const initializeDatabase = () => {
-  try {
-    // Create tables
-    createTables();
-    
-    // Insert default admin user
-    createDefaultAdmin();
-    
-    // Insert sample data for testing
-    insertSampleData();
-    
-    console.log('✅ Database initialized successfully');
-  } catch (error) {
-    console.error('❌ Database initialization failed:', error);
-    throw error;
-  }
-};
+// Initialize database: create tables, default admin, and sample data
+async function initializeDatabase() {
+  const db = getDb();
+  await runAsync(db, 'PRAGMA foreign_keys = ON');
+  await createTables(db);
+  await createDefaultAdmin(db);
+  await insertSampleData(db);
+  db.close();
+  console.log('✅ Database initialized successfully');
+}
 
-const createTables = () => {
+function runAsync(db, sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function (err) {
+      if (err) reject(err);
+      else resolve(this);
+    });
+  });
+}
+
+function getAsync(db, sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) reject(err);
+      else resolve(row);
+    });
+  });
+}
+
+function allAsync(db, sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) reject(err);
+      else resolve(rows);
+    });
+  });
+}
+
+async function createTables(db) {
   // Users table
-  db.exec(`
+  await runAsync(db, `
     CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       username TEXT UNIQUE NOT NULL,
@@ -41,7 +62,7 @@ const createTables = () => {
   `);
 
   // Stock items table
-  db.exec(`
+  await runAsync(db, `
     CREATE TABLE IF NOT EXISTS stock_items (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       barcode TEXT UNIQUE NOT NULL,
@@ -57,7 +78,7 @@ const createTables = () => {
   `);
 
   // Sales table
-  db.exec(`
+  await runAsync(db, `
     CREATE TABLE IF NOT EXISTS sales (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       invoice_number TEXT UNIQUE NOT NULL,
@@ -70,7 +91,7 @@ const createTables = () => {
   `);
 
   // Sales items table
-  db.exec(`
+  await runAsync(db, `
     CREATE TABLE IF NOT EXISTS sales_items (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       sale_id INTEGER NOT NULL,
@@ -85,7 +106,7 @@ const createTables = () => {
   `);
 
   // Expenses table
-  db.exec(`
+  await runAsync(db, `
     CREATE TABLE IF NOT EXISTS expenses (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       date DATE NOT NULL,
@@ -99,32 +120,27 @@ const createTables = () => {
   `);
 
   // Create indexes for better performance
-  db.exec('CREATE INDEX IF NOT EXISTS idx_stock_barcode ON stock_items(barcode)');
-  db.exec('CREATE INDEX IF NOT EXISTS idx_stock_status ON stock_items(status)');
-  db.exec('CREATE INDEX IF NOT EXISTS idx_sales_date ON sales(created_at)');
-  db.exec('CREATE INDEX IF NOT EXISTS idx_expenses_date ON expenses(date)');
-};
+  await runAsync(db, 'CREATE INDEX IF NOT EXISTS idx_stock_barcode ON stock_items(barcode)');
+  await runAsync(db, 'CREATE INDEX IF NOT EXISTS idx_stock_status ON stock_items(status)');
+  await runAsync(db, 'CREATE INDEX IF NOT EXISTS idx_sales_date ON sales(created_at)');
+  await runAsync(db, 'CREATE INDEX IF NOT EXISTS idx_expenses_date ON expenses(date)');
+}
 
-const createDefaultAdmin = () => {
-  const adminExists = db.prepare('SELECT id FROM users WHERE username = ?').get('admin');
-  
+async function createDefaultAdmin(db) {
+  const adminExists = await getAsync(db, 'SELECT id FROM users WHERE username = ?', ['admin']);
   if (!adminExists) {
     const passwordHash = bcrypt.hashSync('admin123', 10);
-    db.prepare(`
+    await runAsync(db, `
       INSERT INTO users (username, password_hash, role) 
       VALUES (?, ?, ?)
-    `).run('admin', passwordHash, 'admin');
-    
+    `, ['admin', passwordHash, 'admin']);
     console.log('✅ Default admin user created (username: admin, password: admin123)');
   }
-};
+}
 
-const insertSampleData = () => {
-  // Check if sample data already exists
-  const stockCount = db.prepare('SELECT COUNT(*) as count FROM stock_items').get();
-  
+async function insertSampleData(db) {
+  const stockCount = await getAsync(db, 'SELECT COUNT(*) as count FROM stock_items');
   if (stockCount.count === 0) {
-    // Insert sample stock items
     const sampleItems = [
       {
         barcode: '1234567890123',
@@ -145,14 +161,11 @@ const insertSampleData = () => {
         reorder_level: 5
       }
     ];
-
-    const insertStock = db.prepare(`
-      INSERT INTO stock_items (barcode, name, quantity, price, expiry_date, status, reorder_level)
-      VALUES (?, ?, ?, ?, ?, ?, ?)
-    `);
-
-    sampleItems.forEach(item => {
-      insertStock.run(
+    for (const item of sampleItems) {
+      await runAsync(db, `
+        INSERT INTO stock_items (barcode, name, quantity, price, expiry_date, status, reorder_level)
+        VALUES (?, ?, ?, ?, ?, ?, ?)
+      `, [
         item.barcode,
         item.name,
         item.quantity,
@@ -160,15 +173,16 @@ const insertSampleData = () => {
         item.expiry_date,
         item.status,
         item.reorder_level
-      );
-    });
-
+      ]);
+    }
     console.log('✅ Sample data inserted');
   }
-};
+}
 
-// Export database instance and initialization function
 module.exports = {
-  db,
-  initializeDatabase
+  getDb,
+  initializeDatabase,
+  runAsync,
+  getAsync,
+  allAsync
 }; 
