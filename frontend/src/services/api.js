@@ -1,0 +1,102 @@
+import axios from 'axios';
+
+// Create axios instance
+const api = axios.create({
+  baseURL: 'http://localhost:3001/api',
+  timeout: 10000,
+  headers: {
+    'Content-Type': 'application/json',
+  },
+});
+
+// Request interceptor to add auth token
+api.interceptors.request.use(
+  (config) => {
+    const token = localStorage.getItem('auth-storage') 
+      ? JSON.parse(localStorage.getItem('auth-storage')).state?.token 
+      : null;
+    
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+  },
+  (error) => {
+    return Promise.reject(error);
+  }
+);
+
+// Response interceptor to handle errors
+api.interceptors.response.use(
+  (response) => {
+    return response;
+  },
+  (error) => {
+    if (error.response?.status === 401) {
+      // Token expired or invalid, redirect to login
+      localStorage.removeItem('auth-storage');
+      window.location.href = '/login';
+    }
+    return Promise.reject(error);
+  }
+);
+
+// API endpoints
+export const authAPI = {
+  login: (credentials) => api.post('/auth/login', credentials),
+  register: (userData) => api.post('/auth/register', userData),
+  getProfile: () => api.get('/auth/profile'),
+  changePassword: (passwords) => api.put('/auth/change-password', passwords),
+  getUsers: () => api.get('/auth/users'),
+  deleteUser: (id) => api.delete(`/auth/users/${id}`),
+};
+
+export const inventoryAPI = {
+  getAll: (params) => api.get('/inventory', { params }),
+  getByBarcode: (barcode) => api.get(`/inventory/barcode/${barcode}`),
+  create: (item) => api.post('/inventory', item),
+  update: (id, item) => api.put(`/inventory/${id}`, item),
+  delete: (id) => api.delete(`/inventory/${id}`),
+  getPending: () => api.get('/inventory/pending'),
+  approve: (id, data) => api.put(`/inventory/${id}/approve`, data),
+  getLowStock: () => api.get('/inventory/low-stock'),
+  getExpiryAlerts: () => api.get('/inventory/expiry-alerts'),
+  getStats: () => api.get('/inventory/stats'),
+};
+
+export const salesAPI = {
+  getAll: (params) => api.get('/sales', { params }),
+  getById: (id) => api.get(`/sales/${id}`),
+  create: (sale) => api.post('/sales', sale),
+  delete: (id) => api.delete(`/sales/${id}`),
+  getStats: (params) => api.get('/sales/stats/overview', { params }),
+  getTopItems: (params) => api.get('/sales/stats/top-items', { params }),
+};
+
+export const expensesAPI = {
+  getAll: (params) => api.get('/expenses', { params }),
+  getById: (id) => api.get(`/expenses/${id}`),
+  create: (expense) => api.post('/expenses', expense),
+  update: (id, expense) => api.put(`/expenses/${id}`, expense),
+  delete: (id) => api.delete(`/expenses/${id}`),
+  getCategories: () => api.get('/expenses/categories/list'),
+  getStats: (params) => api.get('/expenses/stats/overview', { params }),
+};
+
+export const reportsAPI = {
+  getDashboard: () => api.get('/reports/dashboard'),
+  generateSalesReport: (params) => api.get('/reports/sales/excel', { params }),
+  generateInventoryReport: (params) => api.get('/reports/inventory/excel', { params }),
+  generateExpensesReport: (params) => api.get('/reports/expenses/excel', { params }),
+  generateBusinessReport: (params) => api.get('/reports/business/excel', { params }),
+};
+
+export const usersAPI = {
+  getAll: () => api.get('/users'),
+  getById: (id) => api.get(`/users/${id}`),
+  updateRole: (id, role) => api.put(`/users/${id}/role`, { role }),
+  delete: (id) => api.delete(`/users/${id}`),
+  getActivity: (id, params) => api.get(`/users/${id}/activity`, { params }),
+};
+
+export default api; 
