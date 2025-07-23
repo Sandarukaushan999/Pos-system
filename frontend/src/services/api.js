@@ -90,6 +90,7 @@ export const reportsAPI = {
   generateInventoryReport: (params) => api.get('/reports/inventory/excel', { params }),
   generateExpensesReport: (params) => api.get('/reports/expenses/excel', { params }),
   generateBusinessReport: (params) => api.get('/reports/business/excel', { params }),
+  downloadExcel: (type, fileName) => api.get(`/reports/download/${type}/${fileName}`, { responseType: 'blob' }),
 };
 
 export const usersAPI = {

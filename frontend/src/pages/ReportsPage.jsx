@@ -27,7 +27,7 @@ const ReportsPage = () => {
 
       let response;
       const params = { ...reportParams };
-
+      let downloadType = reportType;
       switch (reportType) {
         case 'sales':
           response = await reportsAPI.generateSalesReport(params);
@@ -45,7 +45,19 @@ const ReportsPage = () => {
           throw new Error('Invalid report type');
       }
 
-      if (response.data.success) {
+      if (response.data.success && response.data.fileName) {
+        setSuccess(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report generated successfully! Downloading...`);
+        // Download the file
+        const downloadResponse = await reportsAPI.downloadExcel(downloadType, response.data.fileName);
+        const url = window.URL.createObjectURL(new Blob([downloadResponse.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        link.setAttribute('download', response.data.fileName);
+        document.body.appendChild(link);
+        link.click();
+        link.parentNode.removeChild(link);
+        setTimeout(() => setSuccess(''), 3000);
+      } else if (response.data.success) {
         setSuccess(`${reportType.charAt(0).toUpperCase() + reportType.slice(1)} report generated successfully!`);
         setTimeout(() => setSuccess(''), 3000);
       }

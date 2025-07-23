@@ -245,4 +245,38 @@ router.get('/business/excel', authenticateToken, requireAuth, async (req, res) =
   });
 });
 
+// Download Excel file by filename (search all subfolders)
+router.get('/download/:type/:fileName', authenticateToken, requireAuth, (req, res) => {
+  const { fileName } = req.params;
+  const backupRoot = path.join(__dirname, '../../POSBackups');
+  let allFiles = [];
+
+  function findFile(dir, target) {
+    const files = fs.readdirSync(dir);
+    for (const file of files) {
+      const fullPath = path.join(dir, file);
+      if (fs.statSync(fullPath).isDirectory()) {
+        const found = findFile(fullPath, target);
+        if (found) return found;
+      } else {
+        allFiles.push(fullPath);
+        if (file === target) {
+          return fullPath;
+        }
+      }
+    }
+    return null;
+  }
+
+  const filePath = findFile(backupRoot, fileName);
+  console.log('Download requested for:', fileName);
+  console.log('All files found:', allFiles);
+  if (!filePath) {
+    console.log('File not found:', fileName);
+    return res.status(404).json({ error: 'File not found', searched: allFiles });
+  }
+  console.log('File found at:', filePath);
+  res.download(filePath, fileName);
+});
+
 module.exports = router; 

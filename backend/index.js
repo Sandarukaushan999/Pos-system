@@ -28,15 +28,44 @@ app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 200 }));
 // Initialize DB
 initializeDatabase();
 
-// Always ensure admin user exists
+// Always ensure default users exist
 (async () => {
   const db = getDb();
-  db.get('SELECT * FROM users WHERE username = ?', ['admin'], async (err, user) => {
+  // Admin
+  db.get('SELECT * FROM users WHERE username = ?', ['Admin'], async (err, user) => {
     if (!user) {
-      const hash = await hashPassword('admin123');
-      db.run('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)', ['admin', hash, 'admin'], function(err2) {
+      const hash = await hashPassword('Admin123');
+      db.run('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)', ['Admin', hash, 'admin'], function(err2) {
         if (!err2) {
-          console.log('Default admin user created: admin / admin123');
+          console.log('Default admin user created: Admin / Admin123');
+        }
+      });
+    }
+  });
+  // Salesman
+  db.get('SELECT * FROM users WHERE username = ?', ['salesman'], async (err, user) => {
+    const hash = await hashPassword('salesman123');
+    if (!user) {
+      db.run('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)', ['salesman', hash, 'salesman'], function(err2) {
+        if (!err2) {
+          console.log('Default salesman user created: salesman / salesman123');
+        }
+      });
+    } else {
+      db.run('UPDATE users SET password_hash = ?, role = ? WHERE username = ?', [hash, 'salesman', 'salesman'], function(err2) {
+        if (!err2) {
+          console.log('Salesman user password reset to salesman123 and role set to salesman');
+        }
+      });
+    }
+  });
+  // Data Entry
+  db.get('SELECT * FROM users WHERE username = ?', ['dataenter'], async (err, user) => {
+    if (!user) {
+      const hash = await hashPassword('dataenter123');
+      db.run('INSERT INTO users (username, password_hash, role) VALUES (?, ?, ?)', ['dataenter', hash, 'dataentry'], function(err2) {
+        if (!err2) {
+          console.log('Default dataentry user created: dataenter / dataenter123');
         }
       });
     }
