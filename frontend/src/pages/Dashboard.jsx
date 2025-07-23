@@ -13,60 +13,57 @@ import {
   PieChart,
   Activity
 } from 'lucide-react';
+import { reportsAPI, salesAPI } from '../services/api';
+import { useAuthStore } from '../stores/authStore';
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [salesmanStats, setSalesmanStats] = useState([]);
+  const [salesmanLoading, setSalesmanLoading] = useState(false);
+  const { user } = useAuthStore();
 
-  // Mock data for demonstration
   useEffect(() => {
-    setTimeout(() => {
-      setDashboardData({
-        today: {
-          revenue: 2847.50,
-          expensesAmount: 1234.75
-        },
-        month: {
-          totalItems: 1250,
-          totalUsers: 89,
-          dailySales: [
-            { date: '2025-07-01', total: 1200 },
-            { date: '2025-07-02', total: 1500 },
-            { date: '2025-07-03', total: 1800 },
-            { date: '2025-07-04', total: 1300 },
-            { date: '2025-07-05', total: 2200 },
-            { date: '2025-07-06', total: 1900 },
-            { date: '2025-07-07', total: 2400 }
-          ],
-          salesByPayment: [
-            { payment_type: 'Credit Card', total: 15420 },
-            { payment_type: 'Cash', total: 8930 },
-            { payment_type: 'Digital', total: 5670 },
-            { payment_type: 'Check', total: 2340 }
-          ]
-        },
-        alerts: {
-          lowStock: 23,
-          expired: 5,
-          pending: 12
-        },
-        recentSales: [
-          { id: 1, invoice_number: 'INV-2024-001', cashier_name: 'Sarah Johnson', total_amount: 145.50, payment_type: 'card', created_at: '2025-07-14T10:30:00Z' },
-          { id: 2, invoice_number: 'INV-2024-002', cashier_name: 'Mike Chen', total_amount: 89.25, payment_type: 'cash', created_at: '2025-07-14T10:15:00Z' },
-          { id: 3, invoice_number: 'INV-2024-003', cashier_name: 'Emma Davis', total_amount: 234.80, payment_type: 'digital', created_at: '2025-07-14T10:00:00Z' },
-          { id: 4, invoice_number: 'INV-2024-004', cashier_name: 'Alex Smith', total_amount: 67.40, payment_type: 'cash', created_at: '2025-07-14T09:45:00Z' }
-        ],
-        topItems: [
-          { name: 'Coffee Beans', total_quantity: 245 },
-          { name: 'Wireless Headphones', total_quantity: 189 },
-          { name: 'Notebook Set', total_quantity: 156 },
-          { name: 'Phone Case', total_quantity: 134 },
-          { name: 'Water Bottle', total_quantity: 98 }
-        ]
-      });
-      setLoading(false);
-    }, 1000);
+    const fetchDashboard = async () => {
+      try {
+        setLoading(true);
+        setError('');
+        const response = await reportsAPI.getDashboard();
+        if (response.data.success) {
+          setDashboardData(response.data.dashboard);
+        } else {
+          setError('Failed to load dashboard data');
+        }
+      } catch (err) {
+        setError('Failed to load dashboard data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchDashboard();
   }, []);
+
+  useEffect(() => {
+    if (user?.role === 'admin') {
+      const fetchSalesmanStats = async () => {
+        setSalesmanLoading(true);
+        try {
+          const response = await salesAPI.getGrouped();
+          if (response.data.success && response.data.salesmanStats) {
+            setSalesmanStats(response.data.salesmanStats);
+          } else {
+            setSalesmanStats([]);
+          }
+        } catch (err) {
+          setSalesmanStats([]);
+        } finally {
+          setSalesmanLoading(false);
+        }
+      };
+      fetchSalesmanStats();
+    }
+  }, [user]);
 
   if (loading) {
     return (
@@ -79,12 +76,12 @@ const Dashboard = () => {
     );
   }
 
-  if (!dashboardData) {
+  if (error || !dashboardData) {
     return (
       <div className="bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center min-h-[300px]">
         <div className="text-center p-8 bg-white rounded-2xl shadow-lg">
           <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-          <p className="text-slate-600 text-lg">Failed to load dashboard data</p>
+          <p className="text-slate-600 text-lg">{error || 'Failed to load dashboard data'}</p>
         </div>
       </div>
     );
@@ -187,7 +184,7 @@ const Dashboard = () => {
         <span className="font-medium text-slate-900">{method}</span>
       </div>
       <div className="text-right">
-        <p className="font-bold text-slate-900">${amount.toLocaleString()}</p>
+        <p className="font-bold text-slate-900">Rs {amount.toLocaleString()}</p>
         <p className="text-sm text-slate-500">{percentage}%</p>
       </div>
     </div>
@@ -233,29 +230,29 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           <StatCard
             title="Today's Revenue"
-            value={`$${today.revenue.toFixed(2)}`}
-            change={12.5}
+            value={`Rs ${today.revenue?.toLocaleString() || '0'}`}
+            change={today.revenueChange}
             icon={ShoppingCart}
             color="blue"
           />
           <StatCard
             title="Today's Expenses"
-            value={`$${today.expensesAmount.toFixed(2)}`}
-            change={-4.3}
+            value={`Rs ${today.expensesAmount?.toLocaleString() || '0'}`}
+            change={today.expensesChange}
             icon={DollarSign}
             color="red"
           />
           <StatCard
             title="Total Items"
             value={month.totalItems?.toLocaleString() || '0'}
-            change={8.2}
+            change={month.itemsChange}
             icon={Package}
             color="green"
           />
           <StatCard
             title="Active Users"
             value={month.totalUsers?.toLocaleString() || '0'}
-            change={15.7}
+            change={month.usersChange}
             icon={Users}
             color="purple"
           />
@@ -353,7 +350,7 @@ const Dashboard = () => {
                       </div>
                     </div>
                     <div className="text-right">
-                      <p className="font-bold text-slate-900">${sale.total_amount.toFixed(2)}</p>
+                      <p className="font-bold text-slate-900">Rs {sale.total_amount.toLocaleString()}</p>
                       <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
                         sale.payment_type === 'cash' 
                           ? 'bg-green-100 text-green-800'
@@ -370,6 +367,43 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+
+        {/* Salesman Activity Section (Admin only) */}
+        {user?.role === 'admin' && (
+          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
+            <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+              <Users className="text-blue-500" /> Salesman Activity
+            </h2>
+            {salesmanLoading ? (
+              <div className="flex items-center justify-center h-24">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+              </div>
+            ) : salesmanStats.length === 0 ? (
+              <div className="text-gray-500">No sales data available for salesmen.</div>
+            ) : (
+              <div className="overflow-x-auto">
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-50">
+                    <tr>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salesman</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Sales (Rs)</th>
+                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transactions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {salesmanStats.map((stat) => (
+                      <tr key={stat.salesman}>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{stat.salesman}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.totalSales?.toLocaleString()}</td>
+                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.transactionCount}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

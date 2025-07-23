@@ -71,6 +71,7 @@ export const salesAPI = {
   delete: (id) => api.delete(`/sales/${id}`),
   getStats: (params) => api.get('/sales/stats/overview', { params }),
   getTopItems: (params) => api.get('/sales/stats/top-items', { params }),
+  getGrouped: () => api.get('/sales/grouped'),
 };
 
 export const expensesAPI = {

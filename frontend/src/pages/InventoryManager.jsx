@@ -56,11 +56,22 @@ const InventoryManager = () => {
 
   const handleAddItem = async (e) => {
     e.preventDefault();
+    // Validate required fields
+    if (!newItem.barcode.trim() || !newItem.name.trim() || !newItem.quantity || !newItem.price) {
+      setError('Barcode, name, quantity, and price are required');
+      return;
+    }
     try {
       setLoading(true);
       setError('');
-
-      const response = await inventoryAPI.create(newItem);
+      // Convert quantity and price to numbers
+      const payload = {
+        ...newItem,
+        quantity: Number(newItem.quantity),
+        price: Number(newItem.price),
+        reorder_level: Number(newItem.reorder_level) || 10,
+      };
+      const response = await inventoryAPI.create(payload);
       if (response.data.success) {
         setSuccess('Item added successfully (pending approval)');
         setShowAddModal(false);
@@ -74,6 +85,8 @@ const InventoryManager = () => {
         });
         fetchItems();
         setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(response.data.error || 'Failed to add item');
       }
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to add item');
@@ -298,7 +311,7 @@ const InventoryManager = () => {
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                      ${item.price.toFixed(2)}
+                      Rs {item.price.toLocaleString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       {getStatusBadge(item.status)}

@@ -21,24 +21,34 @@ const Layout = ({ children }) => {
   const navigate = useNavigate();
   const { user, logout } = useAuthStore();
 
-  const navigation = [
-    { name: 'Dashboard', href: '/', icon: LayoutDashboard },
-    { name: 'Billing', href: '/billing', icon: ShoppingCart },
-    { name: 'Inventory', href: '/inventory', icon: Package },
-    { name: 'Stock Approval', href: '/approval', icon: CheckCircle, adminOnly: true },
-    { name: 'Reports', href: '/reports', icon: BarChart3 },
-    { name: 'Expenses', href: '/expenses', icon: DollarSign },
-    { name: 'Settings', href: '/settings', icon: Settings },
-  ];
+  // Role-based navigation
+  let navigation = [];
+  if (user?.role === 'admin') {
+    navigation = [
+      { name: 'Dashboard', href: '/', icon: LayoutDashboard },
+      { name: 'Billing', href: '/billing', icon: ShoppingCart },
+      { name: 'Inventory', href: '/inventory', icon: Package },
+      { name: 'Stock Approval', href: '/approval', icon: CheckCircle },
+      { name: 'Reports', href: '/reports', icon: BarChart3 },
+      { name: 'Expenses', href: '/expenses', icon: DollarSign },
+      { name: 'Settings', href: '/settings', icon: Settings },
+    ];
+  } else if (user?.role === 'salesman') {
+    navigation = [
+      { name: 'Billing', href: '/billing', icon: ShoppingCart },
+      { name: 'Inventory', href: '/inventory', icon: Package },
+    ];
+  } else if (user?.role === 'dataentry') {
+    navigation = [
+      { name: 'Inventory', href: '/inventory', icon: Package },
+      { name: 'Stock Approval', href: '/approval', icon: CheckCircle }, // Only for pending view, not approval
+    ];
+  }
 
   const handleLogout = () => {
     logout();
     navigate('/login');
   };
-
-  const filteredNavigation = navigation.filter(item => 
-    !item.adminOnly || user?.role === 'admin'
-  );
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-row">
@@ -58,7 +68,7 @@ const Layout = ({ children }) => {
           </button>
         </div>
         <nav className="flex-1 space-y-1 px-2 py-4">
-          {filteredNavigation.map((item) => {
+          {navigation.map((item) => {
             const isActive = location.pathname === item.href;
             return (
               <Link
