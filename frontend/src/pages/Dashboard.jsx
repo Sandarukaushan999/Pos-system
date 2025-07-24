@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { reportsAPI, salesAPI } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
+import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -284,11 +285,16 @@ const Dashboard = () => {
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Sales Trend */}
           <ChartCard title="Sales Trend" icon={Activity}>
-            <div className="h-64 flex items-center justify-center">
-              <div className="text-center">
-                <BarChart3 className="h-12 w-12 text-slate-300 mx-auto mb-4" />
-                <p className="text-slate-500">Sales trend visualization would go here</p>
-              </div>
+            <div className="h-64">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={month.dailySales || []} margin={{ top: 20, right: 30, left: 0, bottom: 5 }}>
+                  <CartesianGrid strokeDasharray="3 3" />
+                  <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                  <YAxis tick={{ fontSize: 12 }} />
+                  <Tooltip formatter={(value) => `Rs ${value}`} />
+                  <Bar dataKey="total" fill="#3b82f6" name="Total Sales" barSize={40} />
+                </BarChart>
+              </ResponsiveContainer>
             </div>
           </ChartCard>
 
@@ -379,7 +385,7 @@ const Dashboard = () => {
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
               </div>
             ) : salesmanStats.length === 0 ? (
-              <div className="text-gray-500">No sales data available for salesmen.</div>
+              <div className="text-gray-500 mb-8">No sales data available for salesmen.</div>
             ) : (
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
@@ -392,11 +398,20 @@ const Dashboard = () => {
                   </thead>
                   <tbody className="bg-white divide-y divide-gray-200">
                     {salesmanStats.map((stat) => (
-                      <tr key={stat.salesman}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{stat.salesman}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.totalSales?.toLocaleString()}</td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.transactionCount}</td>
-                      </tr>
+                      <React.Fragment key={stat.salesman}>
+                        <tr>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{stat.salesman}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.totalSales?.toLocaleString()}</td>
+                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.transactionCount}</td>
+                        </tr>
+                        <tr>
+                          <td colSpan={3} className="px-6 pb-6 pt-2">
+                            <div className="bg-slate-50 rounded-xl p-4 text-slate-500 text-sm text-center">
+                              Product activity for <span className="font-semibold text-slate-700">{stat.salesman}</span> will be shown here in the future.
+                            </div>
+                          </td>
+                        </tr>
+                      </React.Fragment>
                     ))}
                   </tbody>
                 </table>

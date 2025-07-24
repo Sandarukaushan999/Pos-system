@@ -35,4 +35,13 @@ router.delete('/:id', authenticateToken, requireAdmin, (req, res) => {
   });
 });
 
+// Get user activity (sales only, non-admin)
+router.get('/activity', authenticateToken, requireAdmin, (req, res) => {
+  const db = getDb();
+  db.all('SELECT username, action, details, created_at FROM user_activity WHERE action = "sale" AND username != "admin" ORDER BY created_at DESC LIMIT 100', [], (err, rows) => {
+    if (err) return res.status(500).json({ error: 'Failed to fetch activity' });
+    res.json({ success: true, activity: rows });
+  });
+});
+
 module.exports = router; 

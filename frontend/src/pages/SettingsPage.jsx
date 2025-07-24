@@ -33,6 +33,10 @@ const SettingsPage = () => {
     role: 'cashier'
   });
 
+  // 1. Add edit modal state
+  const [showEditUserModal, setShowEditUserModal] = useState(false);
+  const [editUser, setEditUser] = useState(null);
+
   useEffect(() => {
     if (user?.role === 'admin') {
       fetchUsers();
@@ -41,7 +45,7 @@ const SettingsPage = () => {
 
   const fetchUsers = async () => {
     try {
-      const response = await authAPI.getUsers();
+      const response = await usersAPI.getAll();
       if (response.data.success) {
         setUsers(response.data.users);
       }
@@ -132,6 +136,34 @@ const SettingsPage = () => {
       }
     } catch (error) {
       setError(error.response?.data?.error || 'Failed to delete user');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // 2. Add edit user handler
+  const handleEditUser = (userItem) => {
+    setEditUser({ ...userItem });
+    setShowEditUserModal(true);
+  };
+
+  // 3. Add update user logic (role only, username update optional)
+  const handleUpdateUser = async (e) => {
+    e.preventDefault();
+    try {
+      setLoading(true);
+      setError("");
+      // Update role
+      await usersAPI.updateRole(editUser.id, editUser.role);
+      // Optionally update username if you have an endpoint
+      // await usersAPI.updateUsername(editUser.id, editUser.username);
+      setSuccess("User updated successfully");
+      setShowEditUserModal(false);
+      setEditUser(null);
+      fetchUsers();
+      setTimeout(() => setSuccess(""), 3000);
+    } catch (error) {
+      setError(error.response?.data?.error || "Failed to update user");
     } finally {
       setLoading(false);
     }
@@ -330,12 +362,20 @@ const SettingsPage = () => {
                         </td>
                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                           {userItem.id !== user.id && (
-                            <button
-                              onClick={() => handleDeleteUser(userItem.id)}
-                              className="text-red-600 hover:text-red-900"
-                            >
-                              Delete
-                            </button>
+                            <>
+                              <button
+                                onClick={() => handleEditUser(userItem)}
+                                className="text-blue-600 hover:text-blue-900 mr-4"
+                              >
+                                Edit
+                              </button>
+                              <button
+                                onClick={() => handleDeleteUser(userItem.id)}
+                                className="text-red-600 hover:text-red-900"
+                              >
+                                Delete
+                              </button>
+                            </>
                           )}
                         </td>
                       </tr>
@@ -416,7 +456,8 @@ const SettingsPage = () => {
                       onChange={(e) => setNewUser({...newUser, role: e.target.value})}
                       className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
                     >
-                      <option value="cashier">Cashier</option>
+                      <option value="salesman">Salesman</option>
+                      <option value="dataentry">Data Entry</option>
                       <option value="admin">Admin</option>
                     </select>
                   </div>
@@ -435,6 +476,65 @@ const SettingsPage = () => {
                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                   >
                     {loading ? 'Adding...' : 'Add User'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Edit User Modal */}
+      {showEditUserModal && editUser && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Edit User</h3>
+              <form onSubmit={handleUpdateUser}>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Username
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      value={editUser.username}
+                      onChange={(e) => setEditUser({...editUser, username: e.target.value})}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      disabled // Remove this if you implement username update endpoint
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Role
+                    </label>
+                    <select
+                      required
+                      value={editUser.role}
+                      onChange={(e) => setEditUser({...editUser, role: e.target.value})}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    >
+                      <option value="salesman">Salesman</option>
+                      <option value="dataentry">Data Entry</option>
+                      <option value="admin">Admin</option>
+                    </select>
+                  </div>
+                </div>
+                <div className="flex gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => setShowEditUserModal(false)}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                  >
+                    {loading ? 'Saving...' : 'Save Changes'}
                   </button>
                 </div>
               </form>
