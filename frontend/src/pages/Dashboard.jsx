@@ -13,7 +13,7 @@ import {
   PieChart,
   Activity
 } from 'lucide-react';
-import { reportsAPI, salesAPI } from '../services/api';
+import { reportsAPI, salesAPI, usersAPI } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
@@ -23,6 +23,7 @@ const Dashboard = () => {
   const [error, setError] = useState('');
   const [salesmanStats, setSalesmanStats] = useState([]);
   const [salesmanLoading, setSalesmanLoading] = useState(false);
+  const [userActivity, setUserActivity] = useState([]);
   const { user } = useAuthStore();
 
   useEffect(() => {
@@ -63,6 +64,18 @@ const Dashboard = () => {
         }
       };
       fetchSalesmanStats();
+      // Fetch user activity
+      const fetchUserActivity = async () => {
+        try {
+          const response = await usersAPI.getActivity();
+          if (response.data.success) {
+            setUserActivity(response.data.activity);
+          }
+        } catch (err) {
+          // Optionally handle error
+        }
+      };
+      fetchUserActivity();
     }
   }, [user]);
 
@@ -131,7 +144,7 @@ const Dashboard = () => {
     );
   };
 
-  const AlertCard = ({ title, count, icon: Icon, color = 'red' }) => {
+  const AlertCard = ({ title, count, icon: Icon, color = 'red', small = false }) => {
     const colorClasses = {
       red: 'from-red-500 to-red-600 bg-red-50 text-red-600 border-red-200',
       yellow: 'from-amber-500 to-amber-600 bg-amber-50 text-amber-600 border-amber-200',
@@ -139,21 +152,21 @@ const Dashboard = () => {
     };
 
     return (
-      <div className={`group relative bg-white rounded-2xl ${colorClasses[color].split(' ')[4]} border-2 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden cursor-pointer`}>
+      <div className={`group relative bg-white rounded-2xl ${colorClasses[color].split(' ')[4]} border-2 hover:shadow-lg transition-all duration-300 transform hover:-translate-y-1 overflow-hidden cursor-pointer ${small ? 'p-2 max-w-xs min-w-[220px]' : ''}`} style={small ? { minHeight: '110px', minWidth: '220px', padding: '20px' } : {}}>
         <div className={`absolute inset-0 bg-gradient-to-r ${colorClasses[color].split(' ')[0]} ${colorClasses[color].split(' ')[1]} opacity-0 group-hover:opacity-5 transition-opacity duration-300`}></div>
         
-        <div className="p-6 relative">
+        <div className={`relative ${small ? 'p-4' : 'p-6'}`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center">
-              <div className={`w-12 h-12 rounded-xl ${colorClasses[color].split(' ')[2]} flex items-center justify-center mr-4`}>
-                <Icon className={`h-6 w-6 ${colorClasses[color].split(' ')[3]}`} />
+              <div className={`w-12 h-12 rounded-xl ${colorClasses[color].split(' ')[2]} flex items-center justify-center mr-4 ${small ? 'w-10 h-10 mr-3' : ''}`}>
+                <Icon className={`h-6 w-6 ${colorClasses[color].split(' ')[3]} ${small ? 'h-6 w-6' : ''}`} />
               </div>
               <div>
-                <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-                <p className="text-3xl font-bold text-slate-900">{count}</p>
+                <h3 className={`text-lg font-semibold text-slate-900 ${small ? 'text-lg' : ''}`}>{title}</h3>
+                <p className={`text-3xl font-bold text-slate-900 ${small ? 'text-2xl' : ''}`}>{count}</p>
               </div>
             </div>
-            <ChevronRight className="h-5 w-5 text-slate-400 group-hover:text-slate-600 transition-colors" />
+            <ChevronRight className={`h-5 w-5 text-slate-400 group-hover:text-slate-600 transition-colors ${small ? 'h-5 w-5' : ''}`} />
           </div>
         </div>
       </div>
@@ -260,24 +273,27 @@ const Dashboard = () => {
         </div>
 
         {/* Alerts */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div className="flex flex-row gap-6 mb-8 justify-between">
           <AlertCard
             title="Low Stock Alert"
             count={alerts.lowStock}
             icon={AlertTriangle}
             color="yellow"
+            small={true}
           />
           <AlertCard
             title="Expired Items"
             count={alerts.expired}
             icon={Clock}
             color="red"
+            small={true}
           />
           <AlertCard
             title="Pending Orders"
             count={alerts.pending}
             icon={Package}
             color="blue"
+            small={true}
           />
         </div>
 
@@ -373,52 +389,6 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
-
-        {/* Salesman Activity Section (Admin only) */}
-        {user?.role === 'admin' && (
-          <div className="bg-white rounded-2xl shadow-lg p-6 mb-8">
-            <h2 className="text-2xl font-bold text-gray-900 mb-4 flex items-center gap-2">
-              <Users className="text-blue-500" /> Salesman Activity
-            </h2>
-            {salesmanLoading ? (
-              <div className="flex items-center justify-center h-24">
-                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
-              </div>
-            ) : salesmanStats.length === 0 ? (
-              <div className="text-gray-500 mb-8">No sales data available for salesmen.</div>
-            ) : (
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Salesman</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Sales (Rs)</th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Transactions</th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {salesmanStats.map((stat) => (
-                      <React.Fragment key={stat.salesman}>
-                        <tr>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{stat.salesman}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.totalSales?.toLocaleString()}</td>
-                          <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{stat.transactionCount}</td>
-                        </tr>
-                        <tr>
-                          <td colSpan={3} className="px-6 pb-6 pt-2">
-                            <div className="bg-slate-50 rounded-xl p-4 text-slate-500 text-sm text-center">
-                              Product activity for <span className="font-semibold text-slate-700">{stat.salesman}</span> will be shown here in the future.
-                            </div>
-                          </td>
-                        </tr>
-                      </React.Fragment>
-                    ))}
-                  </tbody>
-                </table>
-              </div>
-            )}
-          </div>
-        )}
       </div>
     </div>
   );
