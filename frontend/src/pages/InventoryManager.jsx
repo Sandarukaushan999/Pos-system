@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   Plus, 
   Search, 
@@ -7,7 +7,8 @@ import {
   AlertTriangle, 
   Clock,
   Package,
-  Scan
+  Scan,
+  Loader2
 } from 'lucide-react';
 import { inventoryAPI } from '../services/api';
 
@@ -31,6 +32,109 @@ const InventoryManager = () => {
     expiry_date: '',
     reorder_level: '10'
   });
+
+  // Auto-fill states
+  const [barcodeLoading, setBarcodeLoading] = useState(false);
+  const [barcodeError, setBarcodeError] = useState('');
+  const [existingItem, setExistingItem] = useState(null);
+
+  // Debounce function for barcode search
+  const debounce = (func, wait) => {
+    let timeout;
+    return function executedFunction(...args) {
+      const later = () => {
+        clearTimeout(timeout);
+        func(...args);
+      };
+      clearTimeout(timeout);
+      timeout = setTimeout(later, wait);
+    };
+  };
+
+  // Function to fetch item by barcode
+  const fetchItemByBarcode = useCallback(async (barcode) => {
+    if (!barcode.trim()) {
+      setExistingItem(null);
+      setBarcodeError('');
+      return;
+    }
+
+    try {
+      setBarcodeLoading(true);
+      setBarcodeError('');
+      const response = await inventoryAPI.getByBarcode(barcode.trim());
+      if (response.data.success) {
+        setExistingItem(response.data.item);
+        setBarcodeError('');
+      }
+    } catch (error) {
+      if (error.response?.status === 404) {
+        setExistingItem(null);
+        setBarcodeError('No existing item found with this barcode');
+      } else {
+        setBarcodeError('Failed to fetch item details');
+      }
+    } finally {
+      setBarcodeLoading(false);
+    }
+  }, []);
+
+  // Debounced version of fetchItemByBarcode
+  const debouncedFetchBarcode = useCallback(
+    debounce(fetchItemByBarcode, 500),
+    [fetchItemByBarcode]
+  );
+
+  // Handle barcode input change
+  const handleBarcodeChange = (e) => {
+    const barcode = e.target.value;
+    setNewItem({ ...newItem, barcode });
+    
+    // Clear existing item if barcode is cleared
+    if (!barcode.trim()) {
+      setExistingItem(null);
+      setBarcodeError('');
+      return;
+    }
+
+    // Fetch item details if barcode is long enough
+    if (barcode.trim().length >= 3) {
+      debouncedFetchBarcode(barcode);
+    }
+  };
+
+  // Auto-fill form with existing item data
+  const autoFillForm = () => {
+    if (existingItem) {
+      // Show brief loading state
+      setLoading(true);
+      setTimeout(() => {
+        setNewItem({
+          barcode: existingItem.barcode,
+          name: existingItem.name,
+          quantity: '',
+          price: existingItem.price.toString(),
+          expiry_date: '',
+          reorder_level: existingItem.reorder_level.toString()
+        });
+        setSuccess(`✅ Auto-filled details for existing item: ${existingItem.name}`);
+        setLoading(false);
+        setTimeout(() => setSuccess(''), 3000);
+      }, 300); // Brief delay to show loading state
+    }
+  };
+
+  // Clear auto-fill and allow new item with same barcode
+  const clearAutoFill = () => {
+    setExistingItem(null);
+    setBarcodeError('');
+    setNewItem({
+      ...newItem,
+      name: '',
+      price: '',
+      reorder_level: '10'
+    });
+  };
 
   useEffect(() => {
     fetchItems();
@@ -61,6 +165,18 @@ const InventoryManager = () => {
       setError('Barcode, name, quantity, and price are required');
       return;
     }
+
+    // Check if item with same barcode exists and show confirmation
+    if (existingItem && existingItem.barcode === newItem.barcode) {
+      const confirmed = window.confirm(
+        `An item with barcode "${newItem.barcode}" already exists:\n\n` +
+        `Name: ${existingItem.name}\n` +
+        `Price: Rs ${existingItem.price}\n\n` +
+        `Are you sure you want to add this as a new item? This might create a duplicate entry.`
+      );
+      if (!confirmed) return;
+    }
+
     try {
       setLoading(true);
       setError('');
@@ -83,13 +199,19 @@ const InventoryManager = () => {
           expiry_date: '',
           reorder_level: '10'
         });
+        setExistingItem(null);
+        setBarcodeError('');
         fetchItems();
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError(response.data.error || 'Failed to add item');
       }
     } catch (error) {
-      setError(error.response?.data?.error || 'Failed to add item');
+      if (error.response?.data?.error?.includes('already exists')) {
+        setError('An item with this barcode already exists. Please use a different barcode or contact an administrator.');
+      } else {
+        setError(error.response?.data?.error || 'Failed to add item');
+      }
     } finally {
       setLoading(false);
     }
@@ -369,20 +491,83 @@ const InventoryManager = () => {
           <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
             <div className="mt-3">
               <h3 className="text-lg font-medium text-gray-900 mb-4">Add New Item</h3>
+              <p className="text-sm text-gray-600 mb-4">
+                💡 <strong>Tip:</strong> When you scan or enter a barcode, the system will automatically detect if the item already exists and offer to fill in the details for you.
+              </p>
               <form onSubmit={handleAddItem}>
                 <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
                       Barcode *
                     </label>
-                    <input
-                      type="text"
-                      required
-                      value={newItem.barcode}
-                      onChange={(e) => setNewItem({...newItem, barcode: e.target.value})}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      placeholder="Scan or enter barcode"
-                    />
+                    <div className="relative">
+                      <Scan className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="text"
+                        required
+                        value={newItem.barcode}
+                        onChange={handleBarcodeChange}
+                        onKeyDown={(e) => {
+                          if (e.key === 'Enter' && existingItem) {
+                            e.preventDefault();
+                            autoFillForm();
+                          }
+                        }}
+                        className="block w-full pl-10 pr-12 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                        placeholder="Scan or enter barcode (press Enter to auto-fill)"
+                      />
+                      {barcodeLoading && (
+                        <Loader2 className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-blue-500 animate-spin" />
+                      )}
+                      {!barcodeLoading && existingItem && (
+                        <button
+                          type="button"
+                          onClick={autoFillForm}
+                          className="absolute right-3 top-1/2 transform -translate-y-1/2 text-blue-600 hover:text-blue-800"
+                          title="Auto-fill form with existing item details"
+                        >
+                          <Package size={16} />
+                        </button>
+                      )}
+                      {!barcodeLoading && barcodeError && (
+                        <AlertTriangle className="absolute right-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-red-500" />
+                      )}
+                    </div>
+                    {existingItem && (
+                      <div className="mt-2 p-2 bg-blue-50 border border-blue-200 rounded-md">
+                        <div className="text-sm text-blue-800">
+                          <strong>Existing item found:</strong> {existingItem.name}
+                        </div>
+                        <div className="text-xs text-blue-600 mt-1">
+                          Price: Rs {existingItem.price.toLocaleString()} | 
+                          Current Stock: {existingItem.quantity} | 
+                          Reorder Level: {existingItem.reorder_level}
+                        </div>
+                        <div className="flex gap-2 mt-2">
+                          <button
+                            type="button"
+                            onClick={autoFillForm}
+                            className="text-xs bg-blue-600 text-white px-2 py-1 rounded hover:bg-blue-700"
+                            title={`Will fill: Name: ${existingItem.name}, Price: Rs ${existingItem.price}, Reorder Level: ${existingItem.reorder_level}`}
+                          >
+                            Auto-fill form
+                          </button>
+                          <button
+                            type="button"
+                            onClick={clearAutoFill}
+                            className="text-xs bg-gray-500 text-white px-2 py-1 rounded hover:bg-gray-600"
+                            title="Clear auto-fill and add as a completely new item"
+                          >
+                            Add as new item
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                    {barcodeError && (
+                      <div className="mt-2 text-sm text-red-600">
+                        {barcodeError}
+                      </div>
+                    )}
                   </div>
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">
@@ -453,7 +638,19 @@ const InventoryManager = () => {
                 <div className="flex gap-3 mt-6">
                   <button
                     type="button"
-                    onClick={() => setShowAddModal(false)}
+                    onClick={() => {
+                      setShowAddModal(false);
+                      setNewItem({
+                        barcode: '',
+                        name: '',
+                        quantity: '',
+                        price: '',
+                        expiry_date: '',
+                        reorder_level: '10'
+                      });
+                      setExistingItem(null);
+                      setBarcodeError('');
+                    }}
                     className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
                   >
                     Cancel
