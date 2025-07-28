@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -17,101 +17,12 @@ import {
   CreditCard,
   Settings,
   FileText,
-  Receipt
+  Receipt,
+  RefreshCw
 } from 'lucide-react';
 import { reportsAPI, salesAPI, usersAPI } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-
-// Mock data for demo purposes
-const mockDashboardData = {
-  today: {
-    sales: 15,
-    revenue: 25000,
-    expenses: 3,
-    expensesAmount: 1500,
-    revenueChange: 12.5,
-    expensesChange: -5.2
-  },
-  month: {
-    sales: 450,
-    revenue: 750000,
-    expenses: 25,
-    expensesAmount: 25000,
-    totalItems: 1250,
-    totalUsers: 8,
-    itemsChange: 8.3,
-    usersChange: 0,
-    salesByPayment: [
-      { payment_type: 'cash', total: 450000 },
-      { payment_type: 'card', total: 250000 },
-      { payment_type: 'mobile', total: 50000 }
-    ],
-    dailySales: [
-      { date: '2025-01-01', total: 25000 },
-      { date: '2025-01-02', total: 28000 },
-      { date: '2025-01-03', total: 32000 },
-      { date: '2025-01-04', total: 29000 },
-      { date: '2025-01-05', total: 35000 },
-      { date: '2025-01-06', total: 31000 },
-      { date: '2025-01-07', total: 27000 }
-    ]
-  },
-  alerts: {
-    lowStock: 12,
-    expired: 3,
-    pending: 5
-  },
-  recentSales: [
-    {
-      id: 1,
-      invoice_number: 'INV-20250107-0001',
-      cashier_name: 'admin',
-      total_amount: 2500,
-      payment_type: 'cash'
-    },
-    {
-      id: 2,
-      invoice_number: 'INV-20250107-0002',
-      cashier_name: 'salesman1',
-      total_amount: 1800,
-      payment_type: 'card'
-    },
-    {
-      id: 3,
-      invoice_number: 'INV-20250107-0003',
-      cashier_name: 'admin',
-      total_amount: 3200,
-      payment_type: 'mobile'
-    },
-    {
-      id: 4,
-      invoice_number: 'INV-20250107-0004',
-      cashier_name: 'salesman1',
-      total_amount: 1500,
-      payment_type: 'cash'
-    },
-    {
-      id: 5,
-      invoice_number: 'INV-20250107-0005',
-      cashier_name: 'admin',
-      total_amount: 2800,
-      payment_type: 'card'
-    },
-    {
-      id: 6,
-      invoice_number: 'INV-20250107-0006',
-      cashier_name: 'salesman1',
-      total_amount: 1900,
-      payment_type: 'cash'
-    }
-  ],
-  topItems: [
-    { name: 'Product A', total_quantity: 150 },
-    { name: 'Product B', total_quantity: 120 },
-    { name: 'Product C', total_quantity: 95 }
-  ]
-};
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -120,36 +31,67 @@ const Dashboard = () => {
   const [salesmanStats, setSalesmanStats] = useState([]);
   const [salesmanLoading, setSalesmanLoading] = useState(false);
   const [userActivity, setUserActivity] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
+  const [lastUpdated, setLastUpdated] = useState(null);
   const { user } = useAuthStore();
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        setLoading(true);
-        setError('');
-        
-        // Try to fetch real data first, fallback to mock data
-        try {
-          const response = await reportsAPI.getDashboard();
-          if (response.data.success) {
-            setDashboardData(response.data.dashboard);
-          } else {
-            setDashboardData(mockDashboardData);
-          }
-        } catch (err) {
-          console.log('Using mock dashboard data due to API error:', err.message);
-          setDashboardData(mockDashboardData);
-        }
-      } catch (err) {
+  // Fetch dashboard data
+  const fetchDashboard = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await reportsAPI.getDashboard();
+      if (response.data.success) {
+        setDashboardData(response.data.dashboard);
+        setLastUpdated(new Date());
+      } else {
         setError('Failed to load dashboard data');
-        setDashboardData(mockDashboardData);
-      } finally {
-        setLoading(false);
+        setDashboardData(null);
       }
-    };
-    fetchDashboard();
+    } catch (err) {
+      console.error('Dashboard API error:', err.message);
+      setError('Failed to load dashboard data');
+      setDashboardData(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  // Manual refresh function
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchDashboard();
+    setRefreshing(false);
+  };
+
+  // Auto-refresh every 30 seconds
+  useEffect(() => {
+    fetchDashboard();
+    
+    const interval = setInterval(() => {
+      fetchDashboard();
+    }, 30000); // Refresh every 30 seconds
+
+    return () => clearInterval(interval);
+  }, [fetchDashboard]);
+
+  // Listen for storage events (when sales are completed from other tabs/windows)
+  useEffect(() => {
+    const handleStorageChange = (e) => {
+      if (e.key === 'dashboard-refresh' && e.newValue) {
+        // New sale detected, refresh dashboard
+        fetchDashboard();
+        // Clear the flag
+        localStorage.removeItem('dashboard-refresh');
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, [fetchDashboard]);
+
+  // Fetch additional data for admin users
   useEffect(() => {
     if (user?.role === 'admin') {
       const fetchSalesmanStats = async () => {
@@ -201,13 +143,27 @@ const Dashboard = () => {
       <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
         <div className="text-center p-8 bg-white rounded-2xl shadow-lg">
           <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-          <p className="text-slate-600 text-lg">{error || 'Failed to load dashboard data'}</p>
+          <p className="text-slate-600 text-lg mb-4">{error || 'Failed to load dashboard data'}</p>
+          <button 
+            onClick={handleRefresh}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all"
+          >
+            <RefreshCw className="h-4 w-4 inline mr-2" />
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
-  const { today, month, alerts, recentSales, topItems } = dashboardData || mockDashboardData;
+  // Use real data or show empty states
+  const { today, month, alerts, recentSales, topItems } = dashboardData || {
+    today: { revenue: 0, expensesAmount: 0, revenueChange: 0, expensesChange: 0 },
+    month: { totalItems: 0, totalUsers: 0, itemsChange: 0, usersChange: 0, salesByPayment: [], dailySales: [] },
+    alerts: { lowStock: 0, expired: 0, pending: 0 },
+    recentSales: [],
+    topItems: []
+  };
 
   const StatCard = ({ title, value, change, icon: Icon, color = 'blue', trend }) => {
     const colorClasses = {
@@ -278,6 +234,41 @@ const Dashboard = () => {
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 overflow-hidden">
       <div className="h-full flex flex-col">
+        {/* Header with Refresh Button */}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
+            <div className="flex items-center gap-2 text-slate-600 text-sm">
+              <span>Real-time business overview</span>
+              {lastUpdated && (
+                <>
+                  <span>•</span>
+                  <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-green-600 text-xs">Live</span>
+                </>
+              )}
+              {refreshing && (
+                <>
+                  <span>•</span>
+                  <span className="text-blue-600 text-xs">Updating...</span>
+                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                </>
+              )}
+            </div>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-4 py-2 bg-white rounded-lg shadow-lg hover:shadow-xl transition-all btn-press hover-glow"
+          >
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : ''}`} />
+            <span className="text-sm font-medium">
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </span>
+          </button>
+        </div>
+
         {/* Main Content - Grid Layout */}
         <div className="h-full grid grid-cols-12 gap-4 overflow-hidden">
           

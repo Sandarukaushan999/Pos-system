@@ -15,35 +15,7 @@ import {
   Banknote,
   QrCode
 } from 'lucide-react';
-
-// Mock API services for demo
-const inventoryAPI = {
-  getByBarcode: (barcode) => {
-    // Generate different expiry scenarios for testing
-    const today = new Date();
-    const randomDays = Math.floor(Math.random() * 30) - 15; // -15 to +15 days
-    const expiryDate = new Date(today.getTime() + randomDays * 24 * 60 * 60 * 1000);
-    
-    return Promise.resolve({
-      data: {
-        success: true,
-        item: {
-          barcode: barcode,
-          name: `Product ${barcode}`,
-          price: Math.floor(Math.random() * 100) + 10,
-          quantity: Math.floor(Math.random() * 50) + 1,
-          expiry_date: expiryDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
-          isExpired: expiryDate < today,
-          isNearExpiry: expiryDate < new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
-        }
-      }
-    });
-  }
-};
-
-const salesAPI = {
-  create: (data) => Promise.resolve({ data: { success: true } })
-};
+import { inventoryAPI, salesAPI } from '../services/api';
 
 const Receipt = ({ sale, items }) => (
   <div className="font-mono text-xs">
@@ -106,12 +78,16 @@ const BillingScreen = () => {
     try {
       setLoading(true);
       setError('');
+      
+      // Use real API call to get item by barcode
       const response = await inventoryAPI.getByBarcode(barcode);
+      
       if (!response.data.success || !response.data.item) {
         setError('Item not found. Please check the barcode and try again.');
         setBarcode('');
         return;
       }
+      
       const item = response.data.item;
       
       // Check if item is expired
@@ -128,6 +104,14 @@ const BillingScreen = () => {
         setBarcode('');
         return;
       }
+      
+      // Check if item has sufficient stock
+      if (item.quantity <= 0) {
+        setError('This item is out of stock.');
+        setBarcode('');
+        return;
+      }
+      
       const existingItem = cart.find(cartItem => cartItem.barcode === item.barcode);
       if (existingItem) {
         if (existingItem.quantity < item.quantity) {
@@ -148,7 +132,12 @@ const BillingScreen = () => {
       setSuccess('Item added to cart successfully!');
       setTimeout(() => setSuccess(''), 2000);
     } catch (error) {
-      setError('Failed to add item. Please try again.');
+      console.error('Barcode scan error:', error);
+      if (error.response?.status === 404) {
+        setError('Item not found. Please check the barcode and try again.');
+      } else {
+        setError('Failed to add item. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -199,6 +188,7 @@ const BillingScreen = () => {
     try {
       setLoading(true);
       setError('');
+      
       const saleData = {
         items: cart.map(item => ({
           barcode: item.barcode,
@@ -209,8 +199,14 @@ const BillingScreen = () => {
         })),
         total: getTotal(),
         paymentType,
+        subtotal: getTotal(),
+        tax: getTotal() * 0.08,
+        finalTotal: getTotal() * 1.08
       };
+      
+      // Use real sales API to create the sale
       const response = await salesAPI.create(saleData);
+      
       if (response.data.success) {
         setSuccess('Sale completed successfully!');
         setPrintData({ sale: saleData, items: saleData.items });
@@ -218,11 +214,19 @@ const BillingScreen = () => {
         setTimeout(() => setSuccess(''), 3000);
         setCart([]);
         setPaymentType('cash');
+        
+        // Trigger dashboard refresh
+        localStorage.setItem('dashboard-refresh', Date.now().toString());
       } else {
         setError('Payment failed. Please try again.');
       }
     } catch (error) {
-      setError('Payment failed. Please try again.');
+      console.error('Payment error:', error);
+      if (error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else {
+        setError('Payment failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -381,14 +385,14 @@ const BillingScreen = () => {
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateQuantity(item.barcode, item.quantity - 1)}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all"
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all btn-press hover-scale"
                           >
                             <Minus className="h-4 w-4 text-slate-600" />
                           </button>
                           <span className="text-sm font-semibold text-slate-900 w-8 text-center">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.barcode, item.quantity + 1)}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all"
+                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all btn-press hover-scale"
                           >
                             <Plus className="h-4 w-4 text-slate-600" />
                           </button>
@@ -399,7 +403,7 @@ const BillingScreen = () => {
                           </p>
                           <button
                             onClick={() => removeFromCart(item.barcode)}
-                            className="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-all flex items-center justify-center"
+                            className="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-all flex items-center justify-center btn-press hover-scale"
                           >
                             <Trash2 className="h-4 w-4" />
                           </button>
@@ -479,14 +483,14 @@ const BillingScreen = () => {
               <div className="flex gap-3">
                 <button
                   onClick={clearCart}
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-all"
+                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-all btn-press"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={processPayment}
                   disabled={loading || cart.length === 0}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 disabled:opacity-50 transition-all"
+                  className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 disabled:opacity-50 transition-all btn-press hover-glow"
                 >
                   {loading ? (
                     <div className="flex items-center justify-center">
