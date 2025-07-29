@@ -217,6 +217,15 @@ const BillingScreen = () => {
         
         // Trigger dashboard refresh
         localStorage.setItem('dashboard-refresh', Date.now().toString());
+        
+        // Also dispatch a custom event for immediate refresh
+        window.dispatchEvent(new CustomEvent('dashboard-refresh', {
+          detail: {
+            timestamp: Date.now(),
+            saleId: response.data.sale?.id,
+            amount: saleData.total
+          }
+        }));
       } else {
         setError('Payment failed. Please try again.');
       }

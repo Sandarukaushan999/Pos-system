@@ -24,11 +24,17 @@ router.get('/dashboard', authenticateToken, requireAuth, (req, res) => {
   const db = getDb();
   const today = moment().format('YYYY-MM-DD');
   const thisMonth = moment().format('YYYY-MM');
+  console.log('Dashboard request - Today:', today, 'This Month:', thisMonth);
+  
   const stats = {};
   db.get('SELECT COUNT(*) as count, SUM(total_amount) as total FROM sales WHERE DATE(created_at) = ?', [today], (err, todaySales) => {
+    console.log('Today sales query result:', todaySales);
     db.get('SELECT COUNT(*) as count, SUM(total_amount) as total FROM sales WHERE strftime("%Y-%m", created_at) = ?', [thisMonth], (err2, monthSales) => {
+      console.log('Month sales query result:', monthSales);
       db.get('SELECT COUNT(*) as count, SUM(amount) as total FROM expenses WHERE date = ?', [today], (err3, todayExpenses) => {
+        console.log('Today expenses query result:', todayExpenses);
         db.get('SELECT COUNT(*) as count, SUM(amount) as total FROM expenses WHERE strftime("%Y-%m", date) = ?', [thisMonth], (err4, monthExpenses) => {
+          console.log('Month expenses query result:', monthExpenses);
           db.get('SELECT COUNT(*) as count FROM stock_items WHERE status = "active" AND quantity <= reorder_level', [], (err5, lowStock) => {
             db.get('SELECT COUNT(*) as count FROM stock_items WHERE status = "active" AND expiry_date < ?', [today], (err6, expired) => {
               db.get('SELECT COUNT(*) as count FROM stock_items WHERE status = "pending"', [], (err7, pending) => {
@@ -37,34 +43,45 @@ router.get('/dashboard', authenticateToken, requireAuth, (req, res) => {
                     db.get('SELECT COUNT(*) as count FROM stock_items WHERE status = "active"', [], (err10, totalItems) => {
                       db.get('SELECT COUNT(*) as count FROM users', [], (err11, totalUsers) => {
                         db.all('SELECT payment_type, COUNT(*) as count, SUM(total_amount) as total FROM sales WHERE strftime("%Y-%m", created_at) = ? GROUP BY payment_type', [thisMonth], (err12, salesByPayment) => {
-                          db.all('SELECT DATE(created_at) as date, SUM(total_amount) as total FROM sales WHERE strftime("%Y-%m", created_at) = ? GROUP BY DATE(created_at) ORDER BY date DESC LIMIT 30', [thisMonth], (err13, dailySales) => {
+                          // Get daily sales for the current month with proper date formatting
+                          db.all('SELECT DATE(created_at) as date, SUM(total_amount) as total FROM sales WHERE strftime("%Y-%m", created_at) = ? GROUP BY DATE(created_at) ORDER BY date ASC', [thisMonth], (err13, dailySales) => {
+                            console.log('Daily sales query result:', dailySales);
+                            
+                            // Process daily sales data to ensure proper formatting
+                            const processedDailySales = dailySales.map(sale => ({
+                              date: moment(sale.date).format('MMM DD'),
+                              total: sale.total || 0
+                            }));
+                            
+                            const dashboardData = {
+                              today: {
+                                sales: todaySales?.count || 0,
+                                revenue: todaySales?.total || 0,
+                                expenses: todayExpenses?.count || 0,
+                                expensesAmount: todayExpenses?.total || 0
+                              },
+                              month: {
+                                sales: monthSales?.count || 0,
+                                revenue: monthSales?.total || 0,
+                                expenses: monthExpenses?.count || 0,
+                                expensesAmount: monthExpenses?.total || 0,
+                                totalItems: totalItems?.count || 0,
+                                totalUsers: totalUsers?.count || 0,
+                                salesByPayment: salesByPayment || [],
+                                dailySales: processedDailySales || []
+                              },
+                              alerts: {
+                                lowStock: lowStock?.count || 0,
+                                expired: expired?.count || 0,
+                                pending: pending?.count || 0
+                              },
+                              recentSales: recentSales || [],
+                              topItems: topItems || []
+                            };
+                            console.log('Dashboard data being sent:', dashboardData);
                             res.json({
                               success: true,
-                              dashboard: {
-                                today: {
-                                  sales: todaySales?.count || 0,
-                                  revenue: todaySales?.total || 0,
-                                  expenses: todayExpenses?.count || 0,
-                                  expensesAmount: todayExpenses?.total || 0
-                                },
-                                month: {
-                                  sales: monthSales?.count || 0,
-                                  revenue: monthSales?.total || 0,
-                                  expenses: monthExpenses?.count || 0,
-                                  expensesAmount: monthExpenses?.total || 0,
-                                  totalItems: totalItems?.count || 0,
-                                  totalUsers: totalUsers?.count || 0,
-                                  salesByPayment: salesByPayment || [],
-                                  dailySales: dailySales || []
-                                },
-                                alerts: {
-                                  lowStock: lowStock?.count || 0,
-                                  expired: expired?.count || 0,
-                                  pending: pending?.count || 0
-                                },
-                                recentSales: recentSales || [],
-                                topItems: topItems || []
-                              }
+                              dashboard: dashboardData
                             });
                           });
                         });

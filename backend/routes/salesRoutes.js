@@ -116,7 +116,20 @@ router.post('/', authenticateToken, requireAuth, async (req, res) => {
             saleItems.forEach(item => {
               db.run('INSERT INTO user_activity (user_id, username, action, details) VALUES (?, ?, ?, ?)', [req.user.id, req.user.username, 'sale', JSON.stringify({ product: item.name, amount: item.price, quantity: item.quantity })]);
             });
-            res.json({ success: true, message: 'Sale completed successfully', sale: { ...sale, items: saleItems } });
+            
+            // Trigger dashboard refresh by adding a timestamp
+            const refreshData = {
+              timestamp: Date.now(),
+              saleId: saleId,
+              amount: total
+            };
+            
+            res.json({ 
+              success: true, 
+              message: 'Sale completed successfully', 
+              sale: { ...sale, items: saleItems },
+              dashboardRefresh: refreshData
+            });
           });
         });
       });

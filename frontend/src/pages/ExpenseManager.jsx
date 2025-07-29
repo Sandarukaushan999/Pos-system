@@ -173,6 +173,19 @@ const ExpenseManager = () => {
           notes: ''
         });
         fetchExpenses();
+        
+        // Trigger dashboard refresh
+        localStorage.setItem('dashboard-refresh', Date.now().toString());
+        
+        // Also dispatch a custom event for immediate refresh
+        window.dispatchEvent(new CustomEvent('dashboard-refresh', {
+          detail: {
+            timestamp: Date.now(),
+            type: 'expense',
+            amount: parseFloat(newExpense.amount)
+          }
+        }));
+        
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError('Failed to add expense');
@@ -206,6 +219,19 @@ const ExpenseManager = () => {
         setShowEditModal(false);
         setSelectedExpense(null);
         fetchExpenses();
+        
+        // Trigger dashboard refresh
+        localStorage.setItem('dashboard-refresh', Date.now().toString());
+        
+        // Also dispatch a custom event for immediate refresh
+        window.dispatchEvent(new CustomEvent('dashboard-refresh', {
+          detail: {
+            timestamp: Date.now(),
+            type: 'expense-update',
+            amount: parseFloat(selectedExpense.amount)
+          }
+        }));
+        
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError('Failed to update expense');
@@ -226,6 +252,18 @@ const ExpenseManager = () => {
       if (response.data.success) {
         setSuccess('Expense deleted successfully');
         fetchExpenses();
+        
+        // Trigger dashboard refresh
+        localStorage.setItem('dashboard-refresh', Date.now().toString());
+        
+        // Also dispatch a custom event for immediate refresh
+        window.dispatchEvent(new CustomEvent('dashboard-refresh', {
+          detail: {
+            timestamp: Date.now(),
+            type: 'expense-delete'
+          }
+        }));
+        
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError('Failed to delete expense');

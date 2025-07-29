@@ -266,6 +266,29 @@ const InventoryManager = () => {
     setShowEditModal(true);
   };
 
+  // Helper function to calculate item status
+  const calculateItemStatus = (item) => {
+    const isLowStock = item.status === 'active' && 
+      (parseInt(item.quantity) || 0) <= (parseInt(item.reorder_level) || 10);
+    
+    const isExpired = item.status === 'active' && 
+      item.expiry_date && 
+      (() => {
+        try {
+          const expiryDate = new Date(item.expiry_date);
+          const today = new Date();
+          today.setHours(0, 0, 0, 0);
+          expiryDate.setHours(0, 0, 0, 0);
+          return expiryDate < today;
+        } catch (error) {
+          console.error('Error parsing expiry date:', item.expiry_date, error);
+          return false;
+        }
+      })();
+
+    return { isLowStock, isExpired };
+  };
+
   const getStatusBadge = (status) => {
     const statusConfig = {
       active: { color: 'green', text: 'Active', icon: CheckCircle },
@@ -288,14 +311,52 @@ const InventoryManager = () => {
     item.barcode.includes(searchTerm)
   );
 
-  // Calculate stats
+  // Calculate stats with better error handling
   const stats = {
     total: items.length,
     active: items.filter(item => item.status === 'active').length,
     pending: items.filter(item => item.status === 'pending').length,
-    lowStock: items.filter(item => item.quantity <= item.reorder_level).length,
-    expired: items.filter(item => item.expiry_date && new Date(item.expiry_date) < new Date()).length
+    lowStock: items.filter(item => {
+      const { isLowStock } = calculateItemStatus(item);
+      return isLowStock;
+    }).length,
+    expired: items.filter(item => {
+      const { isExpired } = calculateItemStatus(item);
+      return isExpired;
+    }).length
   };
+
+  // Debug logging to help understand the data
+  console.log('Inventory Stats Debug:', {
+    totalItems: items.length,
+    activeItems: items.filter(item => item.status === 'active').length,
+    pendingItems: items.filter(item => item.status === 'pending').length,
+    lowStockItems: items.filter(item => {
+      const { isLowStock } = calculateItemStatus(item);
+      return isLowStock;
+    }).map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      reorder_level: item.reorder_level,
+      status: item.status
+    })),
+    expiredItems: items.filter(item => {
+      const { isExpired } = calculateItemStatus(item);
+      return isExpired;
+    }).map(item => ({
+      name: item.name,
+      expiry_date: item.expiry_date,
+      status: item.status
+    })),
+    allItems: items.map(item => ({
+      name: item.name,
+      quantity: item.quantity,
+      reorder_level: item.reorder_level,
+      status: item.status,
+      expiry_date: item.expiry_date,
+      ...calculateItemStatus(item)
+    }))
+  });
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 overflow-hidden">
@@ -442,86 +503,90 @@ const InventoryManager = () => {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-              {filteredItems.map((item) => (
-                <div key={item.id} className={`bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all ${
-                  item.quantity <= item.reorder_level ? 'border-2 border-yellow-300 animate-pulse' : ''
-                } ${
-                  item.expiry_date && new Date(item.expiry_date) < new Date() ? 'border-2 border-red-300 animate-pulse' : ''
-                }`}>
-                  <div className="flex items-start justify-between mb-3">
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-slate-900 text-sm">{item.name}</h3>
-                      <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
-                        <Scan className="h-3 w-3" />
-                        {item.barcode}
-                      </p>
+              {filteredItems.map((item) => {
+                // Calculate item status with improved logic
+                const { isLowStock, isExpired } = calculateItemStatus(item);
+
+                return (
+                  <div key={item.id} className={`bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all ${
+                    isLowStock ? 'border-2 border-yellow-300 animate-pulse' : ''
+                  } ${
+                    isExpired ? 'border-2 border-red-300 animate-pulse' : ''
+                  }`}>
+                    <div className="flex items-start justify-between mb-3">
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-slate-900 text-sm">{item.name}</h3>
+                        <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                          <Scan className="h-3 w-3" />
+                          {item.barcode}
+                        </p>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        {getStatusBadge(item.status)}
+                      </div>
                     </div>
-                    <div className="flex items-center gap-1">
-                      {getStatusBadge(item.status)}
-                    </div>
-                  </div>
-                  
-                  <div className="space-y-2 mb-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-600">Quantity:</span>
-                      <span className={`text-sm font-semibold ${
-                        item.quantity <= item.reorder_level ? 'text-red-600' : 'text-slate-900'
-                      }`}>
-                        {item.quantity}
-                        {item.quantity <= item.reorder_level && (
-                          <AlertTriangle className="inline h-3 w-3 ml-1 text-red-500 animate-pulse" />
-                        )}
-                      </span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-600">Price:</span>
-                      <span className="text-sm font-semibold text-slate-900">Rs {item.price.toLocaleString()}</span>
-                    </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-600">Reorder Level:</span>
-                      <span className="text-xs text-slate-500">{item.reorder_level}</span>
-                    </div>
-                    {item.expiry_date && (
+                    
+                    <div className="space-y-2 mb-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-600">Expiry:</span>
-                        <span className={`text-xs ${
-                          new Date(item.expiry_date) < new Date() 
-                            ? 'text-red-600' 
-                            : new Date(item.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
-                            ? 'text-yellow-600'
-                            : 'text-slate-500'
+                        <span className="text-xs text-slate-600">Quantity:</span>
+                        <span className={`text-sm font-semibold ${
+                          isLowStock ? 'text-red-600' : 'text-slate-900'
                         }`}>
-                          {new Date(item.expiry_date).toLocaleDateString()}
-                          {new Date(item.expiry_date) < new Date() && (
-                            <Clock className="inline h-3 w-3 ml-1 animate-pulse" />
-                          )}
-                          {new Date(item.expiry_date) >= new Date() && 
-                           new Date(item.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) && (
-                            <Clock className="inline h-3 w-3 ml-1" />
+                          {item.quantity}
+                          {isLowStock && (
+                            <AlertTriangle className="inline h-3 w-3 ml-1 text-red-500 animate-pulse" />
                           )}
                         </span>
                       </div>
-                    )}
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-slate-600">Price:</span>
+                        <span className="text-sm font-semibold text-slate-900">Rs {item.price.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-slate-600">Reorder Level:</span>
+                        <span className="text-xs text-slate-500">{item.reorder_level}</span>
+                      </div>
+                      {item.expiry_date && (
+                        <div className="flex items-center justify-between">
+                          <span className="text-xs text-slate-600">Expiry:</span>
+                          <span className={`text-xs ${
+                            isExpired 
+                              ? 'text-red-600' 
+                              : new Date(item.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
+                              ? 'text-yellow-600'
+                              : 'text-slate-500'
+                          }`}>
+                            {new Date(item.expiry_date).toLocaleDateString()}
+                            {isExpired && (
+                              <Clock className="inline h-3 w-3 ml-1 animate-pulse" />
+                            )}
+                            {!isExpired && new Date(item.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000) && (
+                              <Clock className="inline h-3 w-3 ml-1" />
+                            )}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    <div className="flex items-center gap-2 pt-3 border-t border-slate-100">
+                      <button
+                        onClick={() => openEditModal(item)}
+                        className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center gap-1"
+                      >
+                        <Edit className="h-3 w-3" />
+                        Edit
+                      </button>
+                      <button
+                        onClick={() => handleDeleteItem(item.id)}
+                        className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100 transition-all flex items-center justify-center gap-1"
+                      >
+                        <Trash2 className="h-3 w-3" />
+                        Delete
+                      </button>
+                    </div>
                   </div>
-                  
-                  <div className="flex items-center gap-2 pt-3 border-t border-slate-100">
-                    <button
-                      onClick={() => openEditModal(item)}
-                      className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center gap-1"
-                    >
-                      <Edit className="h-3 w-3" />
-                      Edit
-                    </button>
-                    <button
-                      onClick={() => handleDeleteItem(item.id)}
-                      className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100 transition-all flex items-center justify-center gap-1"
-                    >
-                      <Trash2 className="h-3 w-3" />
-                      Delete
-                    </button>
-                  </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

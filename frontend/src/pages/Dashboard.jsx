@@ -42,9 +42,19 @@ const Dashboard = () => {
       setError('');
       
       const response = await reportsAPI.getDashboard();
+      console.log('Dashboard API Response:', response.data); // Debug log
+      
       if (response.data.success) {
         setDashboardData(response.data.dashboard);
         setLastUpdated(new Date());
+        
+        // Debug log for data structure
+        console.log('Dashboard Data:', {
+          today: response.data.dashboard?.today,
+          month: response.data.dashboard?.month,
+          alerts: response.data.dashboard?.alerts,
+          dailySales: response.data.dashboard?.month?.dailySales
+        });
       } else {
         setError('Failed to load dashboard data');
         setDashboardData(null);
@@ -76,19 +86,43 @@ const Dashboard = () => {
     return () => clearInterval(interval);
   }, [fetchDashboard]);
 
+  // Additional frequent refresh for real-time updates
+  useEffect(() => {
+    const realTimeInterval = setInterval(() => {
+      // Only refresh if we have data and it's been more than 10 seconds since last update
+      if (dashboardData && lastUpdated && (Date.now() - lastUpdated.getTime()) > 10000) {
+        fetchDashboard();
+      }
+    }, 10000); // Check every 10 seconds
+
+    return () => clearInterval(realTimeInterval);
+  }, [dashboardData, lastUpdated, fetchDashboard]);
+
   // Listen for storage events (when sales are completed from other tabs/windows)
   useEffect(() => {
     const handleStorageChange = (e) => {
       if (e.key === 'dashboard-refresh' && e.newValue) {
         // New sale detected, refresh dashboard
+        console.log('Dashboard refresh triggered by storage event');
         fetchDashboard();
         // Clear the flag
         localStorage.removeItem('dashboard-refresh');
       }
     };
 
+    // Also listen for custom events
+    const handleCustomRefresh = (event) => {
+      console.log('Dashboard refresh triggered by custom event', event.detail);
+      fetchDashboard();
+    };
+
     window.addEventListener('storage', handleStorageChange);
-    return () => window.removeEventListener('storage', handleStorageChange);
+    window.addEventListener('dashboard-refresh', handleCustomRefresh);
+    
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('dashboard-refresh', handleCustomRefresh);
+    };
   }, [fetchDashboard]);
 
   // Fetch additional data for admin users
@@ -164,6 +198,39 @@ const Dashboard = () => {
     recentSales: [],
     topItems: []
   };
+
+  // Process chart data to show day-by-day data with proper formatting
+  const chartData = month?.dailySales || [];
+  console.log('Chart Data:', chartData); // Debug log for chart data
+  console.log('Today Revenue:', today?.revenue); // Debug log for today's revenue
+  console.log('Today Expenses:', today?.expensesAmount); // Debug log for today's expenses
+
+  // Create a complete month of data with proper day labels
+  const processedChartData = (() => {
+    if (chartData.length === 0) {
+      // Create sample data for the current month
+      const currentDate = new Date();
+      const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+      const sampleData = [];
+      
+      for (let day = 1; day <= Math.min(daysInMonth, currentDate.getDate()); day++) {
+        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        sampleData.push({
+          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          total: 0
+        });
+      }
+      return sampleData;
+    }
+    
+    // Process existing data and fill gaps
+    const processedData = chartData.map(sale => ({
+      date: sale.date,
+      total: sale.total || 0
+    }));
+    
+    return processedData;
+  })();
 
   const StatCard = ({ title, value, change, icon: Icon, color = 'blue', trend }) => {
     const colorClasses = {
@@ -343,18 +410,25 @@ const Dashboard = () => {
             <div className="bg-white rounded-xl shadow-lg p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-slate-900">Sales Trend</h3>
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                  <Activity className="h-4 w-4 text-white" />
+                <div className="flex items-center gap-2">
+                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+                  <span className="text-xs text-green-600">Live</span>
+                  <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                    <Activity className="h-4 w-4 text-white" />
+                  </div>
                 </div>
               </div>
-              <div className="h-32">
+              <div className="h-70">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={month?.dailySales || []} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                  <BarChart data={processedChartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
                     <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" tick={{ fontSize: 8 }} />
-                    <YAxis tick={{ fontSize: 8 }} />
-                    <Tooltip formatter={(value) => `Rs ${value}`} />
-                    <Bar dataKey="total" fill="#3b82f6" barSize={15} />
+                    <XAxis dataKey="date" tick={{ fontSize: 12 }} />
+                    <YAxis tick={{ fontSize: 11 }} />
+                    <Tooltip 
+                      formatter={(value) => [`Rs ${value.toLocaleString()}`, 'Revenue']}
+                      labelFormatter={(label) => `Date: ${label}`}
+                    />
+                    <Bar dataKey="total" fill="#3b82f6" barSize={23} />
                   </BarChart>
                 </ResponsiveContainer>
               </div>
