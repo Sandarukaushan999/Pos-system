@@ -5,10 +5,14 @@ import {
   Users, 
   Settings as SettingsIcon,
   AlertTriangle,
-  CheckCircle
+  CheckCircle,
+  Download,
+  Upload,
+  RotateCcw,
+  Database
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
-import { authAPI, usersAPI } from '../services/api';
+import { authAPI, usersAPI, settingsAPI } from '../services/api';
 
 const SettingsPage = () => {
   const { user, changePassword } = useAuthStore();
@@ -36,6 +40,10 @@ const SettingsPage = () => {
   // 1. Add edit modal state
   const [showEditUserModal, setShowEditUserModal] = useState(false);
   const [editUser, setEditUser] = useState(null);
+
+  // Data management state
+  const [importFile, setImportFile] = useState(null);
+  const [showImportModal, setShowImportModal] = useState(false);
 
   useEffect(() => {
     if (user?.role === 'admin') {
@@ -169,11 +177,117 @@ const SettingsPage = () => {
     }
   };
 
+  // Data management handlers
+  const handleExportData = async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await settingsAPI.exportData();
+      
+      if (response.data.success) {
+        // Create and download the file
+        const blob = new Blob([JSON.stringify(response.data.data, null, 2)], {
+          type: 'application/json'
+        });
+        const url = window.URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = response.data.filename;
+        document.body.appendChild(a);
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+        
+        setSuccess('Data exported successfully!');
+        setTimeout(() => setSuccess(''), 3000);
+      }
+    } catch (error) {
+      setError(error.response?.data?.error || 'Failed to export data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleImportData = async (e) => {
+    e.preventDefault();
+    
+    if (!importFile) {
+      setError('Please select a file to import');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      setError('');
+      
+      const reader = new FileReader();
+      reader.onload = async (event) => {
+        try {
+          const data = JSON.parse(event.target.result);
+          
+          const response = await settingsAPI.importData(data);
+          
+          if (response.data.success) {
+            setSuccess('Data imported successfully!');
+            setShowImportModal(false);
+            setImportFile(null);
+            setTimeout(() => setSuccess(''), 3000);
+            
+            // Refresh the page to show updated data
+            window.location.reload();
+          }
+        } catch (error) {
+          setError('Invalid file format or failed to import data');
+        }
+      };
+      
+      reader.readAsText(importFile);
+    } catch (error) {
+      setError(error.response?.data?.error || 'Failed to import data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleResetSystem = async () => {
+    const confirmed = window.confirm(
+      '⚠️ WARNING: This will permanently delete ALL data including:\n\n' +
+      '• All inventory items\n' +
+      '• All sales records\n' +
+      '• All expenses\n' +
+      '• All pending items\n\n' +
+      'This action cannot be undone. Are you sure you want to continue?'
+    );
+    
+    if (!confirmed) return;
+
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await settingsAPI.resetSystem();
+      
+      if (response.data.success) {
+        setSuccess('System reset successfully!');
+        setTimeout(() => setSuccess(''), 3000);
+        
+        // Refresh the page to show empty data
+        window.location.reload();
+      }
+    } catch (error) {
+      setError(error.response?.data?.error || 'Failed to reset system');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const tabs = [
     { id: 'profile', name: 'Profile', icon: User },
     { id: 'password', name: 'Change Password', icon: Lock },
     ...(user?.role === 'admin' ? [{ id: 'users', name: 'User Management', icon: Users }] : []),
-    { id: 'system', name: 'System Settings', icon: SettingsIcon }
+    { id: 'system', name: 'System Settings', icon: SettingsIcon },
+    ...(user?.role === 'admin' ? [{ id: 'data', name: 'Data Management', icon: Database }] : [])
   ];
 
   return (
@@ -411,6 +525,90 @@ const SettingsPage = () => {
               </div>
             </div>
           )}
+
+          {/* Data Management Tab */}
+          {activeTab === 'data' && user?.role === 'admin' && (
+            <div className="space-y-6">
+              <h3 className="text-lg font-medium text-gray-900">Data Management</h3>
+              
+              {/* Export Data */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                      <Download className="h-5 w-5 text-blue-600" />
+                      Export Data
+                    </h4>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Export all system data including inventory, sales, expenses, and user data to a JSON file.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleExportData}
+                    disabled={loading}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {loading ? 'Exporting...' : 'Export Data'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Import Data */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                      <Upload className="h-5 w-5 text-green-600" />
+                      Import Data
+                    </h4>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Import previously exported data. This will replace all existing data.
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => setShowImportModal(true)}
+                    disabled={loading}
+                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 flex items-center gap-2"
+                  >
+                    Import Data
+                  </button>
+                </div>
+              </div>
+
+              {/* Reset System */}
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
+                      <RotateCcw className="h-5 w-5 text-red-600" />
+                      Reset System
+                    </h4>
+                    <p className="mt-1 text-sm text-gray-600">
+                      Clear all data and reset the system to factory settings. This action cannot be undone.
+                    </p>
+                  </div>
+                  <button
+                    onClick={handleResetSystem}
+                    disabled={loading}
+                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 flex items-center gap-2"
+                  >
+                    {loading ? 'Resetting...' : 'Reset System'}
+                  </button>
+                </div>
+              </div>
+
+              {/* Warning */}
+              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
+                <h4 className="text-sm font-medium text-red-800">⚠️ Important Notes</h4>
+                <ul className="mt-2 text-sm text-red-700 list-disc list-inside space-y-1">
+                  <li>Always export your data before making any changes</li>
+                  <li>Import will replace all existing data</li>
+                  <li>System reset will permanently delete all data</li>
+                  <li>These actions are only available to administrators</li>
+                </ul>
+              </div>
+            </div>
+          )}
         </div>
       </div>
 
@@ -535,6 +733,62 @@ const SettingsPage = () => {
                     className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
                   >
                     {loading ? 'Saving...' : 'Save Changes'}
+                  </button>
+                </div>
+              </form>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Import Data Modal */}
+      {showImportModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">Import Data</h3>
+              <form onSubmit={handleImportData}>
+                <div className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                      Select Backup File *
+                    </label>
+                    <input
+                      type="file"
+                      accept=".json"
+                      required
+                      onChange={(e) => setImportFile(e.target.files[0])}
+                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      Select a previously exported JSON backup file
+                    </p>
+                  </div>
+                  
+                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+                    <p className="text-sm text-yellow-800">
+                      ⚠️ <strong>Warning:</strong> Importing will replace all existing data. 
+                      Make sure to export current data first if needed.
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3 mt-6">
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowImportModal(false);
+                      setImportFile(null);
+                    }}
+                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    type="submit"
+                    disabled={loading || !importFile}
+                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                  >
+                    {loading ? 'Importing...' : 'Import Data'}
                   </button>
                 </div>
               </form>

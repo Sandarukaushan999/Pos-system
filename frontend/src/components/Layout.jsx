@@ -53,13 +53,13 @@ const Layout = ({ children }) => {
 
   const getColorClasses = (color, isActive) => {
     const colorMap = {
-      blue: isActive ? 'from-blue-500 to-blue-600 bg-blue-50 text-blue-600' : 'from-blue-500 to-blue-600 text-blue-600',
-      green: isActive ? 'from-green-500 to-green-600 bg-green-50 text-green-600' : 'from-green-500 to-green-600 text-green-600',
-      orange: isActive ? 'from-orange-500 to-orange-600 bg-orange-50 text-orange-600' : 'from-orange-500 to-orange-600 text-orange-600',
-      purple: isActive ? 'from-purple-500 to-purple-600 bg-purple-50 text-purple-600' : 'from-purple-500 to-purple-600 text-purple-600',
-      indigo: isActive ? 'from-indigo-500 to-indigo-600 bg-indigo-50 text-indigo-600' : 'from-indigo-500 to-indigo-600 text-indigo-600',
-      red: isActive ? 'from-red-500 to-red-600 bg-red-50 text-red-600' : 'from-red-500 to-red-600 text-red-600',
-      gray: isActive ? 'from-gray-500 to-gray-600 bg-gray-50 text-gray-600' : 'from-gray-500 to-gray-600 text-gray-600'
+      blue: isActive ? 'from-blue-500 to-blue-600 bg-blue-600 text-white' : 'from-blue-500 to-blue-600 text-blue-600',
+      green: isActive ? 'from-green-500 to-green-600 bg-green-600 text-white' : 'from-green-500 to-green-600 text-green-600',
+      orange: isActive ? 'from-orange-500 to-orange-600 bg-orange-600 text-white' : 'from-orange-500 to-orange-600 text-orange-600',
+      purple: isActive ? 'from-purple-500 to-purple-600 bg-purple-600 text-white' : 'from-purple-500 to-purple-600 text-purple-600',
+      indigo: isActive ? 'from-indigo-500 to-indigo-600 bg-indigo-600 text-white' : 'from-indigo-500 to-indigo-600 text-indigo-600',
+      red: isActive ? 'from-red-500 to-red-600 bg-red-600 text-white' : 'from-red-500 to-red-600 text-red-600',
+      gray: isActive ? 'from-gray-500 to-gray-600 bg-gray-600 text-white' : 'from-gray-500 to-gray-600 text-gray-600'
     };
     return colorMap[color] || colorMap.blue;
   };
@@ -109,7 +109,7 @@ const Layout = ({ children }) => {
                     ? 'bg-white/20' 
                     : `bg-gradient-to-r ${colorClasses.split(' ')[2]} ${colorClasses.split(' ')[3]}`
                 }`}>
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className={`h-4 w-4 ${isActive ? 'text-white' : ''}`} />
                 </div>
                 {!sidebarCollapsed && (
                   <span className="ml-3 font-semibold">{item.name}</span>

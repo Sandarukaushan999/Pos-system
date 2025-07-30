@@ -100,4 +100,10 @@ export const usersAPI = {
   delete: (id) => api.delete(`/users/${id}`),
 };
 
+export const settingsAPI = {
+  exportData: () => api.get('/settings/export'),
+  importData: (data) => api.post('/settings/import', { data }),
+  resetSystem: () => api.post('/settings/reset'),
+};
+
 export default api; 
