@@ -38,17 +38,9 @@ const Receipt = ({ sale, items }) => (
       ))}
     </div>
     <div className="mt-2">
-      <div className="flex justify-between">
-        <span>Subtotal:</span>
-        <span>Rs {sale.total.toFixed(2)}</span>
-      </div>
-      <div className="flex justify-between">
-        <span>Tax (8%):</span>
-        <span>Rs {(sale.total * 0.08).toFixed(2)}</span>
-      </div>
       <div className="flex justify-between font-bold">
         <span>Total:</span>
-        <span>Rs {(sale.total * 1.08).toFixed(2)}</span>
+        <span>Rs {sale.total.toFixed(2)}</span>
       </div>
     </div>
   </div>
@@ -194,14 +186,12 @@ const BillingScreen = () => {
           barcode: item.barcode,
           name: item.name,
           price: item.price,
+          buying_price: item.buying_price || item.price,
           quantity: item.quantity,
           expiry_date: item.expiry_date
         })),
         total: getTotal(),
-        paymentType,
-        subtotal: getTotal(),
-        tax: getTotal() * 0.08,
-        finalTotal: getTotal() * 1.08
+        paymentType
       };
       
       // Use real sales API to create the sale
@@ -474,17 +464,9 @@ const BillingScreen = () => {
               
               <div className="bg-slate-50 rounded-lg p-4">
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Subtotal:</span>
-                    <span className="font-semibold">Rs {getTotal().toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Tax (8%):</span>
-                    <span className="font-semibold">Rs {(getTotal() * 0.08).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-lg font-bold text-slate-900 pt-2 border-t border-slate-200">
+                  <div className="flex justify-between items-center text-lg font-bold text-slate-900">
                     <span>Total Amount:</span>
-                    <span>Rs {(getTotal() * 1.08).toFixed(2)}</span>
+                    <span>Rs {getTotal().toFixed(2)}</span>
                   </div>
                 </div>
               </div>

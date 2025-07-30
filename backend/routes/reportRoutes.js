@@ -27,9 +27,9 @@ router.get('/dashboard', authenticateToken, requireAuth, (req, res) => {
   console.log('Dashboard request - Today:', today, 'This Month:', thisMonth);
   
   const stats = {};
-  db.get('SELECT COUNT(*) as count, SUM(total_amount) as total FROM sales WHERE DATE(created_at) = ?', [today], (err, todaySales) => {
+  db.get('SELECT COUNT(*) as count, SUM(total_amount) as total, SUM(total_profit) as profit FROM sales WHERE DATE(created_at) = ?', [today], (err, todaySales) => {
     console.log('Today sales query result:', todaySales);
-    db.get('SELECT COUNT(*) as count, SUM(total_amount) as total FROM sales WHERE strftime("%Y-%m", created_at) = ?', [thisMonth], (err2, monthSales) => {
+    db.get('SELECT COUNT(*) as count, SUM(total_amount) as total, SUM(total_profit) as profit FROM sales WHERE strftime("%Y-%m", created_at) = ?', [thisMonth], (err2, monthSales) => {
       console.log('Month sales query result:', monthSales);
       db.get('SELECT COUNT(*) as count, SUM(amount) as total FROM expenses WHERE date = ?', [today], (err3, todayExpenses) => {
         console.log('Today expenses query result:', todayExpenses);
@@ -57,12 +57,14 @@ router.get('/dashboard', authenticateToken, requireAuth, (req, res) => {
                               today: {
                                 sales: todaySales?.count || 0,
                                 revenue: todaySales?.total || 0,
+                                profit: todaySales?.profit || 0,
                                 expenses: todayExpenses?.count || 0,
                                 expensesAmount: todayExpenses?.total || 0
                               },
                               month: {
                                 sales: monthSales?.count || 0,
                                 revenue: monthSales?.total || 0,
+                                profit: monthSales?.profit || 0,
                                 expenses: monthExpenses?.count || 0,
                                 expensesAmount: monthExpenses?.total || 0,
                                 totalItems: totalItems?.count || 0,

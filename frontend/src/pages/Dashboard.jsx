@@ -32,7 +32,6 @@ const Dashboard = () => {
   const [salesmanLoading, setSalesmanLoading] = useState(false);
   const [userActivity, setUserActivity] = useState([]);
   const [refreshing, setRefreshing] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState(null);
   const { user } = useAuthStore();
 
   // Fetch dashboard data
@@ -46,7 +45,6 @@ const Dashboard = () => {
       
       if (response.data.success) {
         setDashboardData(response.data.dashboard);
-        setLastUpdated(new Date());
         
         // Debug log for data structure
         console.log('Dashboard Data:', {
@@ -75,54 +73,9 @@ const Dashboard = () => {
     setRefreshing(false);
   };
 
-  // Auto-refresh every 30 seconds
+  // Initial data fetch
   useEffect(() => {
     fetchDashboard();
-    
-    const interval = setInterval(() => {
-      fetchDashboard();
-    }, 30000); // Refresh every 30 seconds
-
-    return () => clearInterval(interval);
-  }, [fetchDashboard]);
-
-  // Additional frequent refresh for real-time updates
-  useEffect(() => {
-    const realTimeInterval = setInterval(() => {
-      // Only refresh if we have data and it's been more than 10 seconds since last update
-      if (dashboardData && lastUpdated && (Date.now() - lastUpdated.getTime()) > 10000) {
-        fetchDashboard();
-      }
-    }, 10000); // Check every 10 seconds
-
-    return () => clearInterval(realTimeInterval);
-  }, [dashboardData, lastUpdated, fetchDashboard]);
-
-  // Listen for storage events (when sales are completed from other tabs/windows)
-  useEffect(() => {
-    const handleStorageChange = (e) => {
-      if (e.key === 'dashboard-refresh' && e.newValue) {
-        // New sale detected, refresh dashboard
-        console.log('Dashboard refresh triggered by storage event');
-        fetchDashboard();
-        // Clear the flag
-        localStorage.removeItem('dashboard-refresh');
-      }
-    };
-
-    // Also listen for custom events
-    const handleCustomRefresh = (event) => {
-      console.log('Dashboard refresh triggered by custom event', event.detail);
-      fetchDashboard();
-    };
-
-    window.addEventListener('storage', handleStorageChange);
-    window.addEventListener('dashboard-refresh', handleCustomRefresh);
-    
-    return () => {
-      window.removeEventListener('storage', handleStorageChange);
-      window.removeEventListener('dashboard-refresh', handleCustomRefresh);
-    };
   }, [fetchDashboard]);
 
   // Fetch additional data for admin users
@@ -306,22 +259,7 @@ const Dashboard = () => {
           <div>
             <h1 className="text-2xl font-bold text-slate-900">Dashboard</h1>
             <div className="flex items-center gap-2 text-slate-600 text-sm">
-              <span>Real-time business overview</span>
-              {lastUpdated && (
-                <>
-                  <span>•</span>
-                  <span>Last updated: {lastUpdated.toLocaleTimeString()}</span>
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-green-600 text-xs">Live</span>
-                </>
-              )}
-              {refreshing && (
-                <>
-                  <span>•</span>
-                  <span className="text-blue-600 text-xs">Updating...</span>
-                  <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                </>
-              )}
+              <span>Business overview</span>
             </div>
           </div>
           <button
@@ -350,6 +288,13 @@ const Dashboard = () => {
                 change={today?.revenueChange}
                 icon={ShoppingCart}
                 color="blue"
+              />
+              <StatCard
+                title="Today's Profit"
+                value={`Rs ${(today?.profit || 0).toLocaleString()}`}
+                change={today?.profitChange}
+                icon={TrendingUp}
+                color="green"
               />
               <StatCard
                 title="Today's Expenses"
@@ -410,12 +355,8 @@ const Dashboard = () => {
             <div className="bg-white rounded-xl shadow-lg p-4">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-sm font-semibold text-slate-900">Sales Trend</h3>
-                <div className="flex items-center gap-2">
-                  <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-                  <span className="text-xs text-green-600">Live</span>
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                    <Activity className="h-4 w-4 text-white" />
-                  </div>
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
+                  <Activity className="h-4 w-4 text-white" />
                 </div>
               </div>
               <div className="h-70">

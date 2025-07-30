@@ -34,6 +34,7 @@ const InventoryManager = () => {
     name: '',
     quantity: '',
     price: '',
+    buying_price: '',
     expiry_date: '',
     reorder_level: '10'
   });
@@ -119,6 +120,7 @@ const InventoryManager = () => {
           name: existingItem.name,
           quantity: '',
           price: existingItem.price.toString(),
+          buying_price: existingItem.buying_price ? existingItem.buying_price.toString() : existingItem.price.toString(),
           expiry_date: '',
           reorder_level: existingItem.reorder_level.toString()
         });
@@ -137,6 +139,7 @@ const InventoryManager = () => {
       ...newItem,
       name: '',
       price: '',
+      buying_price: '',
       reorder_level: '10'
     });
   };
@@ -166,8 +169,8 @@ const InventoryManager = () => {
   const handleAddItem = async (e) => {
     e.preventDefault();
     // Validate required fields
-    if (!newItem.barcode.trim() || !newItem.name.trim() || !newItem.quantity || !newItem.price) {
-      setError('Barcode, name, quantity, and price are required');
+    if (!newItem.barcode.trim() || !newItem.name.trim() || !newItem.quantity || !newItem.price || !newItem.buying_price) {
+      setError('Barcode, name, quantity, selling price, and buying price are required');
       return;
     }
 
@@ -190,6 +193,7 @@ const InventoryManager = () => {
         ...newItem,
         quantity: Number(newItem.quantity),
         price: Number(newItem.price),
+        buying_price: Number(newItem.buying_price),
         reorder_level: Number(newItem.reorder_level) || 10,
       };
       const response = await inventoryAPI.create(payload);
@@ -201,6 +205,7 @@ const InventoryManager = () => {
           name: '',
           quantity: '',
           price: '',
+          buying_price: '',
           expiry_date: '',
           reorder_level: '10'
         });
@@ -539,8 +544,18 @@ const InventoryManager = () => {
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-slate-600">Price:</span>
+                        <span className="text-xs text-slate-600">Selling Price:</span>
                         <span className="text-sm font-semibold text-slate-900">Rs {item.price.toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-slate-600">Buying Price:</span>
+                        <span className="text-sm text-slate-700">Rs {(item.buying_price || item.price).toLocaleString()}</span>
+                      </div>
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs text-slate-600">Profit Margin:</span>
+                        <span className="text-xs font-medium text-green-600">
+                          Rs {(item.price - (item.buying_price || item.price)).toLocaleString()}
+                        </span>
                       </div>
                       <div className="flex items-center justify-between">
                         <span className="text-xs text-slate-600">Reorder Level:</span>
@@ -601,14 +616,15 @@ const InventoryManager = () => {
               <button
                 onClick={() => {
                   setShowAddModal(false);
-                  setNewItem({
-                    barcode: '',
-                    name: '',
-                    quantity: '',
-                    price: '',
-                    expiry_date: '',
-                    reorder_level: '10'
-                  });
+                                        setNewItem({
+                        barcode: '',
+                        name: '',
+                        quantity: '',
+                        price: '',
+                        buying_price: '',
+                        expiry_date: '',
+                        reorder_level: '10'
+                      });
                   setExistingItem(null);
                   setBarcodeError('');
                 }}
@@ -666,7 +682,8 @@ const InventoryManager = () => {
                           <strong>Existing item found:</strong> {existingItem.name}
                         </div>
                         <div className="text-xs text-blue-600 mt-1">
-                          Price: Rs {existingItem.price.toLocaleString()} | 
+                          Selling Price: Rs {existingItem.price.toLocaleString()} | 
+                          Buying Price: Rs {(existingItem.buying_price || existingItem.price).toLocaleString()} | 
                           Current Stock: {existingItem.quantity} | 
                           Reorder Level: {existingItem.reorder_level}
                         </div>
@@ -707,7 +724,7 @@ const InventoryManager = () => {
                       placeholder="Item name"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1">
                         Quantity *
@@ -723,7 +740,7 @@ const InventoryManager = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1">
-                        Price *
+                        Selling Price *
                       </label>
                       <input
                         type="number"
@@ -733,6 +750,22 @@ const InventoryManager = () => {
                         value={newItem.price}
                         onChange={(e) => setNewItem({...newItem, price: e.target.value})}
                         className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        placeholder="Rs"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Buying Price *
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        min="0"
+                        step="0.01"
+                        value={newItem.buying_price}
+                        onChange={(e) => setNewItem({...newItem, buying_price: e.target.value})}
+                        className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                        placeholder="Rs"
                       />
                     </div>
                   </div>
@@ -770,6 +803,7 @@ const InventoryManager = () => {
                         name: '',
                         quantity: '',
                         price: '',
+                        buying_price: '',
                         expiry_date: '',
                         reorder_level: '10'
                       });
@@ -834,7 +868,7 @@ const InventoryManager = () => {
                       className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                     />
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-3 gap-4">
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1">
                         Quantity *
@@ -850,7 +884,7 @@ const InventoryManager = () => {
                     </div>
                     <div>
                       <label className="block text-sm font-medium text-slate-700 mb-1">
-                        Price *
+                        Selling Price *
                       </label>
                       <input
                         type="number"
@@ -859,6 +893,20 @@ const InventoryManager = () => {
                         step="0.01"
                         value={selectedItem.price}
                         onChange={(e) => setSelectedItem({...selectedItem, price: e.target.value})}
+                        className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-medium text-slate-700 mb-1">
+                        Buying Price *
+                      </label>
+                      <input
+                        type="number"
+                        required
+                        min="0"
+                        step="0.01"
+                        value={selectedItem.buying_price || selectedItem.price}
+                        onChange={(e) => setSelectedItem({...selectedItem, buying_price: e.target.value})}
                         className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
                       />
                     </div>

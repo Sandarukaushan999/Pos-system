@@ -86,24 +86,41 @@ router.post('/', authenticateToken, requireAuth, async (req, res) => {
           return res.status(500).json({ error: 'Failed to update invoice number' });
         }
         let errorOccurred = false;
+        let totalProfit = 0;
         items.forEach((item, idx) => {
-          db.run('INSERT INTO sales_items (sale_id, barcode, name, quantity, price, expiry_date) VALUES (?, ?, ?, ?, ?, ?)',
-            [saleId, item.barcode, item.name, item.quantity, item.price, item.expiry_date || null],
-            function(err2) {
-              if (err2) {
-                errorOccurred = true;
-                console.log('Checkout error: Failed to insert sales item', err2);
-              }
-            });
-          db.run('UPDATE stock_items SET quantity = quantity - ?, updated_at = CURRENT_TIMESTAMP WHERE barcode = ?',
-            [item.quantity, item.barcode],
-            function(err3) {
-              if (err3) {
-                errorOccurred = true;
-                console.log('Checkout error: Failed to update stock', err3);
-              }
-            });
+          // Get the buying price from stock_items
+          db.get('SELECT buying_price FROM stock_items WHERE barcode = ?', [item.barcode], (err, stockItem) => {
+            const buyingPrice = stockItem ? stockItem.buying_price : 0;
+            const itemProfit = (item.price - buyingPrice) * item.quantity;
+            totalProfit += itemProfit;
+            
+            db.run('INSERT INTO sales_items (sale_id, barcode, name, quantity, price, buying_price, expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
+              [saleId, item.barcode, item.name, item.quantity, item.price, buyingPrice, item.expiry_date || null],
+              function(err2) {
+                if (err2) {
+                  errorOccurred = true;
+                  console.log('Checkout error: Failed to insert sales item', err2);
+                }
+              });
+            db.run('UPDATE stock_items SET quantity = quantity - ?, updated_at = CURRENT_TIMESTAMP WHERE barcode = ?',
+              [item.quantity, item.barcode],
+              function(err3) {
+                if (err3) {
+                  errorOccurred = true;
+                  console.log('Checkout error: Failed to update stock', err3);
+                }
+              });
+          });
         });
+        
+        // Update the sale with total profit
+        setTimeout(() => {
+          db.run('UPDATE sales SET total_profit = ? WHERE id = ?', [totalProfit, saleId], function(err) {
+            if (err) {
+              console.log('Checkout error: Failed to update sale profit', err);
+            }
+          });
+        }, 100);
         if (errorOccurred) {
           db.run('ROLLBACK');
           console.log('Checkout error: Failed to process sale items');

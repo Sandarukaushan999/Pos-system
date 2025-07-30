@@ -35,12 +35,12 @@ router.get('/barcode/:barcode', authenticateToken, requireAuth, (req, res) => {
 // Add new stock item (pending)
 router.post('/', authenticateToken, requireAuth, (req, res) => {
   const db = getDb();
-  const { barcode, name, quantity, price, expiry_date, reorder_level } = req.body;
+  const { barcode, name, quantity, price, buying_price, expiry_date, reorder_level } = req.body;
   if (!barcode || !name || !quantity || !price) return res.status(400).json({ error: 'Barcode, name, quantity, and price are required' });
   db.get('SELECT id FROM stock_items WHERE barcode = ?', [barcode], (err, existing) => {
     if (existing) return res.status(400).json({ error: 'Item with this barcode already exists' });
-    db.run('INSERT INTO stock_items (barcode, name, quantity, price, expiry_date, status, reorder_level) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [barcode, name, quantity, price, expiry_date || null, 'pending', reorder_level || 10],
+    db.run('INSERT INTO stock_items (barcode, name, quantity, price, buying_price, expiry_date, status, reorder_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      [barcode, name, quantity, price, buying_price || price, expiry_date || null, 'pending', reorder_level || 10],
       function(err2) {
         if (err2) return res.status(500).json({ error: 'Failed to add item' });
         db.get('SELECT * FROM stock_items WHERE id = ?', [this.lastID], (err3, newItem) => {
@@ -54,11 +54,11 @@ router.post('/', authenticateToken, requireAuth, (req, res) => {
 router.put('/:id', authenticateToken, requireAuth, (req, res) => {
   const db = getDb();
   const { id } = req.params;
-  const { name, quantity, price, expiry_date, reorder_level, status } = req.body;
+  const { name, quantity, price, buying_price, expiry_date, reorder_level, status } = req.body;
   db.get('SELECT * FROM stock_items WHERE id = ?', [id], (err, existing) => {
     if (!existing) return res.status(404).json({ error: 'Item not found' });
-    db.run('UPDATE stock_items SET name = ?, quantity = ?, price = ?, expiry_date = ?, reorder_level = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-      [name || existing.name, quantity !== undefined ? quantity : existing.quantity, price !== undefined ? price : existing.price, expiry_date || existing.expiry_date, reorder_level !== undefined ? reorder_level : existing.reorder_level, status || existing.status, id],
+    db.run('UPDATE stock_items SET name = ?, quantity = ?, price = ?, buying_price = ?, expiry_date = ?, reorder_level = ?, status = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [name || existing.name, quantity !== undefined ? quantity : existing.quantity, price !== undefined ? price : existing.price, buying_price !== undefined ? buying_price : existing.buying_price, expiry_date || existing.expiry_date, reorder_level !== undefined ? reorder_level : existing.reorder_level, status || existing.status, id],
       function(err2) {
         if (err2) return res.status(500).json({ error: 'Failed to update item' });
         db.get('SELECT * FROM stock_items WHERE id = ?', [id], (err3, updated) => {
@@ -91,13 +91,13 @@ router.get('/pending', authenticateToken, requireAdmin, (req, res) => {
 router.put('/:id/approve', authenticateToken, requireAdmin, (req, res) => {
   const db = getDb();
   const { id } = req.params;
-  const { action, name, price, quantity, expiry_date, reorder_level } = req.body;
+  const { action, name, price, buying_price, quantity, expiry_date, reorder_level } = req.body;
   if (!['approve', 'reject'].includes(action)) return res.status(400).json({ error: 'Action must be "approve" or "reject"' });
   db.get('SELECT * FROM stock_items WHERE id = ? AND status = "pending"', [id], (err, item) => {
     if (!item) return res.status(404).json({ error: 'Pending item not found' });
     if (action === 'approve') {
-      db.run('UPDATE stock_items SET name = ?, price = ?, quantity = ?, expiry_date = ?, reorder_level = ?, status = "active", updated_at = CURRENT_TIMESTAMP WHERE id = ?',
-        [name || item.name, price || item.price, quantity || item.quantity, expiry_date || item.expiry_date, reorder_level || item.reorder_level, id],
+      db.run('UPDATE stock_items SET name = ?, price = ?, buying_price = ?, quantity = ?, expiry_date = ?, reorder_level = ?, status = "active", updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+        [name || item.name, price || item.price, buying_price || item.buying_price || item.price, quantity || item.quantity, expiry_date || item.expiry_date, reorder_level || item.reorder_level, id],
         function(err2) {
           if (err2) return res.status(500).json({ error: 'Failed to approve item' });
           res.json({ success: true, message: 'Item approved successfully' });

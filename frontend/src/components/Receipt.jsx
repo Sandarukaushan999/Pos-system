@@ -22,9 +22,7 @@ const Receipt = ({ sale, items }) => {
         ))}
       </div>
       <div>
-        <b>Subtotal:</b> Rs {safeSale.total.toFixed(2)}<br />
-        <b>Tax:</b> Rs {(safeSale.total * 0.08).toFixed(2)}<br />
-        <b>Total:</b> Rs {(safeSale.total * 1.08).toFixed(2)}<br />
+        <b>Total:</b> Rs {safeSale.total.toFixed(2)}<br />
         <b>Payment:</b> {safeSale.paymentType}
       </div>
       <div style={{ textAlign: 'center', marginTop: 8 }}>
