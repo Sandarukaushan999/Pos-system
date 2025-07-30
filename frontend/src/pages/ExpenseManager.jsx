@@ -173,6 +173,19 @@ const ExpenseManager = () => {
           notes: ''
         });
         fetchExpenses();
+        
+        // Trigger dashboard refresh
+        localStorage.setItem('dashboard-refresh', Date.now().toString());
+        
+        // Also dispatch a custom event for immediate refresh
+        window.dispatchEvent(new CustomEvent('dashboard-refresh', {
+          detail: {
+            timestamp: Date.now(),
+            type: 'expense',
+            amount: parseFloat(newExpense.amount)
+          }
+        }));
+        
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError('Failed to add expense');
@@ -206,6 +219,19 @@ const ExpenseManager = () => {
         setShowEditModal(false);
         setSelectedExpense(null);
         fetchExpenses();
+        
+        // Trigger dashboard refresh
+        localStorage.setItem('dashboard-refresh', Date.now().toString());
+        
+        // Also dispatch a custom event for immediate refresh
+        window.dispatchEvent(new CustomEvent('dashboard-refresh', {
+          detail: {
+            timestamp: Date.now(),
+            type: 'expense-update',
+            amount: parseFloat(selectedExpense.amount)
+          }
+        }));
+        
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError('Failed to update expense');
@@ -226,6 +252,18 @@ const ExpenseManager = () => {
       if (response.data.success) {
         setSuccess('Expense deleted successfully');
         fetchExpenses();
+        
+        // Trigger dashboard refresh
+        localStorage.setItem('dashboard-refresh', Date.now().toString());
+        
+        // Also dispatch a custom event for immediate refresh
+        window.dispatchEvent(new CustomEvent('dashboard-refresh', {
+          detail: {
+            timestamp: Date.now(),
+            type: 'expense-delete'
+          }
+        }));
+        
         setTimeout(() => setSuccess(''), 3000);
       } else {
         setError('Failed to delete expense');
@@ -279,29 +317,35 @@ const ExpenseManager = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 overflow-hidden">
+    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Expense Management</h1>
-              <p className="text-sm text-slate-600">Track and manage business expenses</p>
+              <h1 className="text-2xl font-bold text-[#F8F8F8]">Expense Management</h1>
+              <p className="text-sm text-[#A5BF13]">Track and manage business expenses</p>
             </div>
             <div className="flex items-center gap-2">
               <button
                 onClick={handleExport}
-                className="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:from-green-600 hover:to-green-700 focus:outline-none focus:ring-2 focus:ring-green-300 transition-all flex items-center gap-2"
+                className="bg-[#F79824] text-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-[#E88A1A] focus:outline-none focus:ring-2 focus:ring-[#F79824] transition-all flex items-center gap-2 hover:shadow-xl hover:shadow-[#F79824]/30 hover:-translate-y-1 group ripple relative overflow-hidden"
               >
-                <Download className="h-4 w-4" />
-                Export CSV
+                {/* Ripple effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                
+                <Download className="h-4 w-4 relative z-10 group-hover:animate-pulse" />
+                <span className="relative z-10">Export CSV</span>
               </button>
               <button
                 onClick={() => setShowAddModal(true)}
-                className="bg-gradient-to-r from-blue-500 to-purple-600 text-white px-4 py-2 rounded-lg font-semibold text-sm hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-300 transition-all flex items-center gap-2"
+                className="bg-[#A5BF13] text-black px-4 py-2 rounded-lg font-semibold text-sm hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] transition-all duration-300 flex items-center gap-2 hover:shadow-xl hover:shadow-[#A5BF13]/30 hover:-translate-y-1 group ripple relative overflow-hidden"
               >
-                <Plus className="h-4 w-4" />
-                Add Expense
+                {/* Ripple effect */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                
+                <Plus className="h-4 w-4 relative z-10 group-hover:animate-pulse" />
+                <span className="relative z-10">Add Expense</span>
               </button>
             </div>
           </div>
@@ -309,78 +353,83 @@ const ExpenseManager = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-white rounded-xl shadow-lg p-4">
+          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-600 mb-1">Total Expenses</p>
-                <p className="text-xl font-bold text-slate-900">{stats.total}</p>
+                <p className="text-xs font-medium text-[#A5BF13] mb-1">Total Expenses</p>
+                <p className="text-xl font-bold text-[#F8F8F8]">{stats.total}</p>
               </div>
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center">
-                <DollarSign className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                <DollarSign className="h-5 w-5 text-black" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-4">
+          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-600 mb-1">Total Amount</p>
-                <p className="text-xl font-bold text-red-600">Rs {stats.totalAmount.toLocaleString()}</p>
+                <p className="text-xs font-medium text-[#A5BF13] mb-1">Total Amount</p>
+                <p className="text-xl font-bold text-[#B4182D]">Rs {stats.totalAmount.toLocaleString()}</p>
               </div>
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
+              <div className="w-10 h-10 rounded-lg bg-[#B4182D] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <TrendingUp className="h-5 w-5 text-white" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-4">
+          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-600 mb-1">This Month</p>
-                <p className="text-xl font-bold text-green-600">Rs {stats.thisMonth.toLocaleString()}</p>
+                <p className="text-xs font-medium text-[#A5BF13] mb-1">This Month</p>
+                <p className="text-xl font-bold text-[#F79824]">Rs {stats.thisMonth.toLocaleString()}</p>
               </div>
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
-                <Calendar className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 rounded-lg bg-[#F79824] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                <Calendar className="h-5 w-5 text-black" />
               </div>
             </div>
           </div>
-          <div className="bg-white rounded-xl shadow-lg p-4">
+          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 group">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-slate-600 mb-1">Avg Per Expense</p>
-                <p className="text-xl font-bold text-purple-600">Rs {stats.avgPerExpense.toFixed(0)}</p>
+                <p className="text-xs font-medium text-[#A5BF13] mb-1">Avg Per Expense</p>
+                <p className="text-xl font-bold text-[#C1E8FF]">Rs {stats.avgPerExpense.toFixed(0)}</p>
               </div>
-              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
-                <TrendingDown className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 rounded-lg bg-[#C1E8FF] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                <TrendingDown className="h-5 w-5 text-black" />
               </div>
             </div>
           </div>
         </div>
 
-        {/* Filters */}
-        <div className="bg-white rounded-xl shadow-lg p-4 mb-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Filter className="h-4 w-4 text-white" />
+        {/* Filters - Compact Design */}
+        <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-3 mb-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-[#A5BF13] rounded-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
+                <Filter className="h-3 w-3 text-black" />
+              </div>
+              <h3 className="text-sm font-semibold text-[#F8F8F8]">Filters</h3>
             </div>
-            <h3 className="text-lg font-semibold text-slate-900">Filters</h3>
+            <div className="text-xs text-[#A5BF13]">
+              Filter expenses by criteria
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+          <div className="flex items-center gap-3">
             <div className="flex-1">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                <Search className="absolute left-2 top-1/2 transform -translate-y-1/2 h-3 w-3 text-[#A5BF13]" />
                 <input
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full pl-7 pr-3 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] placeholder-[#A5BF13] focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300"
                   placeholder="Search by category or notes..."
                 />
               </div>
             </div>
-            <div>
+            <div className="flex-1">
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300"
               >
                 <option value="">All Categories</option>
                 {expenseCategories.map(category => (
@@ -393,21 +442,21 @@ const ExpenseManager = () => {
                 type="date"
                 value={dateRange.start}
                 onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-                className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-32 px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300"
               />
               <input
                 type="date"
                 value={dateRange.end}
                 onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-                className="flex-1 px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-32 px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300"
               />
             </div>
             <div>
               <button
                 onClick={clearFilters}
-                className="w-full px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-all flex items-center justify-center gap-2"
+                className="px-3 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] font-medium hover:bg-[#3A3A3A] transition-all flex items-center justify-center gap-1 hover:shadow-lg hover:shadow-[#A5BF13]/20"
               >
-                <X className="h-4 w-4" />
+                <X className="h-3 w-3" />
                 Clear
               </button>
             </div>
@@ -416,19 +465,19 @@ const ExpenseManager = () => {
 
         {/* Error/Success messages */}
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
+          <div className="mb-4 bg-[#2A2A2A] border border-[#B4182D] rounded-lg p-3 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300">
             <div className="flex items-center">
-              <AlertTriangle className="h-4 w-4 text-red-600 mr-2" />
-              <p className="text-red-700 text-sm">{error}</p>
+              <AlertTriangle className="h-4 w-4 text-[#B4182D] mr-2 animate-pulse" />
+              <p className="text-[#F8F8F8] text-sm">{error}</p>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
+          <div className="mb-4 bg-[#2A2A2A] border border-[#A5BF13] rounded-lg p-3 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
             <div className="flex items-center">
-              <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-              <p className="text-green-700 text-sm">{success}</p>
+              <CheckCircle className="h-4 w-4 text-[#A5BF13] mr-2 animate-pulse" />
+              <p className="text-[#F8F8F8] text-sm">{success}</p>
             </div>
           </div>
         )}
@@ -437,15 +486,15 @@ const ExpenseManager = () => {
         <div className="flex-1 overflow-y-auto">
           {loading ? (
             <div className="flex items-center justify-center h-64">
-              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A5BF13]"></div>
             </div>
           ) : paginatedExpenses.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <DollarSign className="h-8 w-8 text-slate-400" />
+              <div className="w-16 h-16 bg-[#2A2A2A] rounded-full flex items-center justify-center mx-auto mb-4 hover:scale-110 transition-all duration-300">
+                <DollarSign className="h-8 w-8 text-[#A5BF13]" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900 mb-2">No expenses found</h3>
-              <p className="text-slate-500">
+              <h3 className="text-lg font-semibold text-[#F8F8F8] mb-2">No expenses found</h3>
+              <p className="text-[#A5BF13]">
                 {searchTerm || categoryFilter || dateRange.start || dateRange.end 
                   ? 'Try adjusting your filters.' 
                   : 'Get started by adding your first expense.'}
@@ -454,49 +503,55 @@ const ExpenseManager = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {paginatedExpenses.map((expense) => (
-                <div key={expense.id} className="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all">
+                <div key={expense.id} className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-slate-900 text-sm">{expense.category}</h3>
-                      <p className="text-xs text-slate-500 flex items-center gap-1 mt-1">
+                      <h3 className="font-semibold text-[#F8F8F8] text-sm group-hover:text-[#A5BF13] transition-colors duration-300">{expense.category}</h3>
+                      <p className="text-xs text-[#A5BF13] flex items-center gap-1 mt-1">
                         <Calendar className="h-3 w-3" />
                         {new Date(expense.date).toLocaleDateString()}
                       </p>
                     </div>
                     <div className="text-right">
-                      <p className="text-lg font-bold text-red-600">Rs {expense.amount.toLocaleString()}</p>
+                      <p className="text-lg font-bold text-[#B4182D]">Rs {expense.amount.toLocaleString()}</p>
                     </div>
                   </div>
                   
                   <div className="space-y-2 mb-3">
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-600">Notes:</span>
-                      <span className="text-xs text-slate-500 max-w-xs truncate">
+                      <span className="text-xs text-[#A5BF13]">Notes:</span>
+                      <span className="text-xs text-[#F8F8F8] max-w-xs truncate">
                         {expense.notes || 'No notes'}
                       </span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-xs text-slate-600">Created by:</span>
-                      <span className="text-xs text-slate-500">
+                      <span className="text-xs text-[#A5BF13]">Created by:</span>
+                      <span className="text-xs text-[#F8F8F8]">
                         {expense.created_by_name || 'Unknown'}
                       </span>
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 pt-3 border-t border-slate-100">
+                  <div className="flex items-center gap-2 pt-3 border-t border-[#3A3A3A]">
                     <button
                       onClick={() => openEditModal(expense)}
-                      className="flex-1 px-3 py-1.5 bg-blue-50 text-blue-600 rounded-lg text-xs font-medium hover:bg-blue-100 transition-all flex items-center justify-center gap-1"
+                      className="w-20 px-2 py-1.5 bg-[#A5BF13] text-black rounded-lg text-xs font-medium hover:bg-[#94A90F] hover:scale-105 transition-all flex items-center justify-center gap-1 ripple relative overflow-hidden group"
                     >
-                      <Edit className="h-3 w-3" />
-                      Edit
+                      {/* Ripple effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                      
+                      <Edit className="h-3 w-3 relative z-10 group-hover:animate-pulse" />
+                      <span className="relative z-10">Edit</span>
                     </button>
                     <button
                       onClick={() => handleDeleteExpense(expense.id)}
-                      className="flex-1 px-3 py-1.5 bg-red-50 text-red-600 rounded-lg text-xs font-medium hover:bg-red-100 transition-all flex items-center justify-center gap-1"
+                      className="w-20 px-2 py-1.5 bg-[#B4182D] text-white rounded-lg text-xs font-medium hover:bg-[#A31528] hover:scale-105 transition-all flex items-center justify-center gap-1 ripple relative overflow-hidden group"
                     >
-                      <Trash2 className="h-3 w-3" />
-                      Delete
+                      {/* Ripple effect */}
+                      <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                      
+                      <Trash2 className="h-3 w-3 relative z-10 group-hover:animate-pulse" />
+                      <span className="relative z-10">Delete</span>
                     </button>
                   </div>
                 </div>
@@ -507,26 +562,26 @@ const ExpenseManager = () => {
 
         {/* Pagination */}
         {totalPages > 1 && (
-          <div className="mt-6 bg-white rounded-xl shadow-lg p-4">
+          <div className="mt-6 bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
             <div className="flex items-center justify-between">
-              <div className="text-sm text-slate-600">
+              <div className="text-sm text-[#A5BF13]">
                 Showing {((currentPage - 1) * itemsPerPage) + 1} to {Math.min(currentPage * itemsPerPage, filteredAndSortedExpenses.length)} of {filteredAndSortedExpenses.length} results
               </div>
               <div className="flex items-center gap-2">
                 <button
                   onClick={() => setCurrentPage(prev => Math.max(prev - 1, 1))}
                   disabled={currentPage === 1}
-                  className="px-3 py-1 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="px-3 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-[#F8F8F8] hover:bg-[#3A3A3A] disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all hover:shadow-lg hover:shadow-[#A5BF13]/20"
                 >
                   Previous
                 </button>
-                <span className="px-3 py-1 text-sm text-slate-600">
+                <span className="px-3 py-1 text-sm text-[#A5BF13]">
                   Page {currentPage} of {totalPages}
                 </span>
                 <button
                   onClick={() => setCurrentPage(prev => Math.min(prev + 1, totalPages))}
                   disabled={currentPage === totalPages}
-                  className="px-3 py-1 border border-slate-300 rounded-lg text-slate-700 hover:bg-slate-50 disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="px-3 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-[#F8F8F8] hover:bg-[#3A3A3A] disabled:opacity-50 disabled:cursor-not-allowed text-sm transition-all hover:shadow-lg hover:shadow-[#A5BF13]/20"
                 >
                   Next
                 </button>
@@ -539,24 +594,24 @@ const ExpenseManager = () => {
       {/* Add Expense Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-900">Add New Expense</h3>
+          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-[#3A3A3A]">
+              <h3 className="text-lg font-semibold text-[#F8F8F8]">Add New Expense</h3>
               <button
                 onClick={() => {
                   setShowAddModal(false);
                   setValidationErrors({});
                 }}
-                className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all"
+                className="w-8 h-8 rounded-lg bg-[#202020] hover:bg-[#3A3A3A] flex items-center justify-center transition-all hover:scale-110"
               >
-                <X className="h-4 w-4 text-slate-600" />
+                <X className="h-4 w-4 text-[#F8F8F8]" />
               </button>
             </div>
             <div className="p-4 overflow-y-auto max-h-[60vh]">
               <form onSubmit={handleAddExpense}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-1">
                       Date *
                     </label>
                     <input
@@ -564,24 +619,24 @@ const ExpenseManager = () => {
                       required
                       value={newExpense.date}
                       onChange={(e) => setNewExpense({...newExpense, date: e.target.value})}
-                      className={`block w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${
-                        validationErrors.date ? 'border-red-300' : 'border-slate-200'
+                      className={`block w-full px-3 py-2 bg-[#202020] border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300 ${
+                        validationErrors.date ? 'border-[#B4182D]' : 'border-[#3A3A3A]'
                       }`}
                     />
                     {validationErrors.date && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.date}</p>
+                      <p className="mt-1 text-sm text-[#B4182D]">{validationErrors.date}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-1">
                       Category *
                     </label>
                     <select
                       required
                       value={newExpense.category}
                       onChange={(e) => setNewExpense({...newExpense, category: e.target.value})}
-                      className={`block w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${
-                        validationErrors.category ? 'border-red-300' : 'border-slate-200'
+                      className={`block w-full px-3 py-2 bg-[#202020] border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300 ${
+                        validationErrors.category ? 'border-[#B4182D]' : 'border-[#3A3A3A]'
                       }`}
                     >
                       <option value="">Select Category</option>
@@ -590,11 +645,11 @@ const ExpenseManager = () => {
                       ))}
                     </select>
                     {validationErrors.category && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.category}</p>
+                      <p className="mt-1 text-sm text-[#B4182D]">{validationErrors.category}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-1">
                       Amount *
                     </label>
                     <input
@@ -604,24 +659,24 @@ const ExpenseManager = () => {
                       step="0.01"
                       value={newExpense.amount}
                       onChange={(e) => setNewExpense({...newExpense, amount: e.target.value})}
-                      className={`block w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${
-                        validationErrors.amount ? 'border-red-300' : 'border-slate-200'
+                      className={`block w-full px-3 py-2 bg-[#202020] border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300 ${
+                        validationErrors.amount ? 'border-[#B4182D]' : 'border-[#3A3A3A]'
                       }`}
                       placeholder="0.00"
                     />
                     {validationErrors.amount && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.amount}</p>
+                      <p className="mt-1 text-sm text-[#B4182D]">{validationErrors.amount}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-1">
                       Notes
                     </label>
                     <textarea
                       value={newExpense.notes}
                       onChange={(e) => setNewExpense({...newExpense, notes: e.target.value})}
                       rows={3}
-                      className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                      className="block w-full px-3 py-2 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300"
                       placeholder="Optional notes about this expense"
                     />
                   </div>
@@ -633,16 +688,19 @@ const ExpenseManager = () => {
                       setShowAddModal(false);
                       setValidationErrors({});
                     }}
-                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-all"
+                    className="flex-1 px-4 py-2 bg-[#202020] border border-[#3A3A3A] rounded-lg text-[#F8F8F8] font-medium hover:bg-[#3A3A3A] transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 transition-all"
+                    className="flex-1 px-4 py-2 bg-[#A5BF13] text-black rounded-lg font-semibold hover:bg-[#94A90F] disabled:opacity-50 transition-all ripple relative overflow-hidden group"
                   >
-                    {loading ? 'Adding...' : 'Add Expense'}
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
+                    <span className="relative z-10">{loading ? 'Adding...' : 'Add Expense'}</span>
                   </button>
                 </div>
               </form>
@@ -654,24 +712,24 @@ const ExpenseManager = () => {
       {/* Edit Expense Modal */}
       {showEditModal && selectedExpense && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-900">Edit Expense</h3>
+          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden">
+            <div className="flex items-center justify-between p-4 border-b border-[#3A3A3A]">
+              <h3 className="text-lg font-semibold text-[#F8F8F8]">Edit Expense</h3>
               <button
                 onClick={() => {
                   setShowEditModal(false);
                   setValidationErrors({});
                 }}
-                className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all"
+                className="w-8 h-8 rounded-lg bg-[#202020] hover:bg-[#3A3A3A] flex items-center justify-center transition-all hover:scale-110"
               >
-                <X className="h-4 w-4 text-slate-600" />
+                <X className="h-4 w-4 text-[#F8F8F8]" />
               </button>
             </div>
             <div className="p-4 overflow-y-auto max-h-[60vh]">
               <form onSubmit={handleEditExpense}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-1">
                       Date *
                     </label>
                     <input
@@ -679,24 +737,24 @@ const ExpenseManager = () => {
                       required
                       value={selectedExpense.date}
                       onChange={(e) => setSelectedExpense({...selectedExpense, date: e.target.value})}
-                      className={`block w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${
-                        validationErrors.date ? 'border-red-300' : 'border-slate-200'
+                      className={`block w-full px-3 py-2 bg-[#202020] border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300 ${
+                        validationErrors.date ? 'border-[#B4182D]' : 'border-[#3A3A3A]'
                       }`}
                     />
                     {validationErrors.date && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.date}</p>
+                      <p className="mt-1 text-sm text-[#B4182D]">{validationErrors.date}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-1">
                       Category *
                     </label>
                     <select
                       required
                       value={selectedExpense.category}
                       onChange={(e) => setSelectedExpense({...selectedExpense, category: e.target.value})}
-                      className={`block w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${
-                        validationErrors.category ? 'border-red-300' : 'border-slate-200'
+                      className={`block w-full px-3 py-2 bg-[#202020] border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300 ${
+                        validationErrors.category ? 'border-[#B4182D]' : 'border-[#3A3A3A]'
                       }`}
                     >
                       {expenseCategories.map(category => (
@@ -704,11 +762,11 @@ const ExpenseManager = () => {
                       ))}
                     </select>
                     {validationErrors.category && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.category}</p>
+                      <p className="mt-1 text-sm text-[#B4182D]">{validationErrors.category}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-1">
                       Amount *
                     </label>
                     <input
@@ -718,23 +776,23 @@ const ExpenseManager = () => {
                       step="0.01"
                       value={selectedExpense.amount}
                       onChange={(e) => setSelectedExpense({...selectedExpense, amount: e.target.value})}
-                      className={`block w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm ${
-                        validationErrors.amount ? 'border-red-300' : 'border-slate-200'
+                      className={`block w-full px-3 py-2 bg-[#202020] border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300 ${
+                        validationErrors.amount ? 'border-[#B4182D]' : 'border-[#3A3A3A]'
                       }`}
                     />
                     {validationErrors.amount && (
-                      <p className="mt-1 text-sm text-red-600">{validationErrors.amount}</p>
+                      <p className="mt-1 text-sm text-[#B4182D]">{validationErrors.amount}</p>
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-1">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-1">
                       Notes
                     </label>
                     <textarea
                       value={selectedExpense.notes || ''}
                       onChange={(e) => setSelectedExpense({...selectedExpense, notes: e.target.value})}
                       rows={3}
-                      className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                      className="block w-full px-3 py-2 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300"
                     />
                   </div>
                 </div>
@@ -745,16 +803,19 @@ const ExpenseManager = () => {
                       setShowEditModal(false);
                       setValidationErrors({});
                     }}
-                    className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-all"
+                    className="flex-1 px-4 py-2 bg-[#202020] border border-[#3A3A3A] rounded-lg text-[#F8F8F8] font-medium hover:bg-[#3A3A3A] transition-all"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold hover:from-blue-600 hover:to-purple-700 disabled:opacity-50 transition-all"
+                    className="flex-1 px-4 py-2 bg-[#A5BF13] text-black rounded-lg font-semibold hover:bg-[#94A90F] disabled:opacity-50 transition-all ripple relative overflow-hidden group"
                   >
-                    {loading ? 'Updating...' : 'Update Expense'}
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
+                    <span className="relative z-10">{loading ? 'Updating...' : 'Update Expense'}</span>
                   </button>
                 </div>
               </form>

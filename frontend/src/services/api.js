@@ -56,6 +56,7 @@ export const inventoryAPI = {
   getByBarcode: (barcode) => api.get(`/inventory/barcode/${barcode}`),
   create: (item) => api.post('/inventory', item),
   update: (id, item) => api.put(`/inventory/${id}`, item),
+  updateStock: (id, data) => api.put(`/inventory/${id}/update-stock`, data),
   delete: (id) => api.delete(`/inventory/${id}`),
   getPending: () => api.get('/inventory/pending'),
   approve: (id, data) => api.put(`/inventory/${id}/approve`, data),
@@ -98,6 +99,12 @@ export const usersAPI = {
   getById: (id) => api.get(`/users/${id}`),
   updateRole: (id, role) => api.put(`/users/${id}`, { role }),
   delete: (id) => api.delete(`/users/${id}`),
+};
+
+export const settingsAPI = {
+  exportData: () => api.get('/settings/export'),
+  importData: (data) => api.post('/settings/import', { data }),
+  resetSystem: () => api.post('/settings/reset'),
 };
 
 export default api; 

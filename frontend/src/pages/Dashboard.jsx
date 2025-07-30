@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { 
   TrendingUp, 
   TrendingDown, 
@@ -17,101 +17,12 @@ import {
   CreditCard,
   Settings,
   FileText,
-  Receipt
+  Receipt,
+  RefreshCw
 } from 'lucide-react';
 import { reportsAPI, salesAPI, usersAPI } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
-import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
-
-// Mock data for demo purposes
-const mockDashboardData = {
-  today: {
-    sales: 15,
-    revenue: 25000,
-    expenses: 3,
-    expensesAmount: 1500,
-    revenueChange: 12.5,
-    expensesChange: -5.2
-  },
-  month: {
-    sales: 450,
-    revenue: 750000,
-    expenses: 25,
-    expensesAmount: 25000,
-    totalItems: 1250,
-    totalUsers: 8,
-    itemsChange: 8.3,
-    usersChange: 0,
-    salesByPayment: [
-      { payment_type: 'cash', total: 450000 },
-      { payment_type: 'card', total: 250000 },
-      { payment_type: 'mobile', total: 50000 }
-    ],
-    dailySales: [
-      { date: '2025-01-01', total: 25000 },
-      { date: '2025-01-02', total: 28000 },
-      { date: '2025-01-03', total: 32000 },
-      { date: '2025-01-04', total: 29000 },
-      { date: '2025-01-05', total: 35000 },
-      { date: '2025-01-06', total: 31000 },
-      { date: '2025-01-07', total: 27000 }
-    ]
-  },
-  alerts: {
-    lowStock: 12,
-    expired: 3,
-    pending: 5
-  },
-  recentSales: [
-    {
-      id: 1,
-      invoice_number: 'INV-20250107-0001',
-      cashier_name: 'admin',
-      total_amount: 2500,
-      payment_type: 'cash'
-    },
-    {
-      id: 2,
-      invoice_number: 'INV-20250107-0002',
-      cashier_name: 'salesman1',
-      total_amount: 1800,
-      payment_type: 'card'
-    },
-    {
-      id: 3,
-      invoice_number: 'INV-20250107-0003',
-      cashier_name: 'admin',
-      total_amount: 3200,
-      payment_type: 'mobile'
-    },
-    {
-      id: 4,
-      invoice_number: 'INV-20250107-0004',
-      cashier_name: 'salesman1',
-      total_amount: 1500,
-      payment_type: 'cash'
-    },
-    {
-      id: 5,
-      invoice_number: 'INV-20250107-0005',
-      cashier_name: 'admin',
-      total_amount: 2800,
-      payment_type: 'card'
-    },
-    {
-      id: 6,
-      invoice_number: 'INV-20250107-0006',
-      cashier_name: 'salesman1',
-      total_amount: 1900,
-      payment_type: 'cash'
-    }
-  ],
-  topItems: [
-    { name: 'Product A', total_quantity: 150 },
-    { name: 'Product B', total_quantity: 120 },
-    { name: 'Product C', total_quantity: 95 }
-  ]
-};
+import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
 const Dashboard = () => {
   const [dashboardData, setDashboardData] = useState(null);
@@ -120,36 +31,54 @@ const Dashboard = () => {
   const [salesmanStats, setSalesmanStats] = useState([]);
   const [salesmanLoading, setSalesmanLoading] = useState(false);
   const [userActivity, setUserActivity] = useState([]);
+  const [refreshing, setRefreshing] = useState(false);
   const { user } = useAuthStore();
 
-  useEffect(() => {
-    const fetchDashboard = async () => {
-      try {
-        setLoading(true);
-        setError('');
+  // Fetch dashboard data
+  const fetchDashboard = useCallback(async () => {
+    try {
+      setLoading(true);
+      setError('');
+      
+      const response = await reportsAPI.getDashboard();
+      console.log('Dashboard API Response:', response.data); // Debug log
+      
+      if (response.data.success) {
+        setDashboardData(response.data.dashboard);
         
-        // Try to fetch real data first, fallback to mock data
-        try {
-          const response = await reportsAPI.getDashboard();
-          if (response.data.success) {
-            setDashboardData(response.data.dashboard);
-          } else {
-            setDashboardData(mockDashboardData);
-          }
-        } catch (err) {
-          console.log('Using mock dashboard data due to API error:', err.message);
-          setDashboardData(mockDashboardData);
-        }
-      } catch (err) {
+        // Debug log for data structure
+        console.log('Dashboard Data:', {
+          today: response.data.dashboard?.today,
+          month: response.data.dashboard?.month,
+          alerts: response.data.dashboard?.alerts,
+          dailySales: response.data.dashboard?.month?.dailySales
+        });
+      } else {
         setError('Failed to load dashboard data');
-        setDashboardData(mockDashboardData);
-      } finally {
-        setLoading(false);
+        setDashboardData(null);
       }
-    };
-    fetchDashboard();
+    } catch (err) {
+      console.error('Dashboard API error:', err.message);
+      setError('Failed to load dashboard data');
+      setDashboardData(null);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
+  // Manual refresh function
+  const handleRefresh = async () => {
+    setRefreshing(true);
+    await fetchDashboard();
+    setRefreshing(false);
+  };
+
+  // Initial data fetch
+  useEffect(() => {
+    fetchDashboard();
+  }, [fetchDashboard]);
+
+  // Fetch additional data for admin users
   useEffect(() => {
     if (user?.role === 'admin') {
       const fetchSalesmanStats = async () => {
@@ -187,10 +116,10 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
+      <div className="h-screen bg-[#202020] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-blue-600 border-t-transparent mx-auto mb-4"></div>
-          <p className="text-slate-600 text-lg">Loading dashboard...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#A5BF13] border-t-transparent mx-auto mb-4"></div>
+          <p className="text-[#F8F8F8] text-lg">Loading dashboard...</p>
         </div>
       </div>
     );
@@ -198,47 +127,94 @@ const Dashboard = () => {
 
   if (error && !dashboardData) {
     return (
-      <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center">
-        <div className="text-center p-8 bg-white rounded-2xl shadow-lg">
-          <AlertTriangle className="h-12 w-12 text-amber-500 mx-auto mb-4" />
-          <p className="text-slate-600 text-lg">{error || 'Failed to load dashboard data'}</p>
+      <div className="h-screen bg-[#202020] flex items-center justify-center">
+        <div className="text-center p-8 bg-[#2A2A2A] rounded-2xl shadow-lg border border-[#3A3A3A]">
+          <AlertTriangle className="h-12 w-12 text-[#A5BF13] mx-auto mb-4" />
+          <p className="text-[#F8F8F8] text-lg mb-4">{error || 'Failed to load dashboard data'}</p>
+          <button 
+            onClick={handleRefresh}
+            className="px-4 py-2 bg-[#A5BF13] text-black rounded-lg hover:bg-[#94A90F] transition-all font-medium"
+          >
+            <RefreshCw className="h-4 w-4 inline mr-2" />
+            Retry
+          </button>
         </div>
       </div>
     );
   }
 
-  const { today, month, alerts, recentSales, topItems } = dashboardData || mockDashboardData;
+  // Use real data or show empty states
+  const { today, month, alerts, recentSales, topItems } = dashboardData || {
+    today: { revenue: 0, expensesAmount: 0, revenueChange: 0, expensesChange: 0 },
+    month: { totalItems: 0, totalUsers: 0, itemsChange: 0, usersChange: 0, salesByPayment: [], dailySales: [] },
+    alerts: { lowStock: 0, expired: 0, pending: 0 },
+    recentSales: [],
+    topItems: []
+  };
+
+  // Process chart data to show day-by-day data with proper formatting
+  const chartData = month?.dailySales || [];
+  console.log('Chart Data:', chartData); // Debug log for chart data
+  console.log('Today Revenue:', today?.revenue); // Debug log for today's revenue
+  console.log('Today Expenses:', today?.expensesAmount); // Debug log for today's expenses
+
+  // Create a complete month of data with proper day labels
+  const processedChartData = (() => {
+    if (chartData.length === 0) {
+      // Create sample data for the current month
+      const currentDate = new Date();
+      const daysInMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0).getDate();
+      const sampleData = [];
+      
+      for (let day = 1; day <= Math.min(daysInMonth, currentDate.getDate()); day++) {
+        const date = new Date(currentDate.getFullYear(), currentDate.getMonth(), day);
+        sampleData.push({
+          date: date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' }),
+          total: 0
+        });
+      }
+      return sampleData;
+    }
+    
+    // Process existing data and fill gaps
+    const processedData = chartData.map(sale => ({
+      date: sale.date,
+      total: sale.total || 0
+    }));
+    
+    return processedData;
+  })();
 
   const StatCard = ({ title, value, change, icon: Icon, color = 'blue', trend }) => {
     const colorClasses = {
-      blue: 'from-blue-500 to-blue-600 bg-blue-50 text-blue-600',
-      red: 'from-red-500 to-red-600 bg-red-50 text-red-600',
-      green: 'from-green-500 to-green-600 bg-green-50 text-green-600',
-      purple: 'from-purple-500 to-purple-600 bg-purple-50 text-purple-600',
-      amber: 'from-amber-500 to-amber-600 bg-amber-50 text-amber-600'
+      blue: 'bg-[#2A2A2A] text-[#A5BF13] border-[#3A3A3A]',
+      red: 'bg-[#2A2A2A] text-[#A5BF13] border-[#3A3A3A]',
+      green: 'bg-[#2A2A2A] text-[#A5BF13] border-[#3A3A3A]',
+      purple: 'bg-[#2A2A2A] text-[#A5BF13] border-[#3A3A3A]',
+      amber: 'bg-[#2A2A2A] text-[#A5BF13] border-[#3A3A3A]'
     };
 
     return (
-      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-4">
+      <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group cursor-pointer">
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-xs font-medium text-slate-600 mb-1">{title}</p>
-            <p className="text-xl font-bold text-slate-900">{value}</p>
+            <p className="text-xs font-medium text-[#F8F8F8] mb-1 group-hover:text-[#A5BF13] transition-colors duration-200">{title}</p>
+            <p className="text-xl font-bold text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{value}</p>
             {change && (
               <div className="flex items-center mt-1">
                 {change > 0 ? (
-                  <TrendingUp className="h-3 w-3 text-green-500 mr-1" />
+                  <TrendingUp className="h-3 w-3 text-[#A5BF13] mr-1 group-hover:animate-pulse" />
                 ) : (
-                  <TrendingDown className="h-3 w-3 text-red-500 mr-1" />
+                  <TrendingDown className="h-3 w-3 text-[#A5BF13] mr-1 group-hover:animate-pulse" />
                 )}
-                <span className={`text-xs font-medium ${change > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <span className={`text-xs font-medium text-[#A5BF13] group-hover:scale-110 transition-transform duration-200`}>
                   {change > 0 ? '+' : ''}{change}%
                 </span>
               </div>
             )}
           </div>
-          <div className={`w-10 h-10 rounded-lg ${colorClasses[color].split(' ')[2]} flex items-center justify-center`}>
-            <Icon className={`h-5 w-5 ${colorClasses[color].split(' ')[3]}`} />
+          <div className={`w-10 h-10 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+            <Icon className="h-5 w-5 text-black group-hover:animate-bounce" />
           </div>
         </div>
       </div>
@@ -246,28 +222,34 @@ const Dashboard = () => {
   };
 
   const AlertActionCard = ({ title, count, icon: Icon, color = 'red', onClick }) => {
-    const colorClasses = {
-      red: 'from-red-500 to-red-600 bg-red-50 text-red-600 border-red-200',
-      yellow: 'from-amber-500 to-amber-600 bg-amber-50 text-amber-600 border-amber-200',
-      blue: 'from-blue-500 to-blue-600 bg-blue-50 text-blue-600 border-blue-200'
+    const getColorClasses = (color) => {
+      const colorMap = {
+        yellow: 'bg-[#F79824] text-black',
+        red: 'bg-[#B4182D] text-white',
+        blue: 'bg-[#C1E8FF] text-black'
+      };
+      return colorMap[color] || colorMap.red;
     };
 
     return (
       <button 
         onClick={onClick}
-        className={`bg-white rounded-xl border-2 ${colorClasses[color].split(' ')[4]} p-3 hover:shadow-lg transition-all duration-300 w-full text-left group`}
+        className="bg-[#2A2A2A] rounded-xl border border-[#3A3A3A] p-3 hover:shadow-xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 w-full text-left group hover:bg-[#3A3A3A] relative overflow-hidden"
       >
-        <div className="flex items-center justify-between">
+        {/* Ripple effect background */}
+        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+        
+        <div className="flex items-center justify-between relative z-10">
           <div className="flex items-center">
-            <div className={`w-8 h-8 rounded-lg ${colorClasses[color].split(' ')[2]} flex items-center justify-center mr-2 group-hover:scale-110 transition-transform`}>
-              <Icon className={`h-4 w-4 ${colorClasses[color].split(' ')[3]}`} />
+            <div className={`w-8 h-8 rounded-lg ${getColorClasses(color)} flex items-center justify-center mr-2 group-hover:scale-110 group-hover:rotate-6 transition-all duration-300`}>
+              <Icon className="h-4 w-4 group-hover:animate-pulse" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-slate-900">{title}</h3>
-              <p className="text-lg font-bold text-slate-900">{count}</p>
+              <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">{title}</h3>
+              <p className="text-lg font-bold text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{count}</p>
             </div>
           </div>
-          <ChevronRight className="h-4 w-4 text-slate-400 group-hover:text-slate-600 transition-colors" />
+          <ChevronRight className="h-4 w-4 text-[#F8F8F8] group-hover:text-[#A5BF13] group-hover:translate-x-1 transition-all duration-300" />
         </div>
       </button>
     );
@@ -276,8 +258,31 @@ const Dashboard = () => {
   const total = month?.salesByPayment?.reduce((sum, item) => sum + item.total, 0) || 0;
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 overflow-hidden">
+    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
       <div className="h-full flex flex-col">
+        {/* Header with Refresh Button */}
+        <div className="flex items-center justify-between mb-4">
+          <div>
+            <h1 className="text-2xl font-bold text-[#F8F8F8]">Dashboard</h1>
+            <div className="flex items-center gap-2 text-[#A5BF13] text-sm">
+              <span>Business overview</span>
+            </div>
+          </div>
+          <button
+            onClick={handleRefresh}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-4 py-2 bg-[#A5BF13] text-black rounded-lg shadow-lg hover:shadow-xl hover:shadow-[#A5BF13]/30 hover:-translate-y-1 transition-all duration-300 font-medium relative overflow-hidden group"
+          >
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            
+            <RefreshCw className={`h-4 w-4 ${refreshing ? 'animate-spin' : 'group-hover:animate-pulse'} relative z-10`} />
+            <span className="text-sm font-medium relative z-10">
+              {refreshing ? 'Refreshing...' : 'Refresh'}
+            </span>
+          </button>
+        </div>
+
         {/* Main Content - Grid Layout */}
         <div className="h-full grid grid-cols-12 gap-4 overflow-hidden">
           
@@ -292,6 +297,13 @@ const Dashboard = () => {
                 change={today?.revenueChange}
                 icon={ShoppingCart}
                 color="blue"
+              />
+              <StatCard
+                title="Today's Profit"
+                value={`Rs ${(today?.profit || 0).toLocaleString()}`}
+                change={today?.profitChange}
+                icon={TrendingUp}
+                color="green"
               />
               <StatCard
                 title="Today's Expenses"
@@ -317,8 +329,8 @@ const Dashboard = () => {
             </div>
 
             {/* Alert Actions */}
-            <div className="bg-white rounded-xl shadow-lg p-4">
-              <h3 className="text-sm font-semibold text-slate-900 mb-3">Quick Actions</h3>
+            <div className="bg-[#2A2A2A] rounded-xl shadow-lg p-4 border border-[#3A3A3A]">
+              <h3 className="text-sm font-semibold text-[#F8F8F8] mb-3">Quick Actions</h3>
               <div className="space-y-3">
                 <AlertActionCard
                   title="Low Stock"
@@ -349,42 +361,46 @@ const Dashboard = () => {
           <div className="col-span-5 flex flex-col gap-4">
             
             {/* Sales Chart - Reduced Space */}
-            <div className="bg-white rounded-xl shadow-lg p-4">
+            <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-slate-900">Sales Trend</h3>
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                  <Activity className="h-4 w-4 text-white" />
+                <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">Sales Trend</h3>
+                <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <Activity className="h-4 w-4 text-black group-hover:animate-pulse" />
                 </div>
               </div>
-              <div className="h-32">
+              <div className="h-70">
                 <ResponsiveContainer width="100%" height="100%">
-                  <BarChart data={month?.dailySales || []} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" />
-                    <XAxis dataKey="date" tick={{ fontSize: 8 }} />
-                    <YAxis tick={{ fontSize: 8 }} />
-                    <Tooltip formatter={(value) => `Rs ${value}`} />
-                    <Bar dataKey="total" fill="#3b82f6" barSize={15} />
-                  </BarChart>
+                  <LineChart data={processedChartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3A" />
+                    <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#F8F8F8' }} />
+                    <YAxis tick={{ fontSize: 11, fill: '#F8F8F8' }} />
+                    <Tooltip 
+                      formatter={(value) => [`Rs ${value.toLocaleString()}`, 'Revenue']}
+                      labelFormatter={(label) => `Date: ${label}`}
+                      contentStyle={{ backgroundColor: '#2A2A2A', border: '1px solid #3A3A3A', color: '#F8F8F8' }}
+                    />
+                    <Line type="monotone" dataKey="total" stroke="#F79824" strokeWidth={2} dot={false} />
+                  </LineChart>
                 </ResponsiveContainer>
               </div>
             </div>
 
             {/* Payment Methods */}
-            <div className="bg-white rounded-xl shadow-lg p-4">
+            <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-slate-900">Payment Methods</h3>
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-green-500 to-green-600 flex items-center justify-center">
-                  <CreditCard className="h-4 w-4 text-white" />
+                <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">Payment Methods</h3>
+                <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <CreditCard className="h-4 w-4 text-black group-hover:animate-pulse" />
                 </div>
               </div>
               <div className="space-y-3">
                 {month?.salesByPayment?.map((payment, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-slate-50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-3 bg-[#202020] rounded-lg border border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30 hover:scale-105 transition-all duration-200 group cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <div className="w-3 h-3 rounded-full bg-blue-500"></div>
-                      <span className="text-sm font-medium text-slate-700 capitalize">{payment.payment_type}</span>
+                      <div className="w-3 h-3 rounded-full bg-[#A5BF13] group-hover:scale-125 group-hover:animate-pulse transition-all duration-200"></div>
+                      <span className="text-sm font-medium text-[#F8F8F8] capitalize group-hover:text-[#A5BF13] transition-colors duration-200">{payment.payment_type}</span>
                     </div>
-                    <span className="text-sm font-semibold text-slate-900">Rs {payment.total.toLocaleString()}</span>
+                    <span className="text-sm font-semibold text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">Rs {payment.total.toLocaleString()}</span>
                   </div>
                 ))}
               </div>
@@ -395,23 +411,23 @@ const Dashboard = () => {
           <div className="col-span-3 flex flex-col gap-4">
             
             {/* Recent Sales */}
-            <div className="bg-white rounded-xl shadow-lg p-4">
+            <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-slate-900">Recent Sales</h3>
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-purple-500 to-purple-600 flex items-center justify-center">
-                  <Receipt className="h-4 w-4 text-white" />
+                <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">Recent Sales</h3>
+                <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <Receipt className="h-4 w-4 text-black group-hover:animate-pulse" />
                 </div>
               </div>
               <div className="space-y-3 max-h-48 overflow-y-auto">
                 {recentSales?.slice(0, 6).map((sale) => (
-                  <div key={sale.id} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                  <div key={sale.id} className="flex items-center justify-between p-2 bg-[#202020] rounded-lg border border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30 hover:scale-105 transition-all duration-200 group cursor-pointer">
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-slate-900 truncate">{sale.invoice_number}</p>
-                      <p className="text-xs text-slate-500">{sale.cashier_name}</p>
+                      <p className="text-xs font-medium text-[#F8F8F8] truncate group-hover:text-[#A5BF13] transition-colors duration-200">{sale.invoice_number}</p>
+                      <p className="text-xs text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{sale.cashier_name}</p>
                     </div>
                     <div className="text-right">
-                      <p className="text-xs font-semibold text-slate-900">Rs {sale.total_amount.toLocaleString()}</p>
-                      <p className="text-xs text-slate-500 capitalize">{sale.payment_type}</p>
+                      <p className="text-xs font-semibold text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">Rs {sale.total_amount.toLocaleString()}</p>
+                      <p className="text-xs text-[#F8F8F8] capitalize group-hover:text-[#A5BF13] transition-colors duration-200">{sale.payment_type}</p>
                     </div>
                   </div>
                 ))}
@@ -419,26 +435,26 @@ const Dashboard = () => {
             </div>
 
             {/* Top Items */}
-            <div className="bg-white rounded-xl shadow-lg p-4">
+            <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-slate-900">Top Items</h3>
-                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center">
-                  <Package className="h-4 w-4 text-white" />
+                <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">Top Items</h3>
+                <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                  <Package className="h-4 w-4 text-black group-hover:animate-pulse" />
                 </div>
               </div>
               <div className="space-y-3">
                 {topItems?.slice(0, 4).map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-slate-50 rounded-lg">
+                  <div key={index} className="flex items-center justify-between p-2 bg-[#202020] rounded-lg border border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30 hover:scale-105 transition-all duration-200 group cursor-pointer">
                     <div className="flex items-center gap-2">
-                      <div className="w-6 h-6 rounded-full bg-orange-100 flex items-center justify-center">
-                        <span className="text-xs font-bold text-orange-600">{index + 1}</span>
+                      <div className="w-6 h-6 rounded-full bg-[#A5BF13] flex items-center justify-center group-hover:scale-125 group-hover:animate-pulse transition-all duration-200">
+                        <span className="text-xs font-bold text-black group-hover:scale-110 transition-transform duration-200">{index + 1}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-slate-900 truncate">{item.name}</p>
-                        <p className="text-xs text-slate-500">Qty: {item.total_quantity}</p>
+                        <p className="text-xs font-medium text-[#F8F8F8] truncate group-hover:text-[#A5BF13] transition-colors duration-200">{item.name}</p>
+                        <p className="text-xs text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">Qty: {item.total_quantity}</p>
                       </div>
                     </div>
-                    <span className="text-xs font-semibold text-slate-900">Rs {item.total_quantity * 100}</span>
+                    <span className="text-xs font-semibold text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">Rs {item.total_quantity * 100}</span>
                   </div>
                 ))}
               </div>

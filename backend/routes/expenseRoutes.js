@@ -22,7 +22,20 @@ router.post('/', authenticateToken, requireAuth, (req, res) => {
   db.run('INSERT INTO expenses (date, category, amount, notes, created_by) VALUES (?, ?, ?, ?, ?)', [date, category, amount, notes || null, req.user.id], function(err) {
     if (err) return res.status(500).json({ error: 'Failed to add expense' });
     db.get('SELECT e.*, u.username as created_by_name FROM expenses e LEFT JOIN users u ON e.created_by = u.id WHERE e.id = ?', [this.lastID], (err2, expense) => {
-      res.json({ success: true, message: 'Expense added successfully', expense });
+      // Trigger dashboard refresh by adding a timestamp
+      const refreshData = {
+        timestamp: Date.now(),
+        expenseId: this.lastID,
+        amount: amount,
+        type: 'expense'
+      };
+      
+      res.json({ 
+        success: true, 
+        message: 'Expense added successfully', 
+        expense,
+        dashboardRefresh: refreshData
+      });
     });
   });
 });

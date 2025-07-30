@@ -53,38 +53,38 @@ const Layout = ({ children }) => {
 
   const getColorClasses = (color, isActive) => {
     const colorMap = {
-      blue: isActive ? 'from-blue-500 to-blue-600 bg-blue-50 text-blue-600' : 'from-blue-500 to-blue-600 text-blue-600',
-      green: isActive ? 'from-green-500 to-green-600 bg-green-50 text-green-600' : 'from-green-500 to-green-600 text-green-600',
-      orange: isActive ? 'from-orange-500 to-orange-600 bg-orange-50 text-orange-600' : 'from-orange-500 to-orange-600 text-orange-600',
-      purple: isActive ? 'from-purple-500 to-purple-600 bg-purple-50 text-purple-600' : 'from-purple-500 to-purple-600 text-purple-600',
-      indigo: isActive ? 'from-indigo-500 to-indigo-600 bg-indigo-50 text-indigo-600' : 'from-indigo-500 to-indigo-600 text-indigo-600',
-      red: isActive ? 'from-red-500 to-red-600 bg-red-50 text-red-600' : 'from-red-500 to-red-600 text-red-600',
-      gray: isActive ? 'from-gray-500 to-gray-600 bg-gray-50 text-gray-600' : 'from-gray-500 to-gray-600 text-gray-600'
+      blue: isActive ? 'bg-[#A5BF13] text-black' : 'text-[#F8F8F8] hover:bg-[#2A2A2A]',
+      green: isActive ? 'bg-[#A5BF13] text-black' : 'text-[#F8F8F8] hover:bg-[#2A2A2A]',
+      orange: isActive ? 'bg-[#A5BF13] text-black' : 'text-[#F8F8F8] hover:bg-[#2A2A2A]',
+      purple: isActive ? 'bg-[#A5BF13] text-black' : 'text-[#F8F8F8] hover:bg-[#2A2A2A]',
+      indigo: isActive ? 'bg-[#A5BF13] text-black' : 'text-[#F8F8F8] hover:bg-[#2A2A2A]',
+      red: isActive ? 'bg-[#A5BF13] text-black' : 'text-[#F8F8F8] hover:bg-[#2A2A2A]',
+      gray: isActive ? 'bg-[#A5BF13] text-black' : 'text-[#F8F8F8] hover:bg-[#2A2A2A]'
     };
     return colorMap[color] || colorMap.blue;
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex flex-row">
+    <div className="min-h-screen bg-[#202020] flex flex-row">
       {/* Sidebar */}
-      <div className={`flex flex-col h-screen bg-white shadow-2xl border-r border-slate-200 transition-all duration-300 ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
+      <div className={`flex flex-col h-screen bg-[#2A2A2A] shadow-2xl border-r border-[#3A3A3A] transition-all duration-300 ${sidebarCollapsed ? 'w-20' : 'w-64'}`}>
         {/* Sidebar Header */}
-        <div className="flex items-center justify-between h-16 px-4 border-b border-slate-200 bg-gradient-to-r from-slate-50 to-blue-50">
-          <div className={`flex items-center gap-3 transition-all duration-300 ${sidebarCollapsed ? 'justify-center w-full' : ''}`}>
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-              <img src={ZentroPOSLogo} alt="ZentroPOS" className="h-6 w-6 object-contain" />
-            </div>
-            {!sidebarCollapsed && (
-              <span className="text-lg font-bold text-slate-900">ZentroPOS</span>
-            )}
-          </div>
+        <div className="flex items-center justify-between h-16 px-4 border-b border-[#3A3A3A] bg-[#202020]">
           <button
             onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="p-1 rounded-lg text-slate-400 hover:text-slate-600 hover:bg-slate-100 transition-all duration-200"
-            aria-label="Toggle sidebar"
+            className={`flex items-center gap-3 transition-all duration-300 hover:scale-105 group relative overflow-hidden ripple ${sidebarCollapsed ? 'justify-center w-full' : ''}`}
           >
-            {sidebarCollapsed ? <ChevronRight size={18} /> : <ChevronLeft size={18} />}
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
+            
+            <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative z-10">
+              <img src={ZentroPOSLogo} alt="ZentroPOS" className="h-6 w-6 object-contain group-hover:animate-pulse" />
+            </div>
+            {!sidebarCollapsed && (
+              <span className="text-lg font-bold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200 relative z-10">ZentroPOS</span>
+            )}
           </button>
+
         </div>
 
         {/* Navigation */}
@@ -97,22 +97,25 @@ const Layout = ({ children }) => {
               <Link
                 key={item.name}
                 to={item.href}
-                className={`group flex items-center ${sidebarCollapsed ? 'justify-center' : ''} px-3 py-3 text-sm font-medium rounded-xl transition-all duration-200 ${
+                className={`group flex items-center ${sidebarCollapsed ? 'justify-center' : ''} px-3 py-3 text-sm font-medium rounded-xl transition-all duration-300 relative overflow-hidden hover:shadow-xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 ripple ${
                   isActive
-                    ? `bg-gradient-to-r ${colorClasses} shadow-lg border border-slate-200`
-                    : 'text-slate-600 hover:bg-slate-50 hover:text-slate-900 hover:shadow-md'
+                    ? `bg-[#A5BF13] text-black shadow-lg border border-[#3A3A3A] hover:scale-105`
+                    : 'text-[#F8F8F8] hover:bg-[#3A3A3A] hover:text-[#A5BF13] hover:shadow-md'
                 }`}
                 title={sidebarCollapsed ? item.name : undefined}
               >
-                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-200 ${
+                {/* Ripple effect for navigation items */}
+                <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                
+                <div className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 relative z-10 ${
                   isActive 
-                    ? 'bg-white/20' 
-                    : `bg-gradient-to-r ${colorClasses.split(' ')[2]} ${colorClasses.split(' ')[3]}`
+                    ? 'bg-[#202020] group-hover:scale-110 group-hover:rotate-3' 
+                    : 'bg-[#3A3A3A] text-[#F8F8F8] group-hover:scale-110 group-hover:rotate-3'
                 }`}>
-                  <item.icon className="h-4 w-4" />
+                  <item.icon className={`h-4 w-4 ${isActive ? 'text-white group-hover:animate-bounce group-active:icon-glow' : 'text-[#F8F8F8] group-hover:animate-pulse group-active:icon-glow'}`} />
                 </div>
                 {!sidebarCollapsed && (
-                  <span className="ml-3 font-semibold">{item.name}</span>
+                  <span className="ml-3 font-semibold group-hover:scale-105 transition-transform duration-200 group-active:text-highlight">{item.name}</span>
                 )}
               </Link>
             );
@@ -122,17 +125,17 @@ const Layout = ({ children }) => {
         {/* User Info & Logout */}
         <div className="px-3 pb-6">
           {/* User Info */}
-          <div className={`mb-4 p-3 rounded-xl bg-gradient-to-r from-slate-50 to-blue-50 border border-slate-200 ${sidebarCollapsed ? 'text-center' : ''}`}>
+          <div className={`mb-4 p-3 rounded-xl bg-[#202020] border border-[#3A3A3A] hover:shadow-xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 group ${sidebarCollapsed ? 'text-center' : ''}`}>
             <div className={`flex items-center gap-3 ${sidebarCollapsed ? 'justify-center' : ''}`}>
-              <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                <User className="h-4 w-4 text-white" />
+              <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <User className="h-4 w-4 text-black group-hover:animate-pulse" />
               </div>
               {!sidebarCollapsed && (
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold text-slate-900 truncate">
+                  <p className="text-sm font-semibold text-[#F8F8F8] truncate group-hover:text-[#A5BF13] transition-colors duration-200">
                     {user?.username}
                   </p>
-                  <p className="text-xs text-slate-500 capitalize">
+                  <p className="text-xs text-[#A5BF13] capitalize group-hover:scale-105 transition-transform duration-200">
                     {user?.role}
                   </p>
                 </div>
@@ -143,12 +146,15 @@ const Layout = ({ children }) => {
           {/* Logout Button */}
           <button
             onClick={handleLogout}
-            className={`flex items-center gap-3 px-3 py-3 text-sm font-medium text-red-600 hover:bg-red-50 hover:text-red-700 rounded-xl transition-all duration-200 w-full ${sidebarCollapsed ? 'justify-center' : ''}`}
+            className={`flex items-center gap-3 px-3 py-3 text-sm font-medium text-[#B4182D] hover:bg-[#3A3A3A] hover:text-[#F8F8F8] rounded-xl transition-all duration-300 w-full group hover:shadow-xl hover:shadow-[#B4182D]/10 hover:-translate-y-1 relative overflow-hidden ripple ${sidebarCollapsed ? 'justify-center' : ''}`}
           >
-            <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-red-500 to-red-600 flex items-center justify-center">
-              <LogOut className="h-4 w-4 text-white" />
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#B4182D]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            
+            <div className="w-8 h-8 rounded-lg bg-[#B4182D] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative z-10">
+              <LogOut className="h-4 w-4 text-white group-hover:animate-pulse group-active:icon-glow" />
             </div>
-            {!sidebarCollapsed && <span className="font-semibold">Logout</span>}
+            {!sidebarCollapsed && <span className="font-semibold group-hover:scale-105 transition-transform duration-200 group-active:text-highlight relative z-10">Logout</span>}
           </button>
         </div>
       </div>
@@ -156,21 +162,21 @@ const Layout = ({ children }) => {
       {/* Main Content */}
       <div className="flex-1 flex flex-col min-h-screen">
         {/* Top Bar */}
-        <div className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-slate-200 bg-white/80 backdrop-blur-sm px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
+        <div className="sticky top-0 z-30 flex h-16 shrink-0 items-center gap-x-4 border-b border-[#3A3A3A] bg-[#2A2A2A]/80 backdrop-blur-sm px-4 shadow-sm sm:gap-x-6 sm:px-6 lg:px-8">
           <div className="flex flex-1 gap-x-4 self-stretch lg:gap-x-6">
             <div className="flex flex-1" />
             <div className="flex items-center gap-x-4 lg:gap-x-6">
               {/* User Menu */}
-              <div className="relative">
-                <div className="flex items-center gap-x-3">
-                  <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center">
-                    <User className="h-4 w-4 text-white" />
+              <div className="relative group">
+                <div className="flex items-center gap-x-3 p-2 rounded-lg hover:bg-[#3A3A3A] hover:shadow-lg hover:shadow-[#A5BF13]/10 transition-all duration-300 cursor-pointer">
+                  <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <User className="h-4 w-4 text-black group-hover:animate-pulse" />
                   </div>
                   <div className="hidden sm:block">
-                    <p className="text-sm font-semibold text-slate-900">
+                    <p className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">
                       {user?.username}
                     </p>
-                    <p className="text-xs text-slate-500 capitalize">
+                    <p className="text-xs text-[#A5BF13] capitalize group-hover:scale-105 transition-transform duration-200">
                       {user?.role}
                     </p>
                   </div>

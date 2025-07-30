@@ -15,35 +15,7 @@ import {
   Banknote,
   QrCode
 } from 'lucide-react';
-
-// Mock API services for demo
-const inventoryAPI = {
-  getByBarcode: (barcode) => {
-    // Generate different expiry scenarios for testing
-    const today = new Date();
-    const randomDays = Math.floor(Math.random() * 30) - 15; // -15 to +15 days
-    const expiryDate = new Date(today.getTime() + randomDays * 24 * 60 * 60 * 1000);
-    
-    return Promise.resolve({
-      data: {
-        success: true,
-        item: {
-          barcode: barcode,
-          name: `Product ${barcode}`,
-          price: Math.floor(Math.random() * 100) + 10,
-          quantity: Math.floor(Math.random() * 50) + 1,
-          expiry_date: expiryDate.toISOString().split('T')[0], // Format as YYYY-MM-DD
-          isExpired: expiryDate < today,
-          isNearExpiry: expiryDate < new Date(today.getTime() + 7 * 24 * 60 * 60 * 1000)
-        }
-      }
-    });
-  }
-};
-
-const salesAPI = {
-  create: (data) => Promise.resolve({ data: { success: true } })
-};
+import { inventoryAPI, salesAPI } from '../services/api';
 
 const Receipt = ({ sale, items }) => (
   <div className="font-mono text-xs">
@@ -66,17 +38,9 @@ const Receipt = ({ sale, items }) => (
       ))}
     </div>
     <div className="mt-2">
-      <div className="flex justify-between">
-        <span>Subtotal:</span>
-        <span>Rs {sale.total.toFixed(2)}</span>
-      </div>
-      <div className="flex justify-between">
-        <span>Tax (8%):</span>
-        <span>Rs {(sale.total * 0.08).toFixed(2)}</span>
-      </div>
       <div className="flex justify-between font-bold">
         <span>Total:</span>
-        <span>Rs {(sale.total * 1.08).toFixed(2)}</span>
+        <span>Rs {sale.total.toFixed(2)}</span>
       </div>
     </div>
   </div>
@@ -106,12 +70,16 @@ const BillingScreen = () => {
     try {
       setLoading(true);
       setError('');
+      
+      // Use real API call to get item by barcode
       const response = await inventoryAPI.getByBarcode(barcode);
+      
       if (!response.data.success || !response.data.item) {
         setError('Item not found. Please check the barcode and try again.');
         setBarcode('');
         return;
       }
+      
       const item = response.data.item;
       
       // Check if item is expired
@@ -128,6 +96,14 @@ const BillingScreen = () => {
         setBarcode('');
         return;
       }
+      
+      // Check if item has sufficient stock
+      if (item.quantity <= 0) {
+        setError('This item is out of stock.');
+        setBarcode('');
+        return;
+      }
+      
       const existingItem = cart.find(cartItem => cartItem.barcode === item.barcode);
       if (existingItem) {
         if (existingItem.quantity < item.quantity) {
@@ -148,7 +124,12 @@ const BillingScreen = () => {
       setSuccess('Item added to cart successfully!');
       setTimeout(() => setSuccess(''), 2000);
     } catch (error) {
-      setError('Failed to add item. Please try again.');
+      console.error('Barcode scan error:', error);
+      if (error.response?.status === 404) {
+        setError('Item not found. Please check the barcode and try again.');
+      } else {
+        setError('Failed to add item. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -199,18 +180,23 @@ const BillingScreen = () => {
     try {
       setLoading(true);
       setError('');
+      
       const saleData = {
         items: cart.map(item => ({
           barcode: item.barcode,
           name: item.name,
           price: item.price,
+          buying_price: item.buying_price || item.price,
           quantity: item.quantity,
           expiry_date: item.expiry_date
         })),
         total: getTotal(),
-        paymentType,
+        paymentType
       };
+      
+      // Use real sales API to create the sale
       const response = await salesAPI.create(saleData);
+      
       if (response.data.success) {
         setSuccess('Sale completed successfully!');
         setPrintData({ sale: saleData, items: saleData.items });
@@ -218,11 +204,28 @@ const BillingScreen = () => {
         setTimeout(() => setSuccess(''), 3000);
         setCart([]);
         setPaymentType('cash');
+        
+        // Trigger dashboard refresh
+        localStorage.setItem('dashboard-refresh', Date.now().toString());
+        
+        // Also dispatch a custom event for immediate refresh
+        window.dispatchEvent(new CustomEvent('dashboard-refresh', {
+          detail: {
+            timestamp: Date.now(),
+            saleId: response.data.sale?.id,
+            amount: saleData.total
+          }
+        }));
       } else {
         setError('Payment failed. Please try again.');
       }
     } catch (error) {
-      setError('Payment failed. Please try again.');
+      console.error('Payment error:', error);
+      if (error.response?.data?.error) {
+        setError(error.response.data.error);
+      } else {
+        setError('Payment failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
@@ -244,7 +247,7 @@ const BillingScreen = () => {
   };
 
   return (
-    <div className="h-screen bg-slate-50 flex">
+    <div className="h-screen bg-[#202020] flex">
       
       {/* Main Content Area - Full width layout */}
       <div className="flex-1 flex h-screen">
@@ -253,23 +256,23 @@ const BillingScreen = () => {
         <div className="flex-1 flex flex-col h-full">
           
           {/* Top Bar with Scanner */}
-          <div className="bg-white border-b border-slate-200 p-4">
+          <div className="bg-[#2A2A2A] border-b border-[#3A3A3A] p-4">
             <div className="flex items-center gap-4">
-              <div className="w-10 h-10 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Scan className="h-5 w-5 text-white" />
+              <div className="w-10 h-10 bg-[#A5BF13] rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <Scan className="h-5 w-5 text-black group-hover:animate-pulse" />
               </div>
               <div className="flex-1">
-                <h2 className="text-lg font-semibold text-slate-900 mb-1">Barcode Scanner</h2>
+                <h2 className="text-lg font-semibold text-[#F8F8F8] mb-1">Barcode Scanner</h2>
                 <div className="flex gap-3">
                   <div className="flex-1 relative">
-                    <QrCode className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
+                    <QrCode className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#F8F8F8]" />
                     <input
                       ref={barcodeInputRef}
                       type="text"
                       value={barcode}
                       onChange={(e) => setBarcode(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && handleBarcodeSubmit(e)}
-                      className="w-full pl-10 pr-4 py-2 border border-slate-200 rounded-lg text-sm bg-white placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      className="w-full pl-10 pr-4 py-2 border border-[#3A3A3A] rounded-lg text-sm bg-[#202020] placeholder-[#F8F8F8]/50 text-[#F8F8F8] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300"
                       placeholder="Scan barcode or enter manually..."
                       disabled={loading}
                     />
@@ -277,16 +280,19 @@ const BillingScreen = () => {
                   <button
                     onClick={handleBarcodeSubmit}
                     disabled={loading || !barcode.trim()}
-                    className="px-6 py-2 bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-lg font-semibold text-sm hover:from-blue-600 hover:to-purple-700 focus:outline-none focus:ring-2 focus:ring-blue-300 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    className="px-6 py-2 bg-[#A5BF13] text-black rounded-lg font-semibold text-sm hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 hover:shadow-xl hover:shadow-[#A5BF13]/30 hover:-translate-y-1 relative overflow-hidden group ripple"
                   >
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
                     {loading ? (
-                      <div className="flex items-center">
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                      <div className="flex items-center relative z-10">
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-black border-t-transparent mr-2"></div>
                         Adding...
                       </div>
                     ) : (
-                      <div className="flex items-center">
-                        <Plus className="h-4 w-4 mr-2" />
+                      <div className="flex items-center relative z-10">
+                        <Plus className="h-4 w-4 mr-2 group-hover:animate-pulse" />
                         Add to Cart
                       </div>
                     )}
@@ -297,40 +303,40 @@ const BillingScreen = () => {
             
             {/* Messages */}
             {error && (
-              <div className="mt-3 bg-red-50 border border-red-200 rounded-lg p-3">
+              <div className="mt-3 bg-[#2A2A2A] border border-[#B4182D] rounded-lg p-3">
                 <div className="flex items-center">
-                  <AlertTriangle className="h-4 w-4 text-red-600 mr-2" />
-                  <p className="text-red-700 text-sm">{error}</p>
+                  <AlertTriangle className="h-4 w-4 text-[#B4182D] mr-2 animate-pulse" />
+                  <p className="text-[#F8F8F8] text-sm">{error}</p>
                 </div>
               </div>
             )}
             {success && (
-              <div className="mt-3 bg-green-50 border border-green-200 rounded-lg p-3">
+              <div className="mt-3 bg-[#2A2A2A] border border-[#A5BF13] rounded-lg p-3">
                 <div className="flex items-center">
-                  <Check className="h-4 w-4 text-green-600 mr-2" />
-                  <p className="text-green-700 text-sm">{success}</p>
+                  <Check className="h-4 w-4 text-[#A5BF13] mr-2 animate-pulse" />
+                  <p className="text-[#F8F8F8] text-sm">{success}</p>
                 </div>
               </div>
             )}
           </div>
 
           {/* Cart Section */}
-          <div className="flex-1 bg-white overflow-hidden">
-            <div className="p-4 border-b border-slate-100">
+          <div className="flex-1 bg-[#202020] overflow-hidden">
+            <div className="p-4 border-b border-[#3A3A3A]">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-                    <ShoppingBag className="h-4 w-4 text-white" />
+                  <div className="w-8 h-8 bg-[#A5BF13] rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                    <ShoppingBag className="h-4 w-4 text-black group-hover:animate-pulse" />
                   </div>
                   <div>
-                    <h3 className="text-lg font-semibold text-slate-900">Shopping Cart</h3>
-                    <p className="text-sm text-slate-600">{cart.length} items</p>
+                    <h3 className="text-lg font-semibold text-[#F8F8F8]">Shopping Cart</h3>
+                    <p className="text-sm text-[#A5BF13]">{cart.length} items</p>
                   </div>
                 </div>
                 <button
                   onClick={clearCart}
                   disabled={cart.length === 0}
-                  className="px-3 py-1 text-red-600 hover:text-red-800 hover:bg-red-50 rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  className="px-3 py-1 text-[#B4182D] hover:text-[#F8F8F8] hover:bg-[#B4182D] rounded-lg transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed text-sm hover:shadow-lg hover:shadow-[#B4182D]/20 hover:-translate-y-1 group ripple"
                 >
                   Clear All
                 </button>
@@ -340,68 +346,68 @@ const BillingScreen = () => {
             <div className="flex-1 overflow-y-auto p-4">
               {cart.length === 0 ? (
                 <div className="text-center py-12">
-                  <div className="w-16 h-16 bg-slate-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <ShoppingBag className="h-8 w-8 text-slate-400" />
+                  <div className="w-16 h-16 bg-[#2A2A2A] rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300">
+                    <ShoppingBag className="h-8 w-8 text-[#A5BF13] group-hover:animate-pulse" />
                   </div>
-                  <h3 className="text-lg font-semibold text-slate-900 mb-2">Cart is Empty</h3>
-                  <p className="text-slate-500">Start scanning items to add them to your cart</p>
+                  <h3 className="text-lg font-semibold text-[#F8F8F8] mb-2">Cart is Empty</h3>
+                  <p className="text-[#A5BF13]">Start scanning items to add them to your cart</p>
                 </div>
               ) : (
                 <div className="space-y-3">
                   {cart.map((item) => (
-                    <div key={item.barcode} className={`rounded-lg p-4 hover:bg-slate-100 transition-all ${
+                    <div key={item.barcode} className={`rounded-lg p-4 hover:bg-[#2A2A2A] transition-all duration-300 hover:shadow-xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 group ${
                       item.expiry_date && new Date(item.expiry_date) < new Date() 
-                        ? 'bg-red-50 border-2 border-red-200' 
-                        : 'bg-slate-50'
+                        ? 'bg-[#2A2A2A] border-2 border-[#B4182D]' 
+                        : 'bg-[#2A2A2A] border border-[#3A3A3A]'
                     }`}>
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
-                          <h4 className="font-semibold text-slate-900">{item.name}</h4>
-                          <p className="text-sm text-slate-500">{item.barcode}</p>
+                          <h4 className="font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">{item.name}</h4>
+                          <p className="text-sm text-[#A5BF13]">{item.barcode}</p>
                           {item.expiry_date && new Date(item.expiry_date) < new Date() && (
-                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-red-100 text-red-800 rounded-full mt-1 animate-pulse">
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#B4182D] text-white rounded-full mt-1 animate-pulse">
                               <AlertTriangle className="h-3 w-3 mr-1" />
                               EXPIRED
                             </span>
                           )}
                           {item.expiry_date && new Date(item.expiry_date) >= new Date() && 
                            new Date(item.expiry_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && (
-                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-yellow-100 text-yellow-800 rounded-full mt-1">
+                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#F79824] text-black rounded-full mt-1">
                               <AlertTriangle className="h-3 w-3 mr-1" />
                               Near Expiry
                             </span>
                           )}
                         </div>
                         <div className="text-right ml-4">
-                          <p className="font-bold text-slate-900">Rs {item.price.toFixed(2)}</p>
-                          <p className="text-sm text-slate-500">each</p>
+                          <p className="font-bold text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">Rs {item.price.toFixed(2)}</p>
+                          <p className="text-sm text-[#F8F8F8]">each</p>
                         </div>
                       </div>
                       <div className="flex items-center justify-between mt-3">
                         <div className="flex items-center gap-2">
                           <button
                             onClick={() => updateQuantity(item.barcode, item.quantity - 1)}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all"
+                            className="w-8 h-8 rounded-lg bg-[#202020] border border-[#3A3A3A] flex items-center justify-center hover:bg-[#A5BF13] hover:text-black transition-all duration-300 btn-press hover:scale-110 group"
                           >
-                            <Minus className="h-4 w-4 text-slate-600" />
+                            <Minus className="h-4 w-4 text-[#F8F8F8] group-hover:animate-pulse" />
                           </button>
-                          <span className="text-sm font-semibold text-slate-900 w-8 text-center">{item.quantity}</span>
+                          <span className="text-sm font-semibold text-[#A5BF13] w-8 text-center group-hover:scale-110 transition-transform duration-200">{item.quantity}</span>
                           <button
                             onClick={() => updateQuantity(item.barcode, item.quantity + 1)}
-                            className="w-8 h-8 rounded-lg bg-white border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-all"
+                            className="w-8 h-8 rounded-lg bg-[#202020] border border-[#3A3A3A] flex items-center justify-center hover:bg-[#A5BF13] hover:text-black transition-all duration-300 btn-press hover:scale-110 group"
                           >
-                            <Plus className="h-4 w-4 text-slate-600" />
+                            <Plus className="h-4 w-4 text-[#F8F8F8] group-hover:animate-pulse" />
                           </button>
                         </div>
                         <div className="flex items-center gap-2">
-                          <p className="font-bold text-slate-900">
+                          <p className="font-bold text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">
                             Rs {(item.price * item.quantity).toLocaleString()}
                           </p>
                           <button
                             onClick={() => removeFromCart(item.barcode)}
-                            className="w-8 h-8 rounded-lg bg-red-100 text-red-600 hover:bg-red-200 transition-all flex items-center justify-center"
+                            className="w-8 h-8 rounded-lg bg-[#B4182D] text-white hover:bg-[#A5BF13] hover:text-black transition-all duration-300 flex items-center justify-center btn-press hover:scale-110 group"
                           >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-4 w-4 group-hover:animate-pulse" />
                           </button>
                         </div>
                       </div>
@@ -414,27 +420,27 @@ const BillingScreen = () => {
         </div>
 
         {/* Right Section: Payment */}
-        <div className="w-96 bg-white border-l border-slate-200 flex flex-col h-full">
+        <div className="w-96 bg-[#2A2A2A] border-l border-[#3A3A3A] flex flex-col h-full">
           
           {/* Payment Section */}
-          <div className="p-4 border-b border-slate-100">
+          <div className="p-4 border-b border-[#3A3A3A]">
             <div className="flex items-center gap-3 mb-4">
-              <div className="w-8 h-8 bg-gradient-to-r from-green-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <CreditCard className="h-4 w-4 text-white" />
+              <div className="w-8 h-8 bg-[#A5BF13] rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
+                <CreditCard className="h-4 w-4 text-black group-hover:animate-pulse" />
               </div>
-              <h3 className="text-lg font-semibold text-slate-900">Payment</h3>
+              <h3 className="text-lg font-semibold text-[#F8F8F8]">Payment</h3>
             </div>
             
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-slate-700 mb-2">Select Payment Method</label>
+                <label className="block text-sm font-medium text-[#F8F8F8] mb-2">Select Payment Method</label>
                 <div className="space-y-2">
                   {[
                     { value: 'cash', label: 'Cash Payment', icon: Banknote },
                     { value: 'card', label: 'Credit/Debit Card', icon: CreditCard },
                     { value: 'mobile', label: 'Mobile Payment', icon: Smartphone }
                   ].map((method) => (
-                    <label key={method.value} className="flex items-center p-3 border border-slate-200 rounded-lg hover:border-blue-300 cursor-pointer transition-all">
+                    <label key={method.value} className="flex items-center p-3 border border-[#3A3A3A] rounded-lg hover:border-[#A5BF13] cursor-pointer transition-all duration-300 hover:bg-[#202020] hover:shadow-lg hover:shadow-[#A5BF13]/10 hover:-translate-y-1 group">
                       <input
                         type="radio"
                         name="payment"
@@ -443,35 +449,27 @@ const BillingScreen = () => {
                         onChange={(e) => setPaymentType(e.target.value)}
                         className="sr-only"
                       />
-                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all ${
-                        paymentType === method.value ? 'bg-blue-500 text-white' : 'bg-slate-100 text-slate-600'
+                      <div className={`w-8 h-8 rounded-lg flex items-center justify-center mr-3 transition-all duration-300 group-hover:scale-110 ${
+                        paymentType === method.value ? 'bg-[#A5BF13] text-black' : 'bg-[#3A3A3A] text-[#F8F8F8]'
                       }`}>
-                        <method.icon className="h-4 w-4" />
+                        <method.icon className="h-4 w-4 group-hover:animate-pulse" />
                       </div>
-                      <span className={`font-medium ${
-                        paymentType === method.value ? 'text-blue-600' : 'text-slate-900'
+                      <span className={`font-medium transition-colors duration-200 ${
+                        paymentType === method.value ? 'text-[#A5BF13]' : 'text-[#F8F8F8]'
                       }`}>{method.label}</span>
                       {paymentType === method.value && (
-                        <Check className="h-4 w-4 text-blue-600 ml-auto" />
+                        <Check className="h-4 w-4 text-[#A5BF13] ml-auto group-hover:animate-pulse" />
                       )}
                     </label>
                   ))}
                 </div>
               </div>
               
-              <div className="bg-slate-50 rounded-lg p-4">
+              <div className="bg-[#202020] rounded-lg p-4 border border-[#3A3A3A] hover:shadow-xl hover:shadow-[#A5BF13]/10 transition-all duration-300">
                 <div className="space-y-2">
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Subtotal:</span>
-                    <span className="font-semibold">Rs {getTotal().toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center">
-                    <span className="text-slate-600">Tax (8%):</span>
-                    <span className="font-semibold">Rs {(getTotal() * 0.08).toFixed(2)}</span>
-                  </div>
-                  <div className="flex justify-between items-center text-lg font-bold text-slate-900 pt-2 border-t border-slate-200">
+                  <div className="flex justify-between items-center text-lg font-bold text-[#A5BF13]">
                     <span>Total Amount:</span>
-                    <span>Rs {(getTotal() * 1.08).toFixed(2)}</span>
+                    <span className="group-hover:scale-110 transition-transform duration-200">Rs {getTotal().toFixed(2)}</span>
                   </div>
                 </div>
               </div>
@@ -479,22 +477,25 @@ const BillingScreen = () => {
               <div className="flex gap-3">
                 <button
                   onClick={clearCart}
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-all"
+                  className="flex-1 px-4 py-2 border border-[#3A3A3A] rounded-lg text-[#F8F8F8] font-medium hover:bg-[#202020] transition-all duration-300 btn-press hover:shadow-lg hover:shadow-[#A5BF13]/10 hover:-translate-y-1 group ripple"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={processPayment}
                   disabled={loading || cart.length === 0}
-                  className="flex-1 px-4 py-2 bg-gradient-to-r from-green-500 to-blue-600 text-white rounded-lg font-semibold hover:from-green-600 hover:to-blue-700 disabled:opacity-50 transition-all"
+                  className="flex-1 px-4 py-2 bg-[#A5BF13] text-black rounded-lg font-semibold hover:bg-[#94A90F] disabled:opacity-50 transition-all duration-300 btn-press hover:shadow-xl hover:shadow-[#A5BF13]/30 hover:-translate-y-1 group ripple relative overflow-hidden"
                 >
+                  {/* Ripple effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  
                   {loading ? (
-                    <div className="flex items-center justify-center">
-                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent mr-2"></div>
+                    <div className="flex items-center justify-center relative z-10">
+                      <div className="animate-spin rounded-full h-4 w-4 border-2 border-black border-t-transparent mr-2"></div>
                       Processing...
                     </div>
                   ) : (
-                    'Complete Sale'
+                    <span className="relative z-10 group-hover:animate-pulse">Complete Sale</span>
                   )}
                 </button>
               </div>
@@ -506,33 +507,36 @@ const BillingScreen = () => {
       {/* Receipt Modal Popup */}
       {showReceiptModal && printData && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-white rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden">
-            <div className="flex items-center justify-between p-4 border-b border-slate-200">
-              <h3 className="text-lg font-semibold text-slate-900">Receipt</h3>
+          <div className="bg-[#2A2A2A] rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden border border-[#3A3A3A]">
+            <div className="flex items-center justify-between p-4 border-b border-[#3A3A3A]">
+              <h3 className="text-lg font-semibold text-[#F8F8F8]">Receipt</h3>
               <button
                 onClick={closeReceiptModal}
-                className="w-8 h-8 rounded-lg bg-slate-100 hover:bg-slate-200 flex items-center justify-center transition-all"
+                className="w-8 h-8 rounded-lg bg-[#202020] hover:bg-[#A5BF13] hover:text-black flex items-center justify-center transition-all duration-300 group ripple"
               >
-                <X className="h-4 w-4 text-slate-600" />
+                <X className="h-4 w-4 text-[#F8F8F8] group-hover:animate-pulse" />
               </button>
             </div>
-            <div className="p-4 overflow-y-auto max-h-[60vh]">
+            <div className="p-4 overflow-y-auto max-h-[60vh] bg-[#202020]">
               <Receipt sale={printData.sale} items={printData.items} />
             </div>
-            <div className="p-4 border-t border-slate-200 bg-slate-50">
+            <div className="p-4 border-t border-[#3A3A3A] bg-[#2A2A2A]">
               <div className="flex gap-3">
                 <button
                   onClick={closeReceiptModal}
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg text-slate-700 font-medium hover:bg-slate-50 transition-all"
+                  className="flex-1 px-4 py-2 border border-[#3A3A3A] rounded-lg text-[#F8F8F8] font-medium hover:bg-[#202020] transition-all duration-300 btn-press hover:shadow-lg hover:shadow-[#A5BF13]/10 hover:-translate-y-1 group ripple"
                 >
                   Close
                 </button>
                 <button
                   onClick={handlePrintReceipt}
-                  className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                  className="flex-1 px-4 py-2 bg-[#A5BF13] text-black rounded-lg font-semibold hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] transition-all duration-300 btn-press hover:shadow-xl hover:shadow-[#A5BF13]/30 hover:-translate-y-1 group ripple relative overflow-hidden"
                 >
-                  <div className="flex items-center justify-center">
-                    <Printer className="h-4 w-4 mr-2" />
+                  {/* Ripple effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  
+                  <div className="flex items-center justify-center relative z-10">
+                    <Printer className="h-4 w-4 mr-2 group-hover:animate-pulse" />
                     Print Receipt
                   </div>
                 </button>

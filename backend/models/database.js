@@ -40,6 +40,7 @@ function initializeDatabase() {
       total_amount REAL NOT NULL DEFAULT 0,
       payment_type TEXT NOT NULL DEFAULT 'cash',
       cashier_id INTEGER,
+      total_profit REAL DEFAULT 0,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (cashier_id) REFERENCES users (id)
     )`);
@@ -51,6 +52,7 @@ function initializeDatabase() {
       name TEXT NOT NULL,
       quantity INTEGER NOT NULL,
       price REAL NOT NULL,
+      buying_price REAL DEFAULT 0,
       expiry_date DATE,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (sale_id) REFERENCES sales (id) ON DELETE CASCADE
