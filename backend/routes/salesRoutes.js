@@ -42,6 +42,7 @@ router.post('/', authenticateToken, requireAuth, async (req, res) => {
   const db = getDb();
   const { items, paymentType, total } = req.body;
   console.log('Checkout request:', req.body);
+  console.log('User:', req.user);
   
   if (!items || !Array.isArray(items) || items.length === 0) {
     console.log('Checkout error: No items in sale');
@@ -192,7 +193,8 @@ router.post('/', authenticateToken, requireAuth, async (req, res) => {
     });
   } catch (error) {
     console.log('Checkout error:', error);
-    res.status(500).json({ error: 'Internal server error during checkout' });
+    console.log('Error stack:', error.stack);
+    res.status(500).json({ error: 'Internal server error during checkout: ' + error.message });
   }
 });
 

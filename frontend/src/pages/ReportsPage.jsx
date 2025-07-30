@@ -80,55 +80,55 @@ const ReportsPage = () => {
       name: 'Sales Report',
       description: 'Generate detailed sales reports with invoice data',
       icon: DollarSign,
-      color: 'blue',
-      gradient: 'from-blue-500 to-blue-600',
-      bgColor: 'bg-blue-50',
-      textColor: 'text-blue-600'
+      color: '#A5BF13',
+      gradient: 'from-[#A5BF13] to-[#94A90F]',
+      bgColor: 'bg-[#2A2A2A]',
+      textColor: 'text-[#A5BF13]'
     },
     {
       id: 'inventory',
       name: 'Inventory Report',
       description: 'Export current inventory status and stock levels',
       icon: Package,
-      color: 'green',
-      gradient: 'from-green-500 to-green-600',
-      bgColor: 'bg-green-50',
-      textColor: 'text-green-600'
+      color: '#F79824',
+      gradient: 'from-[#F79824] to-[#E88A1A]',
+      bgColor: 'bg-[#2A2A2A]',
+      textColor: 'text-[#F79824]'
     },
     {
       id: 'expenses',
       name: 'Expenses Report',
-      description: 'Generate expense reports by category and date range',
-      icon: FileText,
-      color: 'red',
-      gradient: 'from-red-500 to-red-600',
-      bgColor: 'bg-red-50',
-      textColor: 'text-red-600'
+      description: 'Track and analyze business expenses',
+      icon: TrendingDown,
+      color: '#B4182D',
+      gradient: 'from-[#B4182D] to-[#A31526]',
+      bgColor: 'bg-[#2A2A2A]',
+      textColor: 'text-[#B4182D]'
     },
     {
       id: 'business',
-      name: 'Business Summary',
-      description: 'Comprehensive business overview with all data',
+      name: 'Business Report',
+      description: 'Comprehensive business overview and analytics',
       icon: BarChart3,
-      color: 'purple',
-      gradient: 'from-purple-500 to-purple-600',
-      bgColor: 'bg-purple-50',
-      textColor: 'text-purple-600'
+      color: '#C1E8FF',
+      gradient: 'from-[#C1E8FF] to-[#A8D4E6]',
+      bgColor: 'bg-[#2A2A2A]',
+      textColor: 'text-[#C1E8FF]'
     }
   ];
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 overflow-hidden">
+    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-slate-900">Reports</h1>
-              <p className="text-sm text-slate-600">Generate and export business reports</p>
+              <h1 className="text-2xl font-bold text-[#F8F8F8]">Reports</h1>
+              <p className="text-sm text-[#A5BF13]">Generate and download business reports</p>
             </div>
             <div className="flex items-center gap-2">
-              <div className="text-xs text-slate-500 bg-white px-3 py-1 rounded-lg border border-slate-200">
+              <div className="text-xs text-[#A5BF13] bg-[#2A2A2A] px-3 py-1 rounded-lg border border-[#3A3A3A] hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
                 <Clock className="inline h-3 w-3 mr-1" />
                 Auto-save to POSBackups
               </div>
@@ -136,45 +136,50 @@ const ReportsPage = () => {
           </div>
         </div>
 
-        {/* Report Parameters */}
-        <div className="bg-white rounded-xl shadow-lg p-4 mb-6">
-          <div className="flex items-center gap-3 mb-4">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Calendar className="h-4 w-4 text-white" />
+        {/* Report Parameters - Compact Design */}
+        <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-3 mb-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-6 h-6 bg-[#A5BF13] rounded-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
+                <Calendar className="h-3 w-3 text-black" />
+              </div>
+              <h3 className="text-sm font-semibold text-[#F8F8F8]">Report Parameters</h3>
             </div>
-            <h3 className="text-lg font-semibold text-slate-900">Report Parameters</h3>
+            <div className="text-xs text-[#A5BF13]">
+              Quick filters for report generation
+            </div>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+          <div className="flex items-center gap-3">
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-[#A5BF13] mb-1">
                 Start Date
               </label>
               <input
                 type="date"
                 value={reportParams.start_date}
                 onChange={(e) => setReportParams({...reportParams, start_date: e.target.value})}
-                className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="block w-full px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-[#A5BF13] mb-1">
                 End Date
               </label>
               <input
                 type="date"
                 value={reportParams.end_date}
                 onChange={(e) => setReportParams({...reportParams, end_date: e.target.value})}
-                className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="block w-full px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300"
               />
             </div>
-            <div>
-              <label className="block text-sm font-medium text-slate-700 mb-2">
+            <div className="flex-1">
+              <label className="block text-xs font-medium text-[#A5BF13] mb-1">
                 Period
               </label>
               <select
                 value={reportParams.period}
                 onChange={(e) => setReportParams({...reportParams, period: e.target.value})}
-                className="block w-full px-3 py-2 border border-slate-200 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm"
+                className="block w-full px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300"
               >
                 <option value="today">Today</option>
                 <option value="week">This Week</option>
@@ -187,19 +192,19 @@ const ReportsPage = () => {
 
         {/* Error/Success messages */}
         {error && (
-          <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3">
+          <div className="mb-4 bg-[#2A2A2A] border border-[#B4182D] rounded-lg p-3 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300">
             <div className="flex items-center">
-              <AlertTriangle className="h-4 w-4 text-red-600 mr-2" />
-              <p className="text-red-700 text-sm">{error}</p>
+              <AlertTriangle className="h-4 w-4 text-[#B4182D] mr-2 animate-pulse" />
+              <p className="text-[#F8F8F8] text-sm">{error}</p>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 bg-green-50 border border-green-200 rounded-lg p-3">
+          <div className="mb-4 bg-[#2A2A2A] border border-[#A5BF13] rounded-lg p-3 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
             <div className="flex items-center">
-              <CheckCircle className="h-4 w-4 text-green-600 mr-2" />
-              <p className="text-green-700 text-sm">{success}</p>
+              <CheckCircle className="h-4 w-4 text-[#A5BF13] mr-2 animate-pulse" />
+              <p className="text-[#F8F8F8] text-sm">{success}</p>
             </div>
           </div>
         )}
@@ -210,44 +215,47 @@ const ReportsPage = () => {
             {reportTypes.map((report) => {
               const Icon = report.icon;
               return (
-                <div key={report.id} className="bg-white rounded-xl shadow-lg p-4 hover:shadow-xl transition-all">
+                <div key={report.id} className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-lg bg-gradient-to-r ${report.gradient} flex items-center justify-center`}>
-                        <Icon className="h-5 w-5 text-white" />
+                      <div className={`w-10 h-10 rounded-lg bg-[${report.color}] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300`}>
+                        <Icon className="h-5 w-5 text-black" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-slate-900">{report.name}</h3>
-                        <p className="text-sm text-slate-600">{report.description}</p>
+                        <h3 className="text-lg font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-300">{report.name}</h3>
+                        <p className="text-sm text-[#A5BF13]">{report.description}</p>
                       </div>
                     </div>
                   </div>
                   
                   <div className="space-y-3">
-                    <div className="flex items-center justify-between text-xs text-slate-500">
+                    <div className="flex items-center justify-between text-xs text-[#A5BF13]">
                       <span>Format:</span>
-                      <span className="font-medium">Excel (.xlsx)</span>
+                      <span className="font-medium text-[#F8F8F8]">Excel (.xlsx)</span>
                     </div>
-                    <div className="flex items-center justify-between text-xs text-slate-500">
+                    <div className="flex items-center justify-between text-xs text-[#A5BF13]">
                       <span>Auto-save:</span>
-                      <span className="font-medium text-green-600">Enabled</span>
+                      <span className="font-medium text-[#A5BF13]">Enabled</span>
                     </div>
                   </div>
                   
                   <button
                     onClick={() => handleGenerateReport(report.id)}
                     disabled={loading}
-                    className={`w-full mt-4 bg-gradient-to-r ${report.gradient} text-white px-4 py-2 rounded-lg font-semibold text-sm hover:from-${report.color}-600 hover:to-${report.color}-700 focus:outline-none focus:ring-2 focus:ring-${report.color}-300 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all`}
+                    className={`w-full mt-4 bg-[${report.color}] text-black px-4 py-2 rounded-lg font-semibold text-sm hover:scale-105 focus:outline-none focus:ring-2 focus:ring-[${report.color}] disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 transition-all ripple relative overflow-hidden group`}
                   >
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
                     {loading ? (
                       <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-white border-t-transparent"></div>
-                        Generating...
+                        <div className="animate-spin rounded-full h-4 w-4 border-2 border-black border-t-transparent relative z-10"></div>
+                        <span className="relative z-10">Generating...</span>
                       </>
                     ) : (
                       <>
-                        <Download className="h-4 w-4" />
-                        Generate Report
+                        <Download className="h-4 w-4 relative z-10 group-hover:animate-pulse" />
+                        <span className="relative z-10">Generate Report</span>
                       </>
                     )}
                   </button>
@@ -258,31 +266,31 @@ const ReportsPage = () => {
         </div>
 
         {/* Report Info Card */}
-        <div className="mt-6 bg-white rounded-xl shadow-lg p-4">
+        <div className="mt-6 bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
           <div className="flex items-start gap-3">
-            <div className="w-8 h-8 bg-gradient-to-r from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <Info className="h-4 w-4 text-white" />
+            <div className="w-8 h-8 bg-[#A5BF13] rounded-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
+              <Info className="h-4 w-4 text-black" />
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-slate-900 mb-2">Report Information</h3>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-slate-600">
+              <h3 className="text-sm font-semibold text-[#F8F8F8] mb-2">Report Information</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-[#A5BF13]">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <CheckCircle className="h-3 w-3 text-[#A5BF13]" />
                     <span>Excel (.xlsx) format</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <CheckCircle className="h-3 w-3 text-[#A5BF13]" />
                     <span>Auto-saved to POSBackups</span>
                   </div>
                 </div>
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <CheckCircle className="h-3 w-3 text-[#A5BF13]" />
                     <span>Comprehensive data included</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <CheckCircle className="h-3 w-3 text-green-600" />
+                    <CheckCircle className="h-3 w-3 text-[#A5BF13]" />
                     <span>Business summary available</span>
                   </div>
                 </div>

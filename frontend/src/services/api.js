@@ -56,6 +56,7 @@ export const inventoryAPI = {
   getByBarcode: (barcode) => api.get(`/inventory/barcode/${barcode}`),
   create: (item) => api.post('/inventory', item),
   update: (id, item) => api.put(`/inventory/${id}`, item),
+  updateStock: (id, data) => api.put(`/inventory/${id}/update-stock`, data),
   delete: (id) => api.delete(`/inventory/${id}`),
   getPending: () => api.get('/inventory/pending'),
   approve: (id, data) => api.put(`/inventory/${id}/approve`, data),

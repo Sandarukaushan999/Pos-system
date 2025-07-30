@@ -20,15 +20,28 @@ router.get('/', authenticateToken, requireAuth, (req, res) => {
   });
 });
 
-// Get stock item by barcode
+// Get stock items by barcode (returns all items with same barcode)
 router.get('/barcode/:barcode', authenticateToken, requireAuth, (req, res) => {
   const db = getDb();
   const { barcode } = req.params;
-  db.get('SELECT * FROM stock_items WHERE barcode = ?', [barcode], (err, item) => {
-    if (err || !item) return res.status(404).json({ success: false, error: 'Item not found' });
-    const isExpired = item.expiry_date && moment(item.expiry_date).isBefore(moment(), 'day');
-    const isNearExpiry = item.expiry_date && moment(item.expiry_date).diff(moment(), 'days') <= 30;
-    res.json({ success: true, item: { ...item, isExpired, isNearExpiry } });
+  db.all('SELECT * FROM stock_items WHERE barcode = ? ORDER BY expiry_date ASC, created_at DESC', [barcode], (err, items) => {
+    if (err) return res.status(500).json({ success: false, error: 'Failed to fetch items' });
+    if (!items || items.length === 0) return res.status(404).json({ success: false, error: 'No items found with this barcode' });
+    
+    // Add expiry status to each item
+    const itemsWithStatus = items.map(item => {
+      const isExpired = item.expiry_date && moment(item.expiry_date).isBefore(moment(), 'day');
+      const isNearExpiry = item.expiry_date && moment(item.expiry_date).diff(moment(), 'days') <= 30;
+      return { ...item, isExpired, isNearExpiry };
+    });
+    
+    res.json({ 
+      success: true, 
+      items: itemsWithStatus,
+      count: itemsWithStatus.length,
+      // Return the first active item as the primary item for backward compatibility
+      item: itemsWithStatus.find(item => item.status === 'active') || itemsWithStatus[0]
+    });
   });
 });
 
@@ -37,8 +50,15 @@ router.post('/', authenticateToken, requireAuth, (req, res) => {
   const db = getDb();
   const { barcode, name, quantity, price, buying_price, expiry_date, reorder_level } = req.body;
   if (!barcode || !name || !quantity || !price) return res.status(400).json({ error: 'Barcode, name, quantity, and price are required' });
-  db.get('SELECT id FROM stock_items WHERE barcode = ?', [barcode], (err, existing) => {
-    if (existing) return res.status(400).json({ error: 'Item with this barcode already exists' });
+  
+  // Check if item with same barcode and expiry date exists
+  db.get('SELECT id FROM stock_items WHERE barcode = ? AND expiry_date = ?', [barcode, expiry_date || null], (err, existing) => {
+    if (existing) {
+      return res.status(400).json({ 
+        error: 'Item with this barcode and expiry date already exists. Please update the existing item instead.' 
+      });
+    }
+    
     db.run('INSERT INTO stock_items (barcode, name, quantity, price, buying_price, expiry_date, status, reorder_level) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [barcode, name, quantity, price, buying_price || price, expiry_date || null, 'pending', reorder_level || 10],
       function(err2) {
@@ -129,6 +149,39 @@ router.get('/expiry-alerts', authenticateToken, requireAuth, (req, res) => {
     db.all('SELECT * FROM stock_items WHERE status = "active" AND expiry_date >= ? AND expiry_date <= ? ORDER BY expiry_date ASC', [today, thirtyDaysFromNow], (err2, nearExpiry) => {
       res.json({ success: true, expired: expired || [], nearExpiry: nearExpiry || [] });
     });
+  });
+});
+
+// Update stock quantity for existing item
+router.put('/:id/update-stock', authenticateToken, requireAuth, (req, res) => {
+  const db = getDb();
+  const { id } = req.params;
+  const { quantity, expiry_date } = req.body;
+  
+  if (quantity === undefined) {
+    return res.status(400).json({ error: 'Quantity is required' });
+  }
+  
+  db.get('SELECT * FROM stock_items WHERE id = ?', [id], (err, item) => {
+    if (!item) return res.status(404).json({ error: 'Item not found' });
+    
+    const newQuantity = parseInt(item.quantity) + parseInt(quantity);
+    if (newQuantity < 0) {
+      return res.status(400).json({ error: 'Quantity cannot be negative' });
+    }
+    
+    db.run('UPDATE stock_items SET quantity = ?, expiry_date = ?, updated_at = CURRENT_TIMESTAMP WHERE id = ?',
+      [newQuantity, expiry_date || item.expiry_date, id],
+      function(err2) {
+        if (err2) return res.status(500).json({ error: 'Failed to update stock quantity' });
+        db.get('SELECT * FROM stock_items WHERE id = ?', [id], (err3, updated) => {
+          res.json({ 
+            success: true, 
+            message: `Stock quantity updated successfully. New quantity: ${newQuantity}`,
+            item: updated 
+          });
+        });
+      });
   });
 });
 

@@ -355,44 +355,46 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 overflow-hidden">
+    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
       <div className="h-full flex flex-col">
         {/* Header */}
-        <div className="flex items-center justify-between mb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
-            <p className="text-slate-600 text-sm">Manage your account and system preferences</p>
+        <div className="mb-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold text-[#F8F8F8]">Settings</h1>
+              <p className="text-sm text-[#A5BF13]">Manage system settings and user preferences</p>
+            </div>
           </div>
         </div>
 
         {/* Error/Success messages */}
         {error && (
-          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+          <div className="bg-[#2A2A2A] border border-[#B4182D] rounded-xl p-4 mb-6 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300">
             <div className="flex">
-              <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5" />
+              <AlertTriangle className="h-5 w-5 text-[#B4182D] mt-0.5 animate-pulse" />
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-red-800">Error</h3>
-                <div className="mt-1 text-sm text-red-700">{error}</div>
+                <h3 className="text-sm font-medium text-[#F8F8F8]">Error</h3>
+                <div className="mt-1 text-sm text-[#F8F8F8]">{error}</div>
               </div>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+          <div className="bg-[#2A2A2A] border border-[#A5BF13] rounded-xl p-4 mb-6 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
             <div className="flex">
-              <CheckCircle className="h-5 w-5 text-green-400 mt-0.5" />
+              <CheckCircle className="h-5 w-5 text-[#A5BF13] mt-0.5 animate-pulse" />
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-green-800">Success</h3>
-                <div className="mt-1 text-sm text-green-700">{success}</div>
+                <h3 className="text-sm font-medium text-[#F8F8F8]">Success</h3>
+                <div className="mt-1 text-sm text-[#F8F8F8]">{success}</div>
               </div>
             </div>
           </div>
         )}
 
         {/* Tabs */}
-        <div className="bg-white rounded-xl shadow-lg mb-6">
-          <div className="border-b border-slate-200">
+        <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg mb-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+          <div className="border-b border-[#3A3A3A]">
             <nav className="flex space-x-8 px-6">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -402,8 +404,8 @@ const SettingsPage = () => {
                     onClick={() => setActiveTab(tab.id)}
                     className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-all duration-200 ${
                       activeTab === tab.id
-                        ? `border-${tab.color}-500 text-${tab.color}-600`
-                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                        ? `border-[#A5BF13] text-[#A5BF13]`
+                        : 'border-transparent text-[#A5BF13] hover:text-[#F8F8F8] hover:border-[#3A3A3A]'
                     }`}
                   >
                     <Icon size={16} />
@@ -419,24 +421,39 @@ const SettingsPage = () => {
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <StatCard
-                    title="Username"
-                    value={user?.username}
-                    icon={User}
-                    color="blue"
-                  />
-                  <StatCard
-                    title="Role"
-                    value={user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
-                    icon={Shield}
-                    color="purple"
-                  />
-                  <StatCard
-                    title="Account Created"
-                    value={user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
-                    icon={Key}
-                    color="green"
-                  />
+                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-6 group">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-[#A5BF13] mb-1">Username</p>
+                        <p className="text-2xl font-bold text-[#F8F8F8]">{user?.username}</p>
+                      </div>
+                      <div className="w-12 h-12 rounded-xl bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                        <User className="h-6 w-6 text-black" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-6 group">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-[#A5BF13] mb-1">Role</p>
+                        <p className="text-2xl font-bold text-[#F8F8F8]">{user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}</p>
+                      </div>
+                      <div className="w-12 h-12 rounded-xl bg-[#F79824] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                        <Shield className="h-6 w-6 text-black" />
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 p-6 group">
+                    <div className="flex items-center justify-between">
+                      <div className="flex-1">
+                        <p className="text-sm font-medium text-[#A5BF13] mb-1">Account Created</p>
+                        <p className="text-2xl font-bold text-[#F8F8F8]">{user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>
+                      </div>
+                      <div className="w-12 h-12 rounded-xl bg-[#C1E8FF] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
+                        <Key className="h-6 w-6 text-black" />
+                      </div>
+                    </div>
+                  </div>
                 </div>
               </div>
             )}
@@ -444,10 +461,10 @@ const SettingsPage = () => {
             {/* Password Tab */}
             {activeTab === 'password' && (
               <div className="max-w-md">
-                <h3 className="text-lg font-semibold text-slate-900 mb-4">Change Password</h3>
+                <h3 className="text-lg font-semibold text-[#F8F8F8] mb-4">Change Password</h3>
                 <form onSubmit={handlePasswordChange} className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       Current Password
                     </label>
                     <input
@@ -455,12 +472,12 @@ const SettingsPage = () => {
                       required
                       value={passwordForm.currentPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                       placeholder="Enter current password"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       New Password
                     </label>
                     <div className="relative">
@@ -469,7 +486,7 @@ const SettingsPage = () => {
                         required
                         value={passwordForm.newPassword}
                         onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                        className="block w-full px-4 py-3 pr-12 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        className="block w-full px-4 py-3 pr-12 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                         placeholder="Enter new password"
                       />
                       <button
@@ -478,15 +495,15 @@ const SettingsPage = () => {
                         className="absolute inset-y-0 right-0 pr-3 flex items-center"
                       >
                         {showPassword ? (
-                          <EyeOff className="h-5 w-5 text-slate-400" />
+                          <EyeOff className="h-5 w-5 text-[#A5BF13]" />
                         ) : (
-                          <Eye className="h-5 w-5 text-slate-400" />
+                          <Eye className="h-5 w-5 text-[#A5BF13]" />
                         )}
                       </button>
                     </div>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       Confirm New Password
                     </label>
                     <input
@@ -494,16 +511,19 @@ const SettingsPage = () => {
                       required
                       value={passwordForm.confirmPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                       placeholder="Confirm new password"
                     />
                   </div>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 transition-all duration-200"
+                    className="w-full bg-[#A5BF13] text-black px-4 py-3 rounded-lg font-medium hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:ring-offset-2 disabled:opacity-50 transition-all duration-200 ripple relative overflow-hidden group"
                   >
-                    {loading ? 'Changing Password...' : 'Change Password'}
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
+                    <span className="relative z-10">{loading ? 'Changing Password...' : 'Change Password'}</span>
                   </button>
                 </form>
               </div>
@@ -513,58 +533,61 @@ const SettingsPage = () => {
             {activeTab === 'users' && user?.role === 'admin' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold text-slate-900">User Management</h3>
+                  <h3 className="text-lg font-semibold text-[#F8F8F8]">User Management</h3>
                   <button
                     onClick={() => setShowAddUserModal(true)}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 flex items-center gap-2"
+                    className="bg-[#A5BF13] text-black px-4 py-2 rounded-lg hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:ring-offset-2 transition-all duration-200 flex items-center gap-2 ripple relative overflow-hidden group"
                   >
-                    <Plus size={16} />
-                    Add User
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
+                    <Plus size={16} className="relative z-10" />
+                    <span className="relative z-10">Add User</span>
                   </button>
                 </div>
                 
-                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl overflow-hidden hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
                   <div className="overflow-x-auto">
-                    <table className="min-w-full divide-y divide-slate-200">
-                      <thead className="bg-slate-50">
+                    <table className="min-w-full divide-y divide-[#3A3A3A]">
+                      <thead className="bg-[#202020]">
                         <tr>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#A5BF13] uppercase tracking-wider">
                             Username
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#A5BF13] uppercase tracking-wider">
                             Role
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#A5BF13] uppercase tracking-wider">
                             Created
                           </th>
-                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                          <th className="px-6 py-3 text-left text-xs font-medium text-[#A5BF13] uppercase tracking-wider">
                             Actions
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-white divide-y divide-slate-200">
+                      <tbody className="bg-[#2A2A2A] divide-y divide-[#3A3A3A]">
                         {users.map((userItem) => (
-                          <tr key={userItem.id} className="hover:bg-slate-50 transition-colors">
+                          <tr key={userItem.id} className="hover:bg-[#3A3A3A] transition-colors">
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
-                                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3">
-                                  <User className="h-4 w-4 text-white" />
+                                <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center mr-3">
+                                  <User className="h-4 w-4 text-black" />
                                 </div>
-                                <span className="text-sm font-medium text-slate-900">{userItem.username}</span>
+                                <span className="text-sm font-medium text-[#F8F8F8]">{userItem.username}</span>
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
                                 userItem.role === 'admin' 
-                                  ? 'bg-purple-100 text-purple-800' 
+                                  ? 'bg-[#F79824] text-black' 
                                   : userItem.role === 'salesman'
-                                  ? 'bg-blue-100 text-blue-800'
-                                  : 'bg-green-100 text-green-800'
+                                  ? 'bg-[#A5BF13] text-black'
+                                  : 'bg-[#C1E8FF] text-black'
                               }`}>
                                 {userItem.role}
                               </span>
                             </td>
-                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-[#A5BF13]">
                               {new Date(userItem.created_at).toLocaleDateString()}
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
@@ -572,14 +595,14 @@ const SettingsPage = () => {
                                 <div className="flex items-center gap-2">
                                   <button
                                     onClick={() => handleEditUser(userItem)}
-                                    className="text-blue-600 hover:text-blue-900 p-1 rounded transition-colors"
+                                    className="text-[#A5BF13] hover:text-[#94A90F] p-1 rounded transition-colors hover:scale-110"
                                     title="Edit user"
                                   >
                                     <Edit size={16} />
                                   </button>
                                   <button
                                     onClick={() => handleDeleteUser(userItem.id)}
-                                    className="text-red-600 hover:text-red-900 p-1 rounded transition-colors"
+                                    className="text-[#B4182D] hover:text-[#A31528] p-1 rounded transition-colors hover:scale-110"
                                     title="Delete user"
                                   >
                                     <Trash2 size={16} />
@@ -600,27 +623,27 @@ const SettingsPage = () => {
             {activeTab === 'system' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6">
+                  <div className="bg-[#2A2A2A] border border-[#A5BF13] rounded-xl p-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
                     <div className="flex items-center mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center mr-3">
-                        <Database className="h-5 w-5 text-white" />
+                      <div className="w-10 h-10 rounded-xl bg-[#A5BF13] flex items-center justify-center mr-3">
+                        <Database className="h-5 w-5 text-black" />
                       </div>
-                      <h4 className="text-lg font-semibold text-blue-900">Backup Information</h4>
+                      <h4 className="text-lg font-semibold text-[#F8F8F8]">Backup Information</h4>
                     </div>
-                    <p className="text-sm text-blue-800">
+                    <p className="text-sm text-[#A5BF13]">
                       Reports are automatically saved to the POSBackups folder. 
                       Configure Google Drive sync to enable cloud backup.
                     </p>
                   </div>
                   
-                  <div className="bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-6">
+                  <div className="bg-[#2A2A2A] border border-[#F79824] rounded-xl p-6 hover:shadow-xl hover:shadow-[#F79824]/20 transition-all duration-300">
                     <div className="flex items-center mb-4">
-                      <div className="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center mr-3">
-                        <SettingsIcon className="h-5 w-5 text-white" />
+                      <div className="w-10 h-10 rounded-xl bg-[#F79824] flex items-center justify-center mr-3">
+                        <SettingsIcon className="h-5 w-5 text-black" />
                       </div>
-                      <h4 className="text-lg font-semibold text-amber-900">System Requirements</h4>
+                      <h4 className="text-lg font-semibold text-[#F8F8F8]">System Requirements</h4>
                     </div>
-                    <ul className="text-sm text-amber-800 space-y-1">
+                    <ul className="text-sm text-[#A5BF13] space-y-1">
                       <li>• Windows 10 or later</li>
                       <li>• USB Barcode Scanner (optional)</li>
                       <li>• ESC/POS Compatible Printer (optional)</li>
@@ -635,43 +658,85 @@ const SettingsPage = () => {
             {activeTab === 'data' && user?.role === 'admin' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 gap-6">
-                  <ActionCard
-                    title="Export Data"
-                    description="Export all system data including inventory, sales, expenses, and user data to a JSON file."
-                    icon={Download}
-                    color="blue"
-                    onClick={handleExportData}
-                    buttonText="Export Data"
-                    loading={loading}
-                  />
+                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl p-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-xl bg-[#A5BF13] flex items-center justify-center mr-4">
+                          <Download className="h-5 w-5 text-black" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-[#F8F8F8]">Export Data</h3>
+                          <p className="text-sm text-[#A5BF13] mt-1">Export all system data including inventory, sales, expenses, and user data to a JSON file.</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleExportData}
+                        disabled={loading}
+                        className="px-4 py-2 bg-[#A5BF13] text-black rounded-lg font-medium hover:bg-[#94A90F] transition-all duration-200 disabled:opacity-50 ripple relative overflow-hidden group"
+                      >
+                        {/* Ripple effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                        
+                        <span className="relative z-10">{loading ? 'Processing...' : 'Export Data'}</span>
+                      </button>
+                    </div>
+                  </div>
 
-                  <ActionCard
-                    title="Import Data"
-                    description="Import previously exported data. This will replace all existing data."
-                    icon={Upload}
-                    color="green"
-                    onClick={() => setShowImportModal(true)}
-                    buttonText="Import Data"
-                    loading={false}
-                  />
+                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl p-6 hover:shadow-xl hover:shadow-[#F79824]/20 transition-all duration-300">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-xl bg-[#F79824] flex items-center justify-center mr-4">
+                          <Upload className="h-5 w-5 text-black" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-[#F8F8F8]">Import Data</h3>
+                          <p className="text-sm text-[#A5BF13] mt-1">Import previously exported data. This will replace all existing data.</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={() => setShowImportModal(true)}
+                        disabled={false}
+                        className="px-4 py-2 bg-[#F79824] text-black rounded-lg font-medium hover:bg-[#E88A1A] transition-all duration-200 disabled:opacity-50 ripple relative overflow-hidden group"
+                      >
+                        {/* Ripple effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                        
+                        <span className="relative z-10">Import Data</span>
+                      </button>
+                    </div>
+                  </div>
 
-                  <ActionCard
-                    title="Reset System"
-                    description="Clear all data and reset the system to factory settings. This action cannot be undone."
-                    icon={RotateCcw}
-                    color="red"
-                    onClick={handleResetSystem}
-                    buttonText="Reset System"
-                    loading={loading}
-                  />
+                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl p-6 hover:shadow-xl hover:shadow-[#B4182D]/20 transition-all duration-300">
+                    <div className="flex items-start justify-between">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 rounded-xl bg-[#B4182D] flex items-center justify-center mr-4">
+                          <RotateCcw className="h-5 w-5 text-white" />
+                        </div>
+                        <div>
+                          <h3 className="text-lg font-semibold text-[#F8F8F8]">Reset System</h3>
+                          <p className="text-sm text-[#A5BF13] mt-1">Clear all data and reset the system to factory settings. This action cannot be undone.</p>
+                        </div>
+                      </div>
+                      <button
+                        onClick={handleResetSystem}
+                        disabled={loading}
+                        className="px-4 py-2 bg-[#B4182D] text-white rounded-lg font-medium hover:bg-[#A31528] transition-all duration-200 disabled:opacity-50 ripple relative overflow-hidden group"
+                      >
+                        {/* Ripple effect */}
+                        <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                        
+                        <span className="relative z-10">{loading ? 'Processing...' : 'Reset System'}</span>
+                      </button>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+                <div className="bg-[#2A2A2A] border border-[#B4182D] rounded-xl p-6 hover:shadow-xl hover:shadow-[#B4182D]/20 transition-all duration-300">
                   <div className="flex items-start">
-                    <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 mr-3" />
+                    <AlertTriangle className="h-5 w-5 text-[#B4182D] mt-0.5 mr-3 animate-pulse" />
                     <div>
-                      <h4 className="text-sm font-medium text-red-800 mb-2">⚠️ Important Notes</h4>
-                      <ul className="text-sm text-red-700 space-y-1">
+                      <h4 className="text-sm font-medium text-[#F8F8F8] mb-2">⚠️ Important Notes</h4>
+                      <ul className="text-sm text-[#A5BF13] space-y-1">
                         <li>• Always export your data before making any changes</li>
                         <li>• Import will replace all existing data</li>
                         <li>• System reset will permanently delete all data</li>
@@ -688,14 +753,14 @@ const SettingsPage = () => {
 
       {/* Add User Modal */}
       {showAddUserModal && (
-        <div className="fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-white">
+        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-[#2A2A2A] border-[#3A3A3A]">
             <div className="mt-3">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Add New User</h3>
+              <h3 className="text-lg font-semibold text-[#F8F8F8] mb-4">Add New User</h3>
               <form onSubmit={handleAddUser}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       Username *
                     </label>
                     <input
@@ -703,12 +768,12 @@ const SettingsPage = () => {
                       required
                       value={newUser.username}
                       onChange={(e) => setNewUser({...newUser, username: e.target.value})}
-                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                       placeholder="Enter username"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       Password *
                     </label>
                     <input
@@ -716,19 +781,19 @@ const SettingsPage = () => {
                       required
                       value={newUser.password}
                       onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                       placeholder="Enter password"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       Role *
                     </label>
                     <select
                       required
                       value={newUser.role}
                       onChange={(e) => setNewUser({...newUser, role: e.target.value})}
-                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                     >
                       <option value="salesman">Salesman</option>
                       <option value="dataentry">Data Entry</option>
@@ -740,16 +805,19 @@ const SettingsPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowAddUserModal(false)}
-                    className="flex-1 px-4 py-3 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                    className="flex-1 px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg text-sm font-medium text-[#F8F8F8] hover:bg-[#3A3A3A] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A5BF13] transition-all duration-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all duration-200"
+                    className="flex-1 px-4 py-3 bg-[#A5BF13] text-black rounded-lg text-sm font-medium hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A5BF13] disabled:opacity-50 transition-all duration-200 ripple relative overflow-hidden group"
                   >
-                    {loading ? 'Adding...' : 'Add User'}
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
+                    <span className="relative z-10">{loading ? 'Adding...' : 'Add User'}</span>
                   </button>
                 </div>
               </form>
@@ -760,14 +828,14 @@ const SettingsPage = () => {
 
       {/* Edit User Modal */}
       {showEditUserModal && editUser && (
-        <div className="fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-white">
+        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-[#2A2A2A] border-[#3A3A3A]">
             <div className="mt-3">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Edit User</h3>
+              <h3 className="text-lg font-semibold text-[#F8F8F8] mb-4">Edit User</h3>
               <form onSubmit={handleUpdateUser}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       Username
                     </label>
                     <input
@@ -775,19 +843,19 @@ const SettingsPage = () => {
                       required
                       value={editUser.username}
                       onChange={(e) => setEditUser({...editUser, username: e.target.value})}
-                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                       disabled
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       Role
                     </label>
                     <select
                       required
                       value={editUser.role}
                       onChange={(e) => setEditUser({...editUser, role: e.target.value})}
-                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                     >
                       <option value="salesman">Salesman</option>
                       <option value="dataentry">Data Entry</option>
@@ -799,16 +867,19 @@ const SettingsPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowEditUserModal(false)}
-                    className="flex-1 px-4 py-3 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                    className="flex-1 px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg text-sm font-medium text-[#F8F8F8] hover:bg-[#3A3A3A] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A5BF13] transition-all duration-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all duration-200"
+                    className="flex-1 px-4 py-3 bg-[#A5BF13] text-black rounded-lg text-sm font-medium hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A5BF13] disabled:opacity-50 transition-all duration-200 ripple relative overflow-hidden group"
                   >
-                    {loading ? 'Saving...' : 'Save Changes'}
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
+                    <span className="relative z-10">{loading ? 'Saving...' : 'Save Changes'}</span>
                   </button>
                 </div>
               </form>
@@ -819,14 +890,14 @@ const SettingsPage = () => {
 
       {/* Import Data Modal */}
       {showImportModal && (
-        <div className="fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-white">
+        <div className="fixed inset-0 bg-black bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-[#2A2A2A] border-[#3A3A3A]">
             <div className="mt-3">
-              <h3 className="text-lg font-semibold text-slate-900 mb-4">Import Data</h3>
+              <h3 className="text-lg font-semibold text-[#F8F8F8] mb-4">Import Data</h3>
               <form onSubmit={handleImportData}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                    <label className="block text-sm font-medium text-[#A5BF13] mb-2">
                       Select Backup File *
                     </label>
                     <input
@@ -834,15 +905,15 @@ const SettingsPage = () => {
                       accept=".json"
                       required
                       onChange={(e) => setImportFile(e.target.files[0])}
-                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
                     />
-                    <p className="mt-1 text-xs text-slate-500">
+                    <p className="mt-1 text-xs text-[#A5BF13]">
                       Select a previously exported JSON backup file
                     </p>
                   </div>
                   
-                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-                    <p className="text-sm text-amber-800">
+                  <div className="bg-[#2A2A2A] border border-[#F79824] rounded-lg p-4 hover:shadow-lg hover:shadow-[#F79824]/20 transition-all duration-300">
+                    <p className="text-sm text-[#F8F8F8]">
                       ⚠️ <strong>Warning:</strong> Importing will replace all existing data. 
                       Make sure to export current data first if needed.
                     </p>
@@ -855,16 +926,19 @@ const SettingsPage = () => {
                       setShowImportModal(false);
                       setImportFile(null);
                     }}
-                    className="flex-1 px-4 py-3 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
+                    className="flex-1 px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg text-sm font-medium text-[#F8F8F8] hover:bg-[#3A3A3A] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#A5BF13] transition-all duration-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading || !importFile}
-                    className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition-all duration-200"
+                    className="flex-1 px-4 py-3 bg-[#F79824] text-black rounded-lg text-sm font-medium hover:bg-[#E88A1A] focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-[#F79824] disabled:opacity-50 transition-all duration-200 ripple relative overflow-hidden group"
                   >
-                    {loading ? 'Importing...' : 'Import Data'}
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
+                    <span className="relative z-10">{loading ? 'Importing...' : 'Import Data'}</span>
                   </button>
                 </div>
               </form>
