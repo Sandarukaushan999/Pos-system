@@ -42,6 +42,7 @@ router.post('/', authenticateToken, requireAuth, async (req, res) => {
   const db = getDb();
   const { items, paymentType, total } = req.body;
   console.log('Checkout request:', req.body);
+  
   if (!items || !Array.isArray(items) || items.length === 0) {
     console.log('Checkout error: No items in sale');
     return res.status(400).json({ error: 'No items in sale' });
@@ -50,107 +51,149 @@ router.post('/', authenticateToken, requireAuth, async (req, res) => {
     console.log('Checkout error: Payment type and total are required');
     return res.status(400).json({ error: 'Payment type and total are required' });
   }
-  // Validate items and check stock
-  for (const item of items) {
-    const stockItem = await new Promise((resolve) => db.get('SELECT * FROM stock_items WHERE barcode = ? AND status = "active"', [item.barcode], (err, row) => resolve(row)));
-    if (!stockItem) {
-      console.log(`Checkout error: Item with barcode ${item.barcode} not found or not active`);
-      return res.status(400).json({ error: `Item with barcode ${item.barcode} not found or not active` });
-    }
-    if (stockItem.quantity < item.quantity) {
-      console.log(`Checkout error: Insufficient stock for ${stockItem.name}`);
-      return res.status(400).json({ error: `Insufficient stock for ${stockItem.name}` });
-    }
-    if (stockItem.expiry_date && moment(stockItem.expiry_date).isBefore(moment(), 'day')) {
-      console.log(`Checkout error: Item ${stockItem.name} is expired`);
-      return res.status(400).json({ error: `Item ${stockItem.name} is expired` });
-    }
-  }
-  db.run('BEGIN TRANSACTION');
-  // Insert with temporary invoice number
-  db.run('INSERT INTO sales (invoice_number, total_amount, payment_type, cashier_id) VALUES (?, ?, ?, ?)',
-    ['PENDING', total, paymentType, req.user.id],
-    function(err) {
-      if (err) {
-        db.run('ROLLBACK');
-        console.log('Checkout error: Failed to create sale', err);
-        return res.status(500).json({ error: 'Failed to create sale' });
+
+  try {
+    // Validate items and check stock
+    for (const item of items) {
+      const stockItem = await new Promise((resolve) => 
+        db.get('SELECT * FROM stock_items WHERE barcode = ? AND status = "active"', [item.barcode], (err, row) => resolve(row))
+      );
+      
+      if (!stockItem) {
+        console.log(`Checkout error: Item with barcode ${item.barcode} not found or not active`);
+        return res.status(400).json({ error: `Item with barcode ${item.barcode} not found or not active` });
       }
-      const saleId = this.lastID;
-      // Generate unique invoice number using saleId
-      const invoice_number = `INV-${moment().format('YYYYMMDD')}-${String(saleId).padStart(4, '0')}`;
-      db.run('UPDATE sales SET invoice_number = ? WHERE id = ?', [invoice_number, saleId], function(errInv) {
-        if (errInv) {
-          db.run('ROLLBACK');
-          console.log('Checkout error: Failed to update invoice number', errInv);
-          return res.status(500).json({ error: 'Failed to update invoice number' });
-        }
-        let errorOccurred = false;
-        let totalProfit = 0;
-        items.forEach((item, idx) => {
-          // Get the buying price from stock_items
-          db.get('SELECT buying_price FROM stock_items WHERE barcode = ?', [item.barcode], (err, stockItem) => {
-            const buyingPrice = stockItem ? stockItem.buying_price : 0;
-            const itemProfit = (item.price - buyingPrice) * item.quantity;
-            totalProfit += itemProfit;
-            
-            db.run('INSERT INTO sales_items (sale_id, barcode, name, quantity, price, buying_price, expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
-              [saleId, item.barcode, item.name, item.quantity, item.price, buyingPrice, item.expiry_date || null],
-              function(err2) {
-                if (err2) {
-                  errorOccurred = true;
-                  console.log('Checkout error: Failed to insert sales item', err2);
+      if (stockItem.quantity < item.quantity) {
+        console.log(`Checkout error: Insufficient stock for ${stockItem.name}`);
+        return res.status(400).json({ error: `Insufficient stock for ${stockItem.name}` });
+      }
+      if (stockItem.expiry_date && moment(stockItem.expiry_date).isBefore(moment(), 'day')) {
+        console.log(`Checkout error: Item ${stockItem.name} is expired`);
+        return res.status(400).json({ error: `Item ${stockItem.name} is expired` });
+      }
+    }
+
+    // Generate invoice number first
+    const invoice_number = await generateInvoiceNumber(db);
+    
+    // Start transaction
+    db.serialize(() => {
+      db.run('BEGIN TRANSACTION');
+      
+      // Insert sale with proper invoice number
+      db.run('INSERT INTO sales (invoice_number, total_amount, payment_type, cashier_id, total_profit) VALUES (?, ?, ?, ?, ?)',
+        [invoice_number, total, paymentType, req.user.id, 0],
+        function(err) {
+          if (err) {
+            db.run('ROLLBACK');
+            console.log('Checkout error: Failed to create sale', err);
+            return res.status(500).json({ error: 'Failed to create sale' });
+          }
+          
+          const saleId = this.lastID;
+          let totalProfit = 0;
+          let processedItems = 0;
+          let errorOccurred = false;
+          
+          // Process each item
+          items.forEach((item, idx) => {
+            db.get('SELECT buying_price FROM stock_items WHERE barcode = ?', [item.barcode], (err, stockItem) => {
+              if (err) {
+                errorOccurred = true;
+                console.log('Checkout error: Failed to get stock item', err);
+                return;
+              }
+
+              const buyingPrice = stockItem ? stockItem.buying_price : 0;
+              const itemProfit = (item.price - buyingPrice) * item.quantity;
+              totalProfit += itemProfit;
+
+              db.run('INSERT INTO sales_items (sale_id, barcode, name, quantity, price, buying_price, expiry_date) VALUES (?, ?, ?, ?, ?, ?, ?)',
+                [saleId, item.barcode, item.name, item.quantity, item.price, buyingPrice, item.expiry_date || null],
+                function(err2) {
+                  if (err2) {
+                    errorOccurred = true;
+                    console.log('Checkout error: Failed to insert sales item', err2);
+                    return;
+                  }
+
+                  db.run('UPDATE stock_items SET quantity = quantity - ?, updated_at = CURRENT_TIMESTAMP WHERE barcode = ?',
+                    [item.quantity, item.barcode],
+                    function(err3) {
+                      if (err3) {
+                        errorOccurred = true;
+                        console.log('Checkout error: Failed to update stock', err3);
+                        return;
+                      }
+
+                      processedItems++;
+
+                      // If all items processed, commit transaction
+                      if (processedItems === items.length) {
+                        if (errorOccurred) {
+                          db.run('ROLLBACK');
+                          console.log('Checkout error: Failed to process sale items');
+                          return res.status(500).json({ error: 'Failed to process sale items' });
+                        }
+
+                        db.run('UPDATE sales SET total_profit = ? WHERE id = ?', [totalProfit, saleId], function(err4) {
+                          if (err4) {
+                            console.log('Checkout error: Failed to update sale profit', err4);
+                          }
+
+                          db.run('COMMIT', function(err5) {
+                            if (err5) {
+                              console.log('Checkout error: Failed to commit transaction', err5);
+                              return res.status(500).json({ error: 'Failed to commit transaction' });
+                            }
+
+                            db.get('SELECT s.*, u.username as cashier_name FROM sales s LEFT JOIN users u ON s.cashier_id = u.id WHERE s.id = ?', [saleId], (err6, sale) => {
+                              db.all('SELECT * FROM sales_items WHERE sale_id = ?', [saleId], (err7, saleItems) => {
+                                if (err6 || err7) {
+                                  console.log('Checkout error: Failed to get final sale data', err6 || err7);
+                                  return res.status(500).json({ error: 'Failed to get final sale data' });
+                                }
+
+                                saleItems.forEach((item) => {
+                                  db.run('INSERT INTO user_activity (user_id, username, action, details) VALUES (?, ?, ?, ?)',
+                                    [req.user.id, req.user.username, 'sale', JSON.stringify({
+                                      product: item.name,
+                                      amount: item.price,
+                                      quantity: item.quantity,
+                                    })]
+                                  );
+                                });
+
+                                const refreshData = {
+                                  timestamp: Date.now(),
+                                  saleId: saleId,
+                                  amount: total,
+                                };
+
+                                res.json({
+                                  success: true,
+                                  message: 'Sale completed successfully',
+                                  sale: { ...sale, items: saleItems },
+                                  dashboardRefresh: refreshData,
+                                });
+                              });
+                            });
+                          });
+                        });
+                      }
+                    }
+                  );
                 }
-              });
-            db.run('UPDATE stock_items SET quantity = quantity - ?, updated_at = CURRENT_TIMESTAMP WHERE barcode = ?',
-              [item.quantity, item.barcode],
-              function(err3) {
-                if (err3) {
-                  errorOccurred = true;
-                  console.log('Checkout error: Failed to update stock', err3);
-                }
-              });
+              );
+            });
           });
-        });
-        
-        // Update the sale with total profit
-        setTimeout(() => {
-          db.run('UPDATE sales SET total_profit = ? WHERE id = ?', [totalProfit, saleId], function(err) {
-            if (err) {
-              console.log('Checkout error: Failed to update sale profit', err);
-            }
-          });
-        }, 100);
-        if (errorOccurred) {
-          db.run('ROLLBACK');
-          console.log('Checkout error: Failed to process sale items');
-          return res.status(500).json({ error: 'Failed to process sale items' });
         }
-        db.run('COMMIT');
-        db.get('SELECT s.*, u.username as cashier_name FROM sales s LEFT JOIN users u ON s.cashier_id = u.id WHERE s.id = ?', [saleId], (err4, sale) => {
-          db.all('SELECT * FROM sales_items WHERE sale_id = ?', [saleId], (err5, saleItems) => {
-            // Log each item in user_activity
-            saleItems.forEach(item => {
-              db.run('INSERT INTO user_activity (user_id, username, action, details) VALUES (?, ?, ?, ?)', [req.user.id, req.user.username, 'sale', JSON.stringify({ product: item.name, amount: item.price, quantity: item.quantity })]);
-            });
-            
-            // Trigger dashboard refresh by adding a timestamp
-            const refreshData = {
-              timestamp: Date.now(),
-              saleId: saleId,
-              amount: total
-            };
-            
-            res.json({ 
-              success: true, 
-              message: 'Sale completed successfully', 
-              sale: { ...sale, items: saleItems },
-              dashboardRefresh: refreshData
-            });
-          });
-        });
-      });
+      );
     });
+  } catch (error) {
+    console.log('Checkout error:', error);
+    res.status(500).json({ error: 'Internal server error during checkout' });
+  }
 });
 
 // Get sales grouped by salesman

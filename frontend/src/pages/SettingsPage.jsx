@@ -9,7 +9,14 @@ import {
   Download,
   Upload,
   RotateCcw,
-  Database
+  Database,
+  Shield,
+  Key,
+  Trash2,
+  Plus,
+  Edit,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
 import { authAPI, usersAPI, settingsAPI } from '../services/api';
@@ -20,6 +27,7 @@ const SettingsPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   // Password change form
   const [passwordForm, setPasswordForm] = useState({
@@ -34,10 +42,10 @@ const SettingsPage = () => {
   const [newUser, setNewUser] = useState({
     username: '',
     password: '',
-    role: 'cashier'
+    role: 'salesman'
   });
 
-  // 1. Add edit modal state
+  // Edit modal state
   const [showEditUserModal, setShowEditUserModal] = useState(false);
   const [editUser, setEditUser] = useState(null);
 
@@ -119,7 +127,7 @@ const SettingsPage = () => {
         setNewUser({
           username: '',
           password: '',
-          role: 'cashier'
+          role: 'salesman'
         });
         fetchUsers();
         setTimeout(() => setSuccess(''), 3000);
@@ -149,22 +157,17 @@ const SettingsPage = () => {
     }
   };
 
-  // 2. Add edit user handler
   const handleEditUser = (userItem) => {
     setEditUser({ ...userItem });
     setShowEditUserModal(true);
   };
 
-  // 3. Add update user logic (role only, username update optional)
   const handleUpdateUser = async (e) => {
     e.preventDefault();
     try {
       setLoading(true);
       setError("");
-      // Update role
       await usersAPI.updateRole(editUser.id, editUser.role);
-      // Optionally update username if you have an endpoint
-      // await usersAPI.updateUsername(editUser.id, editUser.username);
       setSuccess("User updated successfully");
       setShowEditUserModal(false);
       setEditUser(null);
@@ -186,7 +189,6 @@ const SettingsPage = () => {
       const response = await settingsAPI.exportData();
       
       if (response.data.success) {
-        // Create and download the file
         const blob = new Blob([JSON.stringify(response.data.data, null, 2)], {
           type: 'application/json'
         });
@@ -233,8 +235,6 @@ const SettingsPage = () => {
             setShowImportModal(false);
             setImportFile(null);
             setTimeout(() => setSuccess(''), 3000);
-            
-            // Refresh the page to show updated data
             window.location.reload();
           }
         } catch (error) {
@@ -256,7 +256,7 @@ const SettingsPage = () => {
       '• All inventory items\n' +
       '• All sales records\n' +
       '• All expenses\n' +
-      '• All pending items\n\n' +
+      '• All user activity\n\n' +
       'This action cannot be undone. Are you sure you want to continue?'
     );
     
@@ -271,8 +271,6 @@ const SettingsPage = () => {
       if (response.data.success) {
         setSuccess('System reset successfully!');
         setTimeout(() => setSuccess(''), 3000);
-        
-        // Refresh the page to show empty data
         window.location.reload();
       }
     } catch (error) {
@@ -283,345 +281,421 @@ const SettingsPage = () => {
   };
 
   const tabs = [
-    { id: 'profile', name: 'Profile', icon: User },
-    { id: 'password', name: 'Change Password', icon: Lock },
-    ...(user?.role === 'admin' ? [{ id: 'users', name: 'User Management', icon: Users }] : []),
-    { id: 'system', name: 'System Settings', icon: SettingsIcon },
-    ...(user?.role === 'admin' ? [{ id: 'data', name: 'Data Management', icon: Database }] : [])
+    { id: 'profile', name: 'Profile', icon: User, color: 'blue' },
+    { id: 'password', name: 'Security', icon: Lock, color: 'green' },
+    ...(user?.role === 'admin' ? [{ id: 'users', name: 'Users', icon: Users, color: 'purple' }] : []),
+    { id: 'system', name: 'System', icon: SettingsIcon, color: 'orange' },
+    ...(user?.role === 'admin' ? [{ id: 'data', name: 'Data', icon: Database, color: 'red' }] : [])
   ];
 
-  return (
-    <div className="space-y-6">
-      {/* Page header */}
-      <div>
-        <h1 className="text-2xl font-bold text-gray-900">Settings</h1>
-        <p className="mt-1 text-sm text-gray-500">
-          Manage your account and system preferences
-        </p>
+  const StatCard = ({ title, value, icon: Icon, color = 'blue', subtitle }) => {
+    const colorClasses = {
+      blue: 'from-blue-500 to-blue-600 bg-blue-50 text-blue-600',
+      green: 'from-green-500 to-green-600 bg-green-50 text-green-600',
+      purple: 'from-purple-500 to-purple-600 bg-purple-50 text-purple-600',
+      orange: 'from-orange-500 to-orange-600 bg-orange-50 text-orange-600',
+      red: 'from-red-500 to-red-600 bg-red-50 text-red-600'
+    };
+
+    return (
+      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6">
+        <div className="flex items-center justify-between">
+          <div className="flex-1">
+            <p className="text-sm font-medium text-slate-600 mb-1">{title}</p>
+            <p className="text-2xl font-bold text-slate-900">{value}</p>
+            {subtitle && (
+              <p className="text-xs text-slate-500 mt-1">{subtitle}</p>
+            )}
+          </div>
+          <div className={`w-12 h-12 rounded-xl ${colorClasses[color].split(' ')[2]} flex items-center justify-center`}>
+            <Icon className={`h-6 w-6 ${colorClasses[color].split(' ')[3]}`} />
+          </div>
+        </div>
       </div>
+    );
+  };
 
-      {/* Error/Success messages */}
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-md p-4">
-          <div className="flex">
-            <AlertTriangle className="h-5 w-5 text-red-400" />
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-red-800">Error</h3>
-              <div className="mt-2 text-sm text-red-700">{error}</div>
+  const ActionCard = ({ title, description, icon: Icon, color = 'blue', onClick, buttonText, loading: cardLoading }) => {
+    const colorClasses = {
+      blue: 'from-blue-500 to-blue-600 bg-blue-50 text-blue-600 border-blue-200',
+      green: 'from-green-500 to-green-600 bg-green-50 text-green-600 border-green-200',
+      purple: 'from-purple-500 to-purple-600 bg-purple-50 text-purple-600 border-purple-200',
+      orange: 'from-orange-500 to-orange-600 bg-orange-50 text-orange-600 border-orange-200',
+      red: 'from-red-500 to-red-600 bg-red-50 text-red-600 border-red-200'
+    };
+
+    return (
+      <div className="bg-white rounded-xl border-2 border-slate-200 p-6 hover:shadow-lg transition-all duration-300">
+        <div className="flex items-start justify-between">
+          <div className="flex items-center">
+            <div className={`w-10 h-10 rounded-xl ${colorClasses[color].split(' ')[2]} flex items-center justify-center mr-4`}>
+              <Icon className={`h-5 w-5 ${colorClasses[color].split(' ')[3]}`} />
+            </div>
+            <div>
+              <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
+              <p className="text-sm text-slate-600 mt-1">{description}</p>
             </div>
           </div>
+          <button
+            onClick={onClick}
+            disabled={cardLoading}
+            className={`px-4 py-2 rounded-lg font-medium text-white transition-all duration-200 disabled:opacity-50 ${
+              color === 'blue' ? 'bg-blue-600 hover:bg-blue-700' :
+              color === 'green' ? 'bg-green-600 hover:bg-green-700' :
+              color === 'purple' ? 'bg-purple-600 hover:bg-purple-700' :
+              color === 'orange' ? 'bg-orange-600 hover:bg-orange-700' :
+              'bg-red-600 hover:bg-red-700'
+            }`}
+          >
+            {cardLoading ? 'Processing...' : buttonText}
+          </button>
         </div>
-      )}
+      </div>
+    );
+  };
 
-      {success && (
-        <div className="bg-green-50 border border-green-200 rounded-md p-4">
-          <div className="flex">
-            <CheckCircle className="h-5 w-5 text-green-400" />
-            <div className="ml-3">
-              <h3 className="text-sm font-medium text-green-800">Success</h3>
-              <div className="mt-2 text-sm text-green-700">{success}</div>
-            </div>
+  return (
+    <div className="h-screen bg-gradient-to-br from-slate-50 to-blue-50 p-6 overflow-hidden">
+      <div className="h-full flex flex-col">
+        {/* Header */}
+        <div className="flex items-center justify-between mb-6">
+          <div>
+            <h1 className="text-2xl font-bold text-slate-900">Settings</h1>
+            <p className="text-slate-600 text-sm">Manage your account and system preferences</p>
           </div>
         </div>
-      )}
 
-      {/* Tabs */}
-      <div className="bg-white shadow rounded-lg">
-        <div className="border-b border-gray-200">
-          <nav className="-mb-px flex space-x-8 px-6">
-            {tabs.map((tab) => {
-              const Icon = tab.icon;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setActiveTab(tab.id)}
-                  className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 ${
-                    activeTab === tab.id
-                      ? 'border-blue-500 text-blue-600'
-                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                  }`}
-                >
-                  <Icon size={16} />
-                  {tab.name}
-                </button>
-              );
-            })}
-          </nav>
-        </div>
-
-        <div className="p-6">
-          {/* Profile Tab */}
-          {activeTab === 'profile' && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">Profile Information</h3>
-              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Username</label>
-                  <p className="mt-1 text-sm text-gray-900">{user?.username}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Role</label>
-                  <p className="mt-1 text-sm text-gray-900 capitalize">{user?.role}</p>
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700">Account Created</label>
-                  <p className="mt-1 text-sm text-gray-900">
-                    {user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
-                  </p>
-                </div>
+        {/* Error/Success messages */}
+        {error && (
+          <div className="bg-red-50 border border-red-200 rounded-xl p-4 mb-6">
+            <div className="flex">
+              <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5" />
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-red-800">Error</h3>
+                <div className="mt-1 text-sm text-red-700">{error}</div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* Password Tab */}
-          {activeTab === 'password' && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">Change Password</h3>
-              <form onSubmit={handlePasswordChange} className="space-y-4 max-w-md">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Current Password
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    value={passwordForm.currentPassword}
-                    onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    New Password
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    value={passwordForm.newPassword}
-                    onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">
-                    Confirm New Password
-                  </label>
-                  <input
-                    type="password"
-                    required
-                    value={passwordForm.confirmPassword}
-                    onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                    className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                  />
-                </div>
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50"
-                >
-                  {loading ? 'Changing...' : 'Change Password'}
-                </button>
-              </form>
-            </div>
-          )}
-
-          {/* Users Tab */}
-          {activeTab === 'users' && user?.role === 'admin' && (
-            <div className="space-y-4">
-              <div className="flex justify-between items-center">
-                <h3 className="text-lg font-medium text-gray-900">User Management</h3>
-                <button
-                  onClick={() => setShowAddUserModal(true)}
-                  className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                >
-                  Add User
-                </button>
-              </div>
-              
-              <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-gray-200">
-                  <thead className="bg-gray-50">
-                    <tr>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Username
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Role
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Created
-                      </th>
-                      <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Actions
-                      </th>
-                    </tr>
-                  </thead>
-                  <tbody className="bg-white divide-y divide-gray-200">
-                    {users.map((userItem) => (
-                      <tr key={userItem.id}>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                          {userItem.username}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap">
-                          <span className={`inline-flex px-2 py-1 text-xs font-semibold rounded-full ${
-                            userItem.role === 'admin' 
-                              ? 'bg-purple-100 text-purple-800' 
-                              : 'bg-blue-100 text-blue-800'
-                          }`}>
-                            {userItem.role}
-                          </span>
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                          {new Date(userItem.created_at).toLocaleDateString()}
-                        </td>
-                        <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
-                          {userItem.id !== user.id && (
-                            <>
-                              <button
-                                onClick={() => handleEditUser(userItem)}
-                                className="text-blue-600 hover:text-blue-900 mr-4"
-                              >
-                                Edit
-                              </button>
-                              <button
-                                onClick={() => handleDeleteUser(userItem.id)}
-                                className="text-red-600 hover:text-red-900"
-                              >
-                                Delete
-                              </button>
-                            </>
-                          )}
-                        </td>
-                      </tr>
-                    ))}
-                  </tbody>
-                </table>
+        {success && (
+          <div className="bg-green-50 border border-green-200 rounded-xl p-4 mb-6">
+            <div className="flex">
+              <CheckCircle className="h-5 w-5 text-green-400 mt-0.5" />
+              <div className="ml-3">
+                <h3 className="text-sm font-medium text-green-800">Success</h3>
+                <div className="mt-1 text-sm text-green-700">{success}</div>
               </div>
             </div>
-          )}
+          </div>
+        )}
 
-          {/* System Settings Tab */}
-          {activeTab === 'system' && (
-            <div className="space-y-4">
-              <h3 className="text-lg font-medium text-gray-900">System Settings</h3>
-              <div className="space-y-4">
-                <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-                  <h4 className="text-sm font-medium text-blue-800">Backup Information</h4>
-                  <p className="mt-1 text-sm text-blue-700">
-                    Reports are automatically saved to the POSBackups folder. 
-                    Configure Google Drive sync to enable cloud backup.
-                  </p>
+        {/* Tabs */}
+        <div className="bg-white rounded-xl shadow-lg mb-6">
+          <div className="border-b border-slate-200">
+            <nav className="flex space-x-8 px-6">
+              {tabs.map((tab) => {
+                const Icon = tab.icon;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setActiveTab(tab.id)}
+                    className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-all duration-200 ${
+                      activeTab === tab.id
+                        ? `border-${tab.color}-500 text-${tab.color}-600`
+                        : 'border-transparent text-slate-500 hover:text-slate-700 hover:border-slate-300'
+                    }`}
+                  >
+                    <Icon size={16} />
+                    {tab.name}
+                  </button>
+                );
+              })}
+            </nav>
+          </div>
+
+          <div className="p-6">
+            {/* Profile Tab */}
+            {activeTab === 'profile' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <StatCard
+                    title="Username"
+                    value={user?.username}
+                    icon={User}
+                    color="blue"
+                  />
+                  <StatCard
+                    title="Role"
+                    value={user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}
+                    icon={Shield}
+                    color="purple"
+                  />
+                  <StatCard
+                    title="Account Created"
+                    value={user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}
+                    icon={Key}
+                    color="green"
+                  />
+                </div>
+              </div>
+            )}
+
+            {/* Password Tab */}
+            {activeTab === 'password' && (
+              <div className="max-w-md">
+                <h3 className="text-lg font-semibold text-slate-900 mb-4">Change Password</h3>
+                <form onSubmit={handlePasswordChange} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Current Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={passwordForm.currentPassword}
+                      onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
+                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      placeholder="Enter current password"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      New Password
+                    </label>
+                    <div className="relative">
+                      <input
+                        type={showPassword ? "text" : "password"}
+                        required
+                        value={passwordForm.newPassword}
+                        onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
+                        className="block w-full px-4 py-3 pr-12 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                        placeholder="Enter new password"
+                      />
+                      <button
+                        type="button"
+                        onClick={() => setShowPassword(!showPassword)}
+                        className="absolute inset-y-0 right-0 pr-3 flex items-center"
+                      >
+                        {showPassword ? (
+                          <EyeOff className="h-5 w-5 text-slate-400" />
+                        ) : (
+                          <Eye className="h-5 w-5 text-slate-400" />
+                        )}
+                      </button>
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
+                      Confirm New Password
+                    </label>
+                    <input
+                      type="password"
+                      required
+                      value={passwordForm.confirmPassword}
+                      onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
+                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      placeholder="Confirm new password"
+                    />
+                  </div>
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="w-full bg-blue-600 text-white px-4 py-3 rounded-lg font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 transition-all duration-200"
+                  >
+                    {loading ? 'Changing Password...' : 'Change Password'}
+                  </button>
+                </form>
+              </div>
+            )}
+
+            {/* Users Tab */}
+            {activeTab === 'users' && user?.role === 'admin' && (
+              <div className="space-y-6">
+                <div className="flex justify-between items-center">
+                  <h3 className="text-lg font-semibold text-slate-900">User Management</h3>
+                  <button
+                    onClick={() => setShowAddUserModal(true)}
+                    className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 flex items-center gap-2"
+                  >
+                    <Plus size={16} />
+                    Add User
+                  </button>
                 </div>
                 
-                <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-                  <h4 className="text-sm font-medium text-yellow-800">System Requirements</h4>
-                  <ul className="mt-1 text-sm text-yellow-700 list-disc list-inside space-y-1">
-                    <li>Windows 10 or later</li>
-                    <li>USB Barcode Scanner (optional)</li>
-                    <li>ESC/POS Compatible Printer (optional)</li>
-                    <li>Internet connection for cloud backup</li>
-                  </ul>
+                <div className="bg-white border border-slate-200 rounded-xl overflow-hidden">
+                  <div className="overflow-x-auto">
+                    <table className="min-w-full divide-y divide-slate-200">
+                      <thead className="bg-slate-50">
+                        <tr>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Username
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Role
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Created
+                          </th>
+                          <th className="px-6 py-3 text-left text-xs font-medium text-slate-500 uppercase tracking-wider">
+                            Actions
+                          </th>
+                        </tr>
+                      </thead>
+                      <tbody className="bg-white divide-y divide-slate-200">
+                        {users.map((userItem) => (
+                          <tr key={userItem.id} className="hover:bg-slate-50 transition-colors">
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <div className="flex items-center">
+                                <div className="w-8 h-8 rounded-lg bg-gradient-to-r from-blue-500 to-purple-600 flex items-center justify-center mr-3">
+                                  <User className="h-4 w-4 text-white" />
+                                </div>
+                                <span className="text-sm font-medium text-slate-900">{userItem.username}</span>
+                              </div>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap">
+                              <span className={`inline-flex px-3 py-1 text-xs font-semibold rounded-full ${
+                                userItem.role === 'admin' 
+                                  ? 'bg-purple-100 text-purple-800' 
+                                  : userItem.role === 'salesman'
+                                  ? 'bg-blue-100 text-blue-800'
+                                  : 'bg-green-100 text-green-800'
+                              }`}>
+                                {userItem.role}
+                              </span>
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm text-slate-500">
+                              {new Date(userItem.created_at).toLocaleDateString()}
+                            </td>
+                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
+                              {userItem.id !== user.id && (
+                                <div className="flex items-center gap-2">
+                                  <button
+                                    onClick={() => handleEditUser(userItem)}
+                                    className="text-blue-600 hover:text-blue-900 p-1 rounded transition-colors"
+                                    title="Edit user"
+                                  >
+                                    <Edit size={16} />
+                                  </button>
+                                  <button
+                                    onClick={() => handleDeleteUser(userItem.id)}
+                                    className="text-red-600 hover:text-red-900 p-1 rounded transition-colors"
+                                    title="Delete user"
+                                  >
+                                    <Trash2 size={16} />
+                                  </button>
+                                </div>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
+            )}
 
-          {/* Data Management Tab */}
-          {activeTab === 'data' && user?.role === 'admin' && (
-            <div className="space-y-6">
-              <h3 className="text-lg font-medium text-gray-900">Data Management</h3>
-              
-              {/* Export Data */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                      <Download className="h-5 w-5 text-blue-600" />
-                      Export Data
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-600">
-                      Export all system data including inventory, sales, expenses, and user data to a JSON file.
+            {/* System Settings Tab */}
+            {activeTab === 'system' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="bg-gradient-to-r from-blue-50 to-blue-100 border border-blue-200 rounded-xl p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center mr-3">
+                        <Database className="h-5 w-5 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-blue-900">Backup Information</h4>
+                    </div>
+                    <p className="text-sm text-blue-800">
+                      Reports are automatically saved to the POSBackups folder. 
+                      Configure Google Drive sync to enable cloud backup.
                     </p>
                   </div>
-                  <button
+                  
+                  <div className="bg-gradient-to-r from-amber-50 to-amber-100 border border-amber-200 rounded-xl p-6">
+                    <div className="flex items-center mb-4">
+                      <div className="w-10 h-10 rounded-xl bg-amber-600 flex items-center justify-center mr-3">
+                        <SettingsIcon className="h-5 w-5 text-white" />
+                      </div>
+                      <h4 className="text-lg font-semibold text-amber-900">System Requirements</h4>
+                    </div>
+                    <ul className="text-sm text-amber-800 space-y-1">
+                      <li>• Windows 10 or later</li>
+                      <li>• USB Barcode Scanner (optional)</li>
+                      <li>• ESC/POS Compatible Printer (optional)</li>
+                      <li>• Internet connection for cloud backup</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Data Management Tab */}
+            {activeTab === 'data' && user?.role === 'admin' && (
+              <div className="space-y-6">
+                <div className="grid grid-cols-1 gap-6">
+                  <ActionCard
+                    title="Export Data"
+                    description="Export all system data including inventory, sales, expenses, and user data to a JSON file."
+                    icon={Download}
+                    color="blue"
                     onClick={handleExportData}
-                    disabled={loading}
-                    className="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 disabled:opacity-50 flex items-center gap-2"
-                  >
-                    {loading ? 'Exporting...' : 'Export Data'}
-                  </button>
-                </div>
-              </div>
+                    buttonText="Export Data"
+                    loading={loading}
+                  />
 
-              {/* Import Data */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                      <Upload className="h-5 w-5 text-green-600" />
-                      Import Data
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-600">
-                      Import previously exported data. This will replace all existing data.
-                    </p>
-                  </div>
-                  <button
+                  <ActionCard
+                    title="Import Data"
+                    description="Import previously exported data. This will replace all existing data."
+                    icon={Upload}
+                    color="green"
                     onClick={() => setShowImportModal(true)}
-                    disabled={loading}
-                    className="bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2 disabled:opacity-50 flex items-center gap-2"
-                  >
-                    Import Data
-                  </button>
-                </div>
-              </div>
+                    buttonText="Import Data"
+                    loading={false}
+                  />
 
-              {/* Reset System */}
-              <div className="bg-white border border-gray-200 rounded-lg p-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="text-lg font-medium text-gray-900 flex items-center gap-2">
-                      <RotateCcw className="h-5 w-5 text-red-600" />
-                      Reset System
-                    </h4>
-                    <p className="mt-1 text-sm text-gray-600">
-                      Clear all data and reset the system to factory settings. This action cannot be undone.
-                    </p>
-                  </div>
-                  <button
+                  <ActionCard
+                    title="Reset System"
+                    description="Clear all data and reset the system to factory settings. This action cannot be undone."
+                    icon={RotateCcw}
+                    color="red"
                     onClick={handleResetSystem}
-                    disabled={loading}
-                    className="bg-red-600 text-white px-4 py-2 rounded-md hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 disabled:opacity-50 flex items-center gap-2"
-                  >
-                    {loading ? 'Resetting...' : 'Reset System'}
-                  </button>
+                    buttonText="Reset System"
+                    loading={loading}
+                  />
+                </div>
+
+                <div className="bg-red-50 border border-red-200 rounded-xl p-6">
+                  <div className="flex items-start">
+                    <AlertTriangle className="h-5 w-5 text-red-400 mt-0.5 mr-3" />
+                    <div>
+                      <h4 className="text-sm font-medium text-red-800 mb-2">⚠️ Important Notes</h4>
+                      <ul className="text-sm text-red-700 space-y-1">
+                        <li>• Always export your data before making any changes</li>
+                        <li>• Import will replace all existing data</li>
+                        <li>• System reset will permanently delete all data</li>
+                        <li>• These actions are only available to administrators</li>
+                      </ul>
+                    </div>
+                  </div>
                 </div>
               </div>
-
-              {/* Warning */}
-              <div className="bg-red-50 border border-red-200 rounded-lg p-4">
-                <h4 className="text-sm font-medium text-red-800">⚠️ Important Notes</h4>
-                <ul className="mt-2 text-sm text-red-700 list-disc list-inside space-y-1">
-                  <li>Always export your data before making any changes</li>
-                  <li>Import will replace all existing data</li>
-                  <li>System reset will permanently delete all data</li>
-                  <li>These actions are only available to administrators</li>
-                </ul>
-              </div>
-            </div>
-          )}
+            )}
+          </div>
         </div>
       </div>
 
       {/* Add User Modal */}
       {showAddUserModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-white">
             <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Add New User</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Add New User</h3>
               <form onSubmit={handleAddUser}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Username *
                     </label>
                     <input
@@ -629,11 +703,12 @@ const SettingsPage = () => {
                       required
                       value={newUser.username}
                       onChange={(e) => setNewUser({...newUser, username: e.target.value})}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      placeholder="Enter username"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Password *
                     </label>
                     <input
@@ -641,18 +716,19 @@ const SettingsPage = () => {
                       required
                       value={newUser.password}
                       onChange={(e) => setNewUser({...newUser, password: e.target.value})}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      placeholder="Enter password"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Role *
                     </label>
                     <select
                       required
                       value={newUser.role}
                       onChange={(e) => setNewUser({...newUser, role: e.target.value})}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                     >
                       <option value="salesman">Salesman</option>
                       <option value="dataentry">Data Entry</option>
@@ -664,14 +740,14 @@ const SettingsPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowAddUserModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-3 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all duration-200"
                   >
                     {loading ? 'Adding...' : 'Add User'}
                   </button>
@@ -684,14 +760,14 @@ const SettingsPage = () => {
 
       {/* Edit User Modal */}
       {showEditUserModal && editUser && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-white">
             <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Edit User</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Edit User</h3>
               <form onSubmit={handleUpdateUser}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Username
                     </label>
                     <input
@@ -699,19 +775,19 @@ const SettingsPage = () => {
                       required
                       value={editUser.username}
                       onChange={(e) => setEditUser({...editUser, username: e.target.value})}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
-                      disabled // Remove this if you implement username update endpoint
+                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+                      disabled
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Role
                     </label>
                     <select
                       required
                       value={editUser.role}
                       onChange={(e) => setEditUser({...editUser, role: e.target.value})}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                     >
                       <option value="salesman">Salesman</option>
                       <option value="dataentry">Data Entry</option>
@@ -723,14 +799,14 @@ const SettingsPage = () => {
                   <button
                     type="button"
                     onClick={() => setShowEditUserModal(false)}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-3 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading}
-                    className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+                    className="flex-1 px-4 py-3 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-all duration-200"
                   >
                     {loading ? 'Saving...' : 'Save Changes'}
                   </button>
@@ -743,14 +819,14 @@ const SettingsPage = () => {
 
       {/* Import Data Modal */}
       {showImportModal && (
-        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+        <div className="fixed inset-0 bg-slate-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-xl rounded-xl bg-white">
             <div className="mt-3">
-              <h3 className="text-lg font-medium text-gray-900 mb-4">Import Data</h3>
+              <h3 className="text-lg font-semibold text-slate-900 mb-4">Import Data</h3>
               <form onSubmit={handleImportData}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 mb-2">
                       Select Backup File *
                     </label>
                     <input
@@ -758,15 +834,15 @@ const SettingsPage = () => {
                       accept=".json"
                       required
                       onChange={(e) => setImportFile(e.target.files[0])}
-                      className="block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+                      className="block w-full px-4 py-3 border border-slate-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
                     />
-                    <p className="mt-1 text-xs text-gray-500">
+                    <p className="mt-1 text-xs text-slate-500">
                       Select a previously exported JSON backup file
                     </p>
                   </div>
                   
-                  <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-                    <p className="text-sm text-yellow-800">
+                  <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
+                    <p className="text-sm text-amber-800">
                       ⚠️ <strong>Warning:</strong> Importing will replace all existing data. 
                       Make sure to export current data first if needed.
                     </p>
@@ -779,14 +855,14 @@ const SettingsPage = () => {
                       setShowImportModal(false);
                       setImportFile(null);
                     }}
-                    className="flex-1 px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+                    className="flex-1 px-4 py-3 border border-slate-300 rounded-lg text-sm font-medium text-slate-700 hover:bg-slate-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-all duration-200"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
                     disabled={loading || !importFile}
-                    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50"
+                    className="flex-1 px-4 py-3 bg-green-600 text-white rounded-lg text-sm font-medium hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 transition-all duration-200"
                   >
                     {loading ? 'Importing...' : 'Import Data'}
                   </button>

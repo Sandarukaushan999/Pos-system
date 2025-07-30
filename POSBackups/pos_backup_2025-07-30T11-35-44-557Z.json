@@ -1,0 +1,2350 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "$2a$10$7.g264ypjA2oXTeakwC6z.hLkVyWVVyXyMWyFqoGfBR1I2aC8bAl.",
+      "role": "admin",
+      "created_at": "2025-07-23 16:44:55",
+      "updated_at": "2025-07-23 16:44:55"
+    },
+    {
+      "id": 2,
+      "username": "salesman",
+      "password_hash": "$2a$10$8eaAhvjrIZ197aaW2tuddO29OQ5Y7UNMKDnjjxRCOZ27AU.Vfmgoq",
+      "role": "salesman",
+      "created_at": "2025-07-23 17:30:34",
+      "updated_at": "2025-07-23 17:30:34"
+    },
+    {
+      "id": 7,
+      "username": "dataenter",
+      "password_hash": "$2a$10$YccQgcBpnfl0PslS/kOHDeK3v6nrEeOwic9.EIk9Mz7Tysh1oBrxq",
+      "role": "dataentry",
+      "created_at": "2025-07-24 07:36:34",
+      "updated_at": "2025-07-24 07:36:34"
+    },
+    {
+      "id": 11,
+      "username": "Admin",
+      "password_hash": "$2a$10$oqlz8YpPuB8NwxpWPIqakunjMp6qPmBdmZHwZBfSJEflMqyvzXvzq",
+      "role": "admin",
+      "created_at": "2025-07-28 20:55:52",
+      "updated_at": "2025-07-28 20:55:52"
+    }
+  ],
+  "stock_items": [
+    {
+      "id": 1,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 39,
+      "price": 212,
+      "expiry_date": "2025-08-15",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-23 16:45:48",
+      "updated_at": "2025-07-29 21:01:21",
+      "buying_price": 212
+    },
+    {
+      "id": 2,
+      "barcode": "789456123",
+      "name": "dhal",
+      "quantity": 5,
+      "price": 123,
+      "expiry_date": "2025-07-21",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-23 17:32:11",
+      "updated_at": "2025-07-24 09:19:13",
+      "buying_price": 123
+    },
+    {
+      "id": 3,
+      "barcode": "456789123",
+      "name": "peper",
+      "quantity": 11,
+      "price": 100,
+      "expiry_date": "2027-02-01",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-23 17:38:38",
+      "updated_at": "2025-07-24 09:23:05",
+      "buying_price": 100
+    },
+    {
+      "id": 4,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 110,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-23 17:53:35",
+      "updated_at": "2025-07-29 20:36:28",
+      "buying_price": 2232
+    },
+    {
+      "id": 5,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 4,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-24 08:01:16",
+      "updated_at": "2025-07-28 08:50:20",
+      "buying_price": 510
+    },
+    {
+      "id": 6,
+      "barcode": "2222",
+      "name": "san",
+      "quantity": 13,
+      "price": 100,
+      "expiry_date": "2025-07-29",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-25 17:26:34",
+      "updated_at": "2025-07-26 05:01:58",
+      "buying_price": 100
+    },
+    {
+      "id": 7,
+      "barcode": "4792024016131",
+      "name": "Nestomalt",
+      "quantity": 44,
+      "price": 780,
+      "expiry_date": "2027-05-27",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-26 11:16:40",
+      "updated_at": "2025-07-30 09:11:29",
+      "buying_price": 780
+    },
+    {
+      "id": 8,
+      "barcode": "4791066002270",
+      "name": "water",
+      "quantity": 45,
+      "price": 100,
+      "expiry_date": "2025-07-31",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-26 14:02:36",
+      "updated_at": "2025-07-26 14:04:42",
+      "buying_price": 100
+    },
+    {
+      "id": 9,
+      "barcode": "4792279002231",
+      "name": "Beta",
+      "quantity": 38,
+      "price": 100,
+      "expiry_date": "2025-08-09",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-26 14:06:27",
+      "updated_at": "2025-07-30 09:02:20",
+      "buying_price": 100
+    },
+    {
+      "id": 10,
+      "barcode": "102222222222",
+      "name": "oooo",
+      "quantity": 74,
+      "price": 8888,
+      "expiry_date": "2025-08-14",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-28 19:04:53",
+      "updated_at": "2025-07-29 20:54:09",
+      "buying_price": 8888
+    },
+    {
+      "id": 11,
+      "barcode": "77777777777",
+      "name": "dsdssds",
+      "quantity": 20,
+      "price": 1110.99,
+      "expiry_date": "2025-07-21",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-28 19:28:43",
+      "updated_at": "2025-07-29 17:31:49",
+      "buying_price": 1110.99
+    },
+    {
+      "id": 12,
+      "barcode": "788777887",
+      "name": "sssefffdd",
+      "quantity": 8,
+      "price": 55,
+      "expiry_date": "2027-10-12",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-28 19:39:19",
+      "updated_at": "2025-07-29 20:36:51",
+      "buying_price": 55
+    },
+    {
+      "id": 13,
+      "barcode": "77778888",
+      "name": "sandaru",
+      "quantity": 6,
+      "price": 22211,
+      "expiry_date": "2025-09-27",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-29 18:17:41",
+      "updated_at": "2025-07-29 18:42:23",
+      "buying_price": 22211
+    },
+    {
+      "id": 14,
+      "barcode": "1111122222",
+      "name": "kit",
+      "quantity": 16,
+      "price": 200,
+      "expiry_date": "2025-08-09",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-29 19:36:26",
+      "updated_at": "2025-07-29 20:08:23",
+      "buying_price": 200
+    },
+    {
+      "id": 15,
+      "barcode": "1111111115111111111",
+      "name": "asasa",
+      "quantity": 2117,
+      "price": 23223,
+      "expiry_date": "2025-08-16",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-29 20:08:52",
+      "updated_at": "2025-07-29 20:46:37",
+      "buying_price": 23223
+    },
+    {
+      "id": 16,
+      "barcode": "sa112233",
+      "name": "suduru",
+      "quantity": 12,
+      "price": 200,
+      "expiry_date": "2025-09-13",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-30 09:28:16",
+      "updated_at": "2025-07-30 09:32:53",
+      "buying_price": 180
+    },
+    {
+      "id": 17,
+      "barcode": "200132",
+      "name": "thunapaha ",
+      "quantity": 19,
+      "price": 300,
+      "expiry_date": "2025-08-15",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-30 09:33:36",
+      "updated_at": "2025-07-30 09:40:20",
+      "buying_price": 250
+    },
+    {
+      "id": 18,
+      "barcode": "328012",
+      "name": "black magic",
+      "quantity": 48,
+      "price": 50,
+      "expiry_date": "2025-08-30",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-30 09:38:20",
+      "updated_at": "2025-07-30 09:40:03",
+      "buying_price": 45
+    }
+  ],
+  "sales": [
+    {
+      "id": 1,
+      "invoice_number": "INV-20250723-001",
+      "total_amount": 335,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-23 17:33:49",
+      "total_profit": 0
+    },
+    {
+      "id": 2,
+      "invoice_number": "INV-20250723-002",
+      "total_amount": 212,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-23 18:07:40",
+      "total_profit": 0
+    },
+    {
+      "id": 3,
+      "invoice_number": "INV-20250723-003",
+      "total_amount": 1060,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-23 18:27:16",
+      "total_profit": 0
+    },
+    {
+      "id": 4,
+      "invoice_number": "INV-20250724-001",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-23 18:36:32",
+      "total_profit": 0
+    },
+    {
+      "id": 5,
+      "invoice_number": "INV-20250724-0005",
+      "total_amount": 212,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-23 18:49:16",
+      "total_profit": 0
+    },
+    {
+      "id": 6,
+      "invoice_number": "INV-20250724-0006",
+      "total_amount": 212,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 06:28:39",
+      "total_profit": 0
+    },
+    {
+      "id": 7,
+      "invoice_number": "INV-20250724-0007",
+      "total_amount": 212,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-24 06:55:56",
+      "total_profit": 0
+    },
+    {
+      "id": 8,
+      "invoice_number": "INV-20250724-0008",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 07:01:24",
+      "total_profit": 0
+    },
+    {
+      "id": 9,
+      "invoice_number": "INV-20250724-0009",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-24 07:02:42",
+      "total_profit": 0
+    },
+    {
+      "id": 10,
+      "invoice_number": "INV-20250724-0010",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 08:02:13",
+      "total_profit": 0
+    },
+    {
+      "id": 11,
+      "invoice_number": "INV-20250724-0011",
+      "total_amount": 722,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-24 08:17:53",
+      "total_profit": 0
+    },
+    {
+      "id": 12,
+      "invoice_number": "INV-20250724-0012",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-24 08:32:32",
+      "total_profit": 0
+    },
+    {
+      "id": 13,
+      "invoice_number": "INV-20250724-0013",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 8,
+      "created_at": "2025-07-24 08:35:10",
+      "total_profit": 0
+    },
+    {
+      "id": 14,
+      "invoice_number": "INV-20250724-0014",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-24 08:37:18",
+      "total_profit": 0
+    },
+    {
+      "id": 15,
+      "invoice_number": "INV-20250724-0015",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 08:48:12",
+      "total_profit": 0
+    },
+    {
+      "id": 16,
+      "invoice_number": "INV-20250724-0016",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 08:52:54",
+      "total_profit": 0
+    },
+    {
+      "id": 17,
+      "invoice_number": "INV-20250724-0017",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 08:58:01",
+      "total_profit": 0
+    },
+    {
+      "id": 18,
+      "invoice_number": "INV-20250724-0018",
+      "total_amount": 2550,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 09:22:38",
+      "total_profit": 0
+    },
+    {
+      "id": 19,
+      "invoice_number": "INV-20250724-0019",
+      "total_amount": 212,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 09:24:31",
+      "total_profit": 0
+    },
+    {
+      "id": 20,
+      "invoice_number": "INV-20250724-0020",
+      "total_amount": 1000,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 13:41:45",
+      "total_profit": 0
+    },
+    {
+      "id": 21,
+      "invoice_number": "INV-20250724-0021",
+      "total_amount": 13000,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 14:54:57",
+      "total_profit": 0
+    },
+    {
+      "id": 22,
+      "invoice_number": "INV-20250725-0022",
+      "total_amount": 1000,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 18:34:54",
+      "total_profit": 0
+    },
+    {
+      "id": 23,
+      "invoice_number": "INV-20250725-0023",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 18:42:36",
+      "total_profit": 0
+    },
+    {
+      "id": 24,
+      "invoice_number": "INV-20250725-0024",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 18:44:07",
+      "total_profit": 0
+    },
+    {
+      "id": 25,
+      "invoice_number": "INV-20250725-0025",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 18:44:55",
+      "total_profit": 0
+    },
+    {
+      "id": 26,
+      "invoice_number": "INV-20250725-0026",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 18:46:10",
+      "total_profit": 0
+    },
+    {
+      "id": 27,
+      "invoice_number": "INV-20250725-0027",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-24 18:54:29",
+      "total_profit": 0
+    },
+    {
+      "id": 28,
+      "invoice_number": "INV-20250725-0028",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-25 09:18:16",
+      "total_profit": 0
+    },
+    {
+      "id": 29,
+      "invoice_number": "INV-20250725-0029",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-25 09:20:39",
+      "total_profit": 0
+    },
+    {
+      "id": 30,
+      "invoice_number": "INV-20250725-0030",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-25 09:47:44",
+      "total_profit": 0
+    },
+    {
+      "id": 31,
+      "invoice_number": "INV-20250725-0031",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-25 09:50:27",
+      "total_profit": 0
+    },
+    {
+      "id": 32,
+      "invoice_number": "INV-20250725-0032",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-25 16:57:09",
+      "total_profit": 0
+    },
+    {
+      "id": 33,
+      "invoice_number": "INV-20250725-0033",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-25 17:33:06",
+      "total_profit": 0
+    },
+    {
+      "id": 34,
+      "invoice_number": "INV-20250726-0034",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-26 05:00:40",
+      "total_profit": 0
+    },
+    {
+      "id": 35,
+      "invoice_number": "INV-20250726-0035",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-26 05:01:58",
+      "total_profit": 0
+    },
+    {
+      "id": 36,
+      "invoice_number": "INV-20250726-0036",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-26 14:06:49",
+      "total_profit": 0
+    },
+    {
+      "id": 37,
+      "invoice_number": "INV-20250728-0037",
+      "total_amount": 510,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 08:50:20",
+      "total_profit": 0
+    },
+    {
+      "id": 38,
+      "invoice_number": "INV-20250728-0038",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 08:52:13",
+      "total_profit": 0
+    },
+    {
+      "id": 39,
+      "invoice_number": "INV-20250728-0039",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 09:06:53",
+      "total_profit": 0
+    },
+    {
+      "id": 40,
+      "invoice_number": "INV-20250728-0040",
+      "total_amount": 780,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 09:13:23",
+      "total_profit": 0
+    },
+    {
+      "id": 41,
+      "invoice_number": "INV-20250728-0041",
+      "total_amount": 2332,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 09:31:09",
+      "total_profit": 0
+    },
+    {
+      "id": 42,
+      "invoice_number": "INV-20250728-0042",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 09:38:08",
+      "total_profit": 0
+    },
+    {
+      "id": 43,
+      "invoice_number": "INV-20250728-0043",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 09:38:20",
+      "total_profit": 0
+    },
+    {
+      "id": 44,
+      "invoice_number": "INV-20250728-0044",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 13:07:54",
+      "total_profit": 0
+    },
+    {
+      "id": 45,
+      "invoice_number": "INV-20250729-0045",
+      "total_amount": 780,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 21:17:43",
+      "total_profit": 0
+    },
+    {
+      "id": 46,
+      "invoice_number": "INV-20250729-0046",
+      "total_amount": 780,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 21:22:20",
+      "total_profit": 0
+    },
+    {
+      "id": 47,
+      "invoice_number": "INV-20250729-0047",
+      "total_amount": 55,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-28 21:23:09",
+      "total_profit": 0
+    },
+    {
+      "id": 48,
+      "invoice_number": "INV-20250729-0048",
+      "total_amount": 8888,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 18:14:24",
+      "total_profit": 0
+    },
+    {
+      "id": 49,
+      "invoice_number": "INV-20250729-0049",
+      "total_amount": 780,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 18:14:57",
+      "total_profit": 0
+    },
+    {
+      "id": 50,
+      "invoice_number": "INV-20250730-0050",
+      "total_amount": 22211,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 18:33:48",
+      "total_profit": 0
+    },
+    {
+      "id": 51,
+      "invoice_number": "INV-20250730-0051",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 18:37:16",
+      "total_profit": 0
+    },
+    {
+      "id": 52,
+      "invoice_number": "INV-20250730-0052",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 18:37:33",
+      "total_profit": 0
+    },
+    {
+      "id": 53,
+      "invoice_number": "INV-20250730-0053",
+      "total_amount": 22211,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 18:42:23",
+      "total_profit": 0
+    },
+    {
+      "id": 54,
+      "invoice_number": "INV-20250730-0054",
+      "total_amount": 8888,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 18:50:31",
+      "total_profit": 0
+    },
+    {
+      "id": 55,
+      "invoice_number": "INV-20250730-0057",
+      "total_amount": 780,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 19:27:32",
+      "total_profit": 0
+    },
+    {
+      "id": 56,
+      "invoice_number": "INV-20250730-0058",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 19:36:44",
+      "total_profit": 0
+    },
+    {
+      "id": 57,
+      "invoice_number": "INV-20250730-0059",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 19:51:00",
+      "total_profit": 0
+    },
+    {
+      "id": 58,
+      "invoice_number": "INV-20250730-0060",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 19:51:12",
+      "total_profit": 0
+    },
+    {
+      "id": 59,
+      "invoice_number": "INV-20250730-0061",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:08:23",
+      "total_profit": 0
+    },
+    {
+      "id": 60,
+      "invoice_number": "INV-20250730-0062",
+      "total_amount": 23223,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:23:27",
+      "total_profit": 0
+    },
+    {
+      "id": 61,
+      "invoice_number": "INV-20250730-0063",
+      "total_amount": 23223,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:23:37",
+      "total_profit": 0
+    },
+    {
+      "id": 62,
+      "invoice_number": "INV-20250730-0064",
+      "total_amount": 23223,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:31:07",
+      "total_profit": 0
+    },
+    {
+      "id": 63,
+      "invoice_number": "INV-20250730-0065",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:36:05",
+      "total_profit": 0
+    },
+    {
+      "id": 64,
+      "invoice_number": "INV-20250730-0066",
+      "total_amount": 2232,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:36:28",
+      "total_profit": 0
+    },
+    {
+      "id": 65,
+      "invoice_number": "INV-20250730-0067",
+      "total_amount": 55,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:36:51",
+      "total_profit": 0
+    },
+    {
+      "id": 66,
+      "invoice_number": "INV-20250730-0068",
+      "total_amount": 23223,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:46:37",
+      "total_profit": 0
+    },
+    {
+      "id": 67,
+      "invoice_number": "INV-20250730-0069",
+      "total_amount": 8888,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-29 20:53:32",
+      "total_profit": 0
+    },
+    {
+      "id": 68,
+      "invoice_number": "INV-20250730-0070",
+      "total_amount": 8888,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-29 20:54:09",
+      "total_profit": 0
+    },
+    {
+      "id": 69,
+      "invoice_number": "INV-20250730-0071",
+      "total_amount": 100,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-30 09:02:20",
+      "total_profit": 0
+    },
+    {
+      "id": 70,
+      "invoice_number": "INV-20250730-0072",
+      "total_amount": 780,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-30 09:11:29",
+      "total_profit": 0
+    },
+    {
+      "id": 71,
+      "invoice_number": "INV-20250730-0073",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-30 09:28:38",
+      "total_profit": 0
+    },
+    {
+      "id": 72,
+      "invoice_number": "INV-20250730-0074",
+      "total_amount": 50,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-30 09:39:45",
+      "total_profit": 5
+    },
+    {
+      "id": 73,
+      "invoice_number": "INV-20250730-0075",
+      "total_amount": 50,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-30 09:40:03",
+      "total_profit": 5
+    },
+    {
+      "id": 74,
+      "invoice_number": "INV-20250730-0076",
+      "total_amount": 300,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-30 09:40:20",
+      "total_profit": 50
+    }
+  ],
+  "sales_items": [
+    {
+      "id": 1,
+      "sale_id": 1,
+      "barcode": "789456123",
+      "name": "dhal",
+      "quantity": 1,
+      "price": 123,
+      "expiry_date": null,
+      "created_at": "2025-07-23 17:33:49",
+      "buying_price": 123
+    },
+    {
+      "id": 2,
+      "sale_id": 1,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 1,
+      "price": 212,
+      "expiry_date": null,
+      "created_at": "2025-07-23 17:33:49",
+      "buying_price": 212
+    },
+    {
+      "id": 3,
+      "sale_id": 2,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 1,
+      "price": 212,
+      "expiry_date": null,
+      "created_at": "2025-07-23 18:07:40",
+      "buying_price": 212
+    },
+    {
+      "id": 4,
+      "sale_id": 3,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 5,
+      "price": 212,
+      "expiry_date": null,
+      "created_at": "2025-07-23 18:27:16",
+      "buying_price": 212
+    },
+    {
+      "id": 5,
+      "sale_id": 4,
+      "barcode": "456789123",
+      "name": "peper",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": null,
+      "created_at": "2025-07-23 18:36:32",
+      "buying_price": 100
+    },
+    {
+      "id": 6,
+      "sale_id": 5,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 1,
+      "price": 212,
+      "expiry_date": null,
+      "created_at": "2025-07-23 18:49:16",
+      "buying_price": 212
+    },
+    {
+      "id": 7,
+      "sale_id": 6,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 1,
+      "price": 212,
+      "expiry_date": null,
+      "created_at": "2025-07-24 06:28:39",
+      "buying_price": 212
+    },
+    {
+      "id": 8,
+      "sale_id": 7,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 1,
+      "price": 212,
+      "expiry_date": null,
+      "created_at": "2025-07-24 06:55:56",
+      "buying_price": 212
+    },
+    {
+      "id": 9,
+      "sale_id": 8,
+      "barcode": "456789123",
+      "name": "peper",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": null,
+      "created_at": "2025-07-24 07:01:24",
+      "buying_price": 100
+    },
+    {
+      "id": 10,
+      "sale_id": 9,
+      "barcode": "456789123",
+      "name": "peper",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": null,
+      "created_at": "2025-07-24 07:02:42",
+      "buying_price": 100
+    },
+    {
+      "id": 11,
+      "sale_id": 10,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": null,
+      "created_at": "2025-07-24 08:02:13",
+      "buying_price": 510
+    },
+    {
+      "id": 12,
+      "sale_id": 11,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": null,
+      "created_at": "2025-07-24 08:17:53",
+      "buying_price": 510
+    },
+    {
+      "id": 13,
+      "sale_id": 11,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 1,
+      "price": 212,
+      "expiry_date": null,
+      "created_at": "2025-07-24 08:17:53",
+      "buying_price": 212
+    },
+    {
+      "id": 14,
+      "sale_id": 12,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": null,
+      "created_at": "2025-07-24 08:32:32",
+      "buying_price": 510
+    },
+    {
+      "id": 15,
+      "sale_id": 13,
+      "barcode": "456789123",
+      "name": "peper",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": null,
+      "created_at": "2025-07-24 08:35:10",
+      "buying_price": 100
+    },
+    {
+      "id": 16,
+      "sale_id": 14,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": null,
+      "created_at": "2025-07-24 08:37:18",
+      "buying_price": 510
+    },
+    {
+      "id": 17,
+      "sale_id": 15,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-24 08:48:12",
+      "buying_price": 510
+    },
+    {
+      "id": 18,
+      "sale_id": 16,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-24 08:52:54",
+      "buying_price": 510
+    },
+    {
+      "id": 19,
+      "sale_id": 17,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-24 08:58:01",
+      "buying_price": 510
+    },
+    {
+      "id": 20,
+      "sale_id": 18,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 5,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-24 09:22:38",
+      "buying_price": 510
+    },
+    {
+      "id": 21,
+      "sale_id": 19,
+      "barcode": "123456789",
+      "name": "rice",
+      "quantity": 1,
+      "price": 212,
+      "expiry_date": "2025-07-31",
+      "created_at": "2025-07-24 09:24:31",
+      "buying_price": 212
+    },
+    {
+      "id": 22,
+      "sale_id": 20,
+      "barcode": "369258147",
+      "name": "methmi",
+      "quantity": 1,
+      "price": 1000,
+      "expiry_date": "2026-07-31",
+      "created_at": "2025-07-24 13:41:45",
+      "buying_price": 1000
+    },
+    {
+      "id": 23,
+      "sale_id": 21,
+      "barcode": "369258147",
+      "name": "methmi",
+      "quantity": 13,
+      "price": 1000,
+      "expiry_date": "2026-07-31",
+      "created_at": "2025-07-24 14:54:57",
+      "buying_price": 1000
+    },
+    {
+      "id": 24,
+      "sale_id": 22,
+      "barcode": "369258147",
+      "name": "methmi",
+      "quantity": 1,
+      "price": 1000,
+      "expiry_date": "2026-07-31",
+      "created_at": "2025-07-24 18:34:54",
+      "buying_price": 1000
+    },
+    {
+      "id": 25,
+      "sale_id": 23,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-24 18:42:36",
+      "buying_price": 2232
+    },
+    {
+      "id": 26,
+      "sale_id": 24,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-24 18:44:07",
+      "buying_price": 2232
+    },
+    {
+      "id": 27,
+      "sale_id": 25,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-24 18:44:55",
+      "buying_price": 2232
+    },
+    {
+      "id": 28,
+      "sale_id": 26,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-24 18:46:10",
+      "buying_price": 2232
+    },
+    {
+      "id": 29,
+      "sale_id": 27,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-24 18:54:29",
+      "buying_price": 2232
+    },
+    {
+      "id": 30,
+      "sale_id": 28,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-25 09:18:16",
+      "buying_price": 510
+    },
+    {
+      "id": 31,
+      "sale_id": 29,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-25 09:20:39",
+      "buying_price": 2232
+    },
+    {
+      "id": 32,
+      "sale_id": 30,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-25 09:47:44",
+      "buying_price": 510
+    },
+    {
+      "id": 33,
+      "sale_id": 31,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-25 09:50:27",
+      "buying_price": 2232
+    },
+    {
+      "id": 34,
+      "sale_id": 32,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-25 16:57:09",
+      "buying_price": 510
+    },
+    {
+      "id": 35,
+      "sale_id": 33,
+      "barcode": "2222",
+      "name": "san",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-07-29",
+      "created_at": "2025-07-25 17:33:06",
+      "buying_price": 100
+    },
+    {
+      "id": 36,
+      "sale_id": 34,
+      "barcode": "2222",
+      "name": "san",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-07-29",
+      "created_at": "2025-07-26 05:00:40",
+      "buying_price": 100
+    },
+    {
+      "id": 37,
+      "sale_id": 35,
+      "barcode": "2222",
+      "name": "san",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-07-29",
+      "created_at": "2025-07-26 05:01:58",
+      "buying_price": 100
+    },
+    {
+      "id": 38,
+      "sale_id": 36,
+      "barcode": "4792279002231",
+      "name": "Beta",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-07-30",
+      "created_at": "2025-07-26 14:06:49",
+      "buying_price": 100
+    },
+    {
+      "id": 39,
+      "sale_id": 37,
+      "barcode": "147258369",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 510,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-28 08:50:20",
+      "buying_price": 510
+    },
+    {
+      "id": 40,
+      "sale_id": 38,
+      "barcode": "4792279002231",
+      "name": "Beta",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-07-30",
+      "created_at": "2025-07-28 08:52:13",
+      "buying_price": 100
+    },
+    {
+      "id": 41,
+      "sale_id": 39,
+      "barcode": "4792279002231",
+      "name": "Beta",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-07-30",
+      "created_at": "2025-07-28 09:06:53",
+      "buying_price": 100
+    },
+    {
+      "id": 42,
+      "sale_id": 40,
+      "barcode": "4792024016131",
+      "name": "Nestomalt",
+      "quantity": 1,
+      "price": 780,
+      "expiry_date": "2027-05-27",
+      "created_at": "2025-07-28 09:13:23",
+      "buying_price": 780
+    },
+    {
+      "id": 43,
+      "sale_id": 41,
+      "barcode": "4792279002231",
+      "name": "Beta",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-07-30",
+      "created_at": "2025-07-28 09:31:09",
+      "buying_price": 100
+    },
+    {
+      "id": 44,
+      "sale_id": 41,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-28 09:31:09",
+      "buying_price": 2232
+    },
+    {
+      "id": 45,
+      "sale_id": 42,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-28 09:38:08",
+      "buying_price": 2232
+    },
+    {
+      "id": 46,
+      "sale_id": 43,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-28 09:38:20",
+      "buying_price": 2232
+    },
+    {
+      "id": 47,
+      "sale_id": 44,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-28 13:07:54",
+      "buying_price": 2232
+    },
+    {
+      "id": 48,
+      "sale_id": 45,
+      "barcode": "4792024016131",
+      "name": "Nestomalt",
+      "quantity": 1,
+      "price": 780,
+      "expiry_date": "2027-05-27",
+      "created_at": "2025-07-28 21:17:43",
+      "buying_price": 780
+    },
+    {
+      "id": 49,
+      "sale_id": 46,
+      "barcode": "4792024016131",
+      "name": "Nestomalt",
+      "quantity": 1,
+      "price": 780,
+      "expiry_date": "2027-05-27",
+      "created_at": "2025-07-28 21:22:20",
+      "buying_price": 780
+    },
+    {
+      "id": 50,
+      "sale_id": 47,
+      "barcode": "788777887",
+      "name": "sssefffdd",
+      "quantity": 1,
+      "price": 55,
+      "expiry_date": "2027-10-12",
+      "created_at": "2025-07-28 21:23:09",
+      "buying_price": 55
+    },
+    {
+      "id": 51,
+      "sale_id": 48,
+      "barcode": "102222222222",
+      "name": "oooo",
+      "quantity": 1,
+      "price": 8888,
+      "expiry_date": "2025-08-14",
+      "created_at": "2025-07-29 18:14:24",
+      "buying_price": 8888
+    },
+    {
+      "id": 52,
+      "sale_id": 49,
+      "barcode": "4792024016131",
+      "name": "Nestomalt",
+      "quantity": 1,
+      "price": 780,
+      "expiry_date": "2027-05-27",
+      "created_at": "2025-07-29 18:14:57",
+      "buying_price": 780
+    },
+    {
+      "id": 53,
+      "sale_id": 50,
+      "barcode": "77778888",
+      "name": "sandaru",
+      "quantity": 1,
+      "price": 22211,
+      "expiry_date": "2025-09-27",
+      "created_at": "2025-07-29 18:33:48",
+      "buying_price": 22211
+    },
+    {
+      "id": 54,
+      "sale_id": 51,
+      "barcode": "4792279002231",
+      "name": "Beta",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-08-09",
+      "created_at": "2025-07-29 18:37:16",
+      "buying_price": 100
+    },
+    {
+      "id": 55,
+      "sale_id": 52,
+      "barcode": "4792279002231",
+      "name": "Beta",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-08-09",
+      "created_at": "2025-07-29 18:37:33",
+      "buying_price": 100
+    },
+    {
+      "id": 56,
+      "sale_id": 53,
+      "barcode": "77778888",
+      "name": "sandaru",
+      "quantity": 1,
+      "price": 22211,
+      "expiry_date": "2025-09-27",
+      "created_at": "2025-07-29 18:42:23",
+      "buying_price": 22211
+    },
+    {
+      "id": 57,
+      "sale_id": 54,
+      "barcode": "102222222222",
+      "name": "oooo",
+      "quantity": 1,
+      "price": 8888,
+      "expiry_date": "2025-08-14",
+      "created_at": "2025-07-29 18:50:31",
+      "buying_price": 8888
+    },
+    {
+      "id": 58,
+      "sale_id": 57,
+      "barcode": "4792024016131",
+      "name": "Nestomalt",
+      "quantity": 1,
+      "price": 780,
+      "expiry_date": "2027-05-27",
+      "created_at": "2025-07-29 19:27:32",
+      "buying_price": 780
+    },
+    {
+      "id": 59,
+      "sale_id": 58,
+      "barcode": "1111122222",
+      "name": "kit",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-08-09",
+      "created_at": "2025-07-29 19:36:44",
+      "buying_price": 200
+    },
+    {
+      "id": 60,
+      "sale_id": 59,
+      "barcode": "1111122222",
+      "name": "kit",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-08-09",
+      "created_at": "2025-07-29 19:51:00",
+      "buying_price": 200
+    },
+    {
+      "id": 61,
+      "sale_id": 60,
+      "barcode": "1111122222",
+      "name": "kit",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-08-09",
+      "created_at": "2025-07-29 19:51:12",
+      "buying_price": 200
+    },
+    {
+      "id": 62,
+      "sale_id": 61,
+      "barcode": "1111122222",
+      "name": "kit",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-08-09",
+      "created_at": "2025-07-29 20:08:23",
+      "buying_price": 200
+    },
+    {
+      "id": 63,
+      "sale_id": 62,
+      "barcode": "1111111115111111111",
+      "name": "asasa",
+      "quantity": 1,
+      "price": 23223,
+      "expiry_date": "2025-08-16",
+      "created_at": "2025-07-29 20:23:27",
+      "buying_price": 23223
+    },
+    {
+      "id": 64,
+      "sale_id": 63,
+      "barcode": "1111111115111111111",
+      "name": "asasa",
+      "quantity": 1,
+      "price": 23223,
+      "expiry_date": "2025-08-16",
+      "created_at": "2025-07-29 20:23:37",
+      "buying_price": 23223
+    },
+    {
+      "id": 65,
+      "sale_id": 64,
+      "barcode": "1111111115111111111",
+      "name": "asasa",
+      "quantity": 1,
+      "price": 23223,
+      "expiry_date": "2025-08-16",
+      "created_at": "2025-07-29 20:31:07",
+      "buying_price": 23223
+    },
+    {
+      "id": 66,
+      "sale_id": 65,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-29 20:36:05",
+      "buying_price": 2232
+    },
+    {
+      "id": 67,
+      "sale_id": 66,
+      "barcode": "22222222222",
+      "name": "ssss",
+      "quantity": 1,
+      "price": 2232,
+      "expiry_date": "2026-06-23",
+      "created_at": "2025-07-29 20:36:28",
+      "buying_price": 2232
+    },
+    {
+      "id": 68,
+      "sale_id": 67,
+      "barcode": "788777887",
+      "name": "sssefffdd",
+      "quantity": 1,
+      "price": 55,
+      "expiry_date": "2027-10-12",
+      "created_at": "2025-07-29 20:36:51",
+      "buying_price": 55
+    },
+    {
+      "id": 69,
+      "sale_id": 68,
+      "barcode": "1111111115111111111",
+      "name": "asasa",
+      "quantity": 1,
+      "price": 23223,
+      "expiry_date": "2025-08-16",
+      "created_at": "2025-07-29 20:46:37",
+      "buying_price": 23223
+    },
+    {
+      "id": 70,
+      "sale_id": 69,
+      "barcode": "102222222222",
+      "name": "oooo",
+      "quantity": 1,
+      "price": 8888,
+      "expiry_date": "2025-08-14",
+      "created_at": "2025-07-29 20:53:32",
+      "buying_price": 8888
+    },
+    {
+      "id": 71,
+      "sale_id": 70,
+      "barcode": "102222222222",
+      "name": "oooo",
+      "quantity": 1,
+      "price": 8888,
+      "expiry_date": "2025-08-14",
+      "created_at": "2025-07-29 20:54:09",
+      "buying_price": 8888
+    },
+    {
+      "id": 72,
+      "sale_id": 71,
+      "barcode": "4792279002231",
+      "name": "Beta",
+      "quantity": 1,
+      "price": 100,
+      "expiry_date": "2025-08-09",
+      "created_at": "2025-07-30 09:02:20",
+      "buying_price": 100
+    },
+    {
+      "id": 73,
+      "sale_id": 72,
+      "barcode": "4792024016131",
+      "name": "Nestomalt",
+      "quantity": 1,
+      "price": 780,
+      "expiry_date": "2027-05-27",
+      "created_at": "2025-07-30 09:11:29",
+      "buying_price": 780
+    },
+    {
+      "id": 74,
+      "sale_id": 73,
+      "barcode": "sa112233",
+      "name": "suduru",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-09-13",
+      "created_at": "2025-07-30 09:28:38",
+      "buying_price": 200
+    },
+    {
+      "id": 75,
+      "sale_id": 74,
+      "barcode": "328012",
+      "name": "black magic",
+      "quantity": 1,
+      "price": 50,
+      "expiry_date": "2025-08-30",
+      "created_at": "2025-07-30 09:39:45",
+      "buying_price": 45
+    },
+    {
+      "id": 76,
+      "sale_id": 75,
+      "barcode": "328012",
+      "name": "black magic",
+      "quantity": 1,
+      "price": 50,
+      "expiry_date": "2025-08-30",
+      "created_at": "2025-07-30 09:40:03",
+      "buying_price": 45
+    },
+    {
+      "id": 77,
+      "sale_id": 76,
+      "barcode": "200132",
+      "name": "thunapaha ",
+      "quantity": 1,
+      "price": 300,
+      "expiry_date": "2025-08-15",
+      "created_at": "2025-07-30 09:40:20",
+      "buying_price": 250
+    }
+  ],
+  "expenses": [
+    {
+      "id": 1,
+      "date": "2025-07-29",
+      "category": "Salaries",
+      "amount": 1000,
+      "notes": "sales",
+      "created_by": 1,
+      "created_at": "2025-07-29 18:15:41"
+    },
+    {
+      "id": 2,
+      "date": "2025-07-29",
+      "category": "Salaries",
+      "amount": 1000,
+      "notes": "",
+      "created_by": 1,
+      "created_at": "2025-07-29 18:38:02"
+    },
+    {
+      "id": 3,
+      "date": "2025-07-30",
+      "category": "Inventory",
+      "amount": 100,
+      "notes": "522",
+      "created_by": 1,
+      "created_at": "2025-07-29 19:51:46"
+    },
+    {
+      "id": 4,
+      "date": "2025-07-30",
+      "category": "Salaries",
+      "amount": 30,
+      "notes": "",
+      "created_by": 1,
+      "created_at": "2025-07-29 20:07:59"
+    },
+    {
+      "id": 5,
+      "date": "2025-07-30",
+      "category": "Salaries",
+      "amount": 22121,
+      "notes": "212",
+      "created_by": 1,
+      "created_at": "2025-07-29 20:19:52"
+    }
+  ],
+  "user_activity": [
+    {
+      "id": 1,
+      "user_id": 2,
+      "username": "salesman",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-24 08:32:32"
+    },
+    {
+      "id": 2,
+      "user_id": 8,
+      "username": "sandaru",
+      "action": "sale",
+      "details": "{\"product\":\"peper\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-24 08:35:10"
+    },
+    {
+      "id": 3,
+      "user_id": 2,
+      "username": "salesman",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-24 08:37:18"
+    },
+    {
+      "id": 4,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-24 08:48:12"
+    },
+    {
+      "id": 5,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-24 08:52:54"
+    },
+    {
+      "id": 6,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-24 08:58:02"
+    },
+    {
+      "id": 7,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":5}",
+      "created_at": "2025-07-24 09:22:38"
+    },
+    {
+      "id": 8,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"rice\",\"amount\":212,\"quantity\":1}",
+      "created_at": "2025-07-24 09:24:31"
+    },
+    {
+      "id": 9,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"methmi\",\"amount\":1000,\"quantity\":1}",
+      "created_at": "2025-07-24 13:41:45"
+    },
+    {
+      "id": 10,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"methmi\",\"amount\":1000,\"quantity\":13}",
+      "created_at": "2025-07-24 14:54:57"
+    },
+    {
+      "id": 11,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"methmi\",\"amount\":1000,\"quantity\":1}",
+      "created_at": "2025-07-24 18:34:54"
+    },
+    {
+      "id": 12,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-24 18:42:36"
+    },
+    {
+      "id": 13,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-24 18:44:07"
+    },
+    {
+      "id": 14,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-24 18:44:55"
+    },
+    {
+      "id": 15,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-24 18:46:10"
+    },
+    {
+      "id": 16,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-24 18:54:29"
+    },
+    {
+      "id": 17,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-25 09:18:16"
+    },
+    {
+      "id": 18,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-25 09:20:39"
+    },
+    {
+      "id": 19,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-25 09:47:44"
+    },
+    {
+      "id": 20,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-25 09:50:27"
+    },
+    {
+      "id": 21,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-25 16:57:09"
+    },
+    {
+      "id": 22,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"san\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-25 17:33:06"
+    },
+    {
+      "id": 23,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"san\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-26 05:00:40"
+    },
+    {
+      "id": 24,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"san\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-26 05:01:58"
+    },
+    {
+      "id": 25,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Beta\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-26 14:06:49"
+    },
+    {
+      "id": 26,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":510,\"quantity\":1}",
+      "created_at": "2025-07-28 08:50:20"
+    },
+    {
+      "id": 27,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Beta\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-28 08:52:13"
+    },
+    {
+      "id": 28,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Beta\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-28 09:06:53"
+    },
+    {
+      "id": 29,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Nestomalt\",\"amount\":780,\"quantity\":1}",
+      "created_at": "2025-07-28 09:13:23"
+    },
+    {
+      "id": 30,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Beta\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-28 09:31:09"
+    },
+    {
+      "id": 31,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-28 09:31:09"
+    },
+    {
+      "id": 32,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-28 09:38:08"
+    },
+    {
+      "id": 33,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-28 09:38:20"
+    },
+    {
+      "id": 34,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-28 13:07:54"
+    },
+    {
+      "id": 35,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Nestomalt\",\"amount\":780,\"quantity\":1}",
+      "created_at": "2025-07-28 21:17:43"
+    },
+    {
+      "id": 36,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Nestomalt\",\"amount\":780,\"quantity\":1}",
+      "created_at": "2025-07-28 21:22:20"
+    },
+    {
+      "id": 37,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"sssefffdd\",\"amount\":55,\"quantity\":1}",
+      "created_at": "2025-07-28 21:23:09"
+    },
+    {
+      "id": 38,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"oooo\",\"amount\":8888,\"quantity\":1}",
+      "created_at": "2025-07-29 18:14:24"
+    },
+    {
+      "id": 39,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Nestomalt\",\"amount\":780,\"quantity\":1}",
+      "created_at": "2025-07-29 18:14:57"
+    },
+    {
+      "id": 40,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"sandaru\",\"amount\":22211,\"quantity\":1}",
+      "created_at": "2025-07-29 18:33:48"
+    },
+    {
+      "id": 41,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Beta\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-29 18:37:16"
+    },
+    {
+      "id": 42,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Beta\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-29 18:37:33"
+    },
+    {
+      "id": 43,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"sandaru\",\"amount\":22211,\"quantity\":1}",
+      "created_at": "2025-07-29 18:42:23"
+    },
+    {
+      "id": 44,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"oooo\",\"amount\":8888,\"quantity\":1}",
+      "created_at": "2025-07-29 18:50:31"
+    },
+    {
+      "id": 45,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Nestomalt\",\"amount\":780,\"quantity\":1}",
+      "created_at": "2025-07-29 19:27:32"
+    },
+    {
+      "id": 46,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kit\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-07-29 19:36:44"
+    },
+    {
+      "id": 47,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kit\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-07-29 19:51:00"
+    },
+    {
+      "id": 48,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kit\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-07-29 19:51:12"
+    },
+    {
+      "id": 49,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kit\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-07-29 20:08:23"
+    },
+    {
+      "id": 50,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"asasa\",\"amount\":23223,\"quantity\":1}",
+      "created_at": "2025-07-29 20:23:27"
+    },
+    {
+      "id": 51,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"asasa\",\"amount\":23223,\"quantity\":1}",
+      "created_at": "2025-07-29 20:23:37"
+    },
+    {
+      "id": 52,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"asasa\",\"amount\":23223,\"quantity\":1}",
+      "created_at": "2025-07-29 20:31:07"
+    },
+    {
+      "id": 53,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-29 20:36:05"
+    },
+    {
+      "id": 54,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"ssss\",\"amount\":2232,\"quantity\":1}",
+      "created_at": "2025-07-29 20:36:28"
+    },
+    {
+      "id": 55,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"sssefffdd\",\"amount\":55,\"quantity\":1}",
+      "created_at": "2025-07-29 20:36:51"
+    },
+    {
+      "id": 56,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"asasa\",\"amount\":23223,\"quantity\":1}",
+      "created_at": "2025-07-29 20:46:37"
+    },
+    {
+      "id": 57,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"oooo\",\"amount\":8888,\"quantity\":1}",
+      "created_at": "2025-07-29 20:53:32"
+    },
+    {
+      "id": 58,
+      "user_id": 2,
+      "username": "salesman",
+      "action": "sale",
+      "details": "{\"product\":\"oooo\",\"amount\":8888,\"quantity\":1}",
+      "created_at": "2025-07-29 20:54:09"
+    },
+    {
+      "id": 59,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Beta\",\"amount\":100,\"quantity\":1}",
+      "created_at": "2025-07-30 09:02:20"
+    },
+    {
+      "id": 60,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Nestomalt\",\"amount\":780,\"quantity\":1}",
+      "created_at": "2025-07-30 09:11:29"
+    },
+    {
+      "id": 61,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"suduru\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-07-30 09:28:38"
+    },
+    {
+      "id": 62,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"black magic\",\"amount\":50,\"quantity\":1}",
+      "created_at": "2025-07-30 09:39:45"
+    },
+    {
+      "id": 63,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"black magic\",\"amount\":50,\"quantity\":1}",
+      "created_at": "2025-07-30 09:40:03"
+    },
+    {
+      "id": 64,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"thunapaha \",\"amount\":300,\"quantity\":1}",
+      "created_at": "2025-07-30 09:40:20"
+    }
+  ]
+}

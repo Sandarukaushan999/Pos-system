@@ -22,6 +22,7 @@ const InventoryManager = () => {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [statusFilter, setStatusFilter] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('');
   const [showAddModal, setShowAddModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
@@ -311,10 +312,43 @@ const InventoryManager = () => {
     );
   };
 
-  const filteredItems = items.filter(item => 
-    item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    item.barcode.includes(searchTerm)
-  );
+  // Enhanced filtering logic
+  const filteredItems = items.filter(item => {
+    // Text search filter
+    const matchesSearch = item.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         item.barcode.includes(searchTerm);
+    
+    // Status filter
+    const matchesStatus = !statusFilter || item.status === statusFilter;
+    
+    // Category filter
+    let matchesCategory = true;
+    if (categoryFilter) {
+      const { isLowStock, isExpired } = calculateItemStatus(item);
+      const today = new Date();
+      const expiryDate = item.expiry_date ? new Date(item.expiry_date) : null;
+      const daysUntilExpiry = expiryDate ? Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24)) : null;
+      
+      switch (categoryFilter) {
+        case 'expired':
+          matchesCategory = isExpired;
+          break;
+        case 'pending':
+          matchesCategory = item.status === 'pending';
+          break;
+        case 'near-expire':
+          matchesCategory = expiryDate && daysUntilExpiry <= 30 && daysUntilExpiry > 0 && item.status === 'active';
+          break;
+        case 'low-stock':
+          matchesCategory = isLowStock;
+          break;
+        default:
+          matchesCategory = true;
+      }
+    }
+    
+    return matchesSearch && matchesStatus && matchesCategory;
+  });
 
   // Calculate stats with better error handling
   const stats = {
@@ -328,6 +362,12 @@ const InventoryManager = () => {
     expired: items.filter(item => {
       const { isExpired } = calculateItemStatus(item);
       return isExpired;
+    }).length,
+    nearExpire: items.filter(item => {
+      const today = new Date();
+      const expiryDate = item.expiry_date ? new Date(item.expiry_date) : null;
+      const daysUntilExpiry = expiryDate ? Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24)) : null;
+      return expiryDate && daysUntilExpiry <= 30 && daysUntilExpiry > 0 && item.status === 'active';
     }).length
   };
 
@@ -348,6 +388,16 @@ const InventoryManager = () => {
     expiredItems: items.filter(item => {
       const { isExpired } = calculateItemStatus(item);
       return isExpired;
+    }).map(item => ({
+      name: item.name,
+      expiry_date: item.expiry_date,
+      status: item.status
+    })),
+    nearExpireItems: items.filter(item => {
+      const today = new Date();
+      const expiryDate = item.expiry_date ? new Date(item.expiry_date) : null;
+      const daysUntilExpiry = expiryDate ? Math.ceil((expiryDate - today) / (1000 * 60 * 60 * 24)) : null;
+      return expiryDate && daysUntilExpiry <= 30 && daysUntilExpiry > 0 && item.status === 'active';
     }).map(item => ({
       name: item.name,
       expiry_date: item.expiry_date,
@@ -384,7 +434,7 @@ const InventoryManager = () => {
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-5 gap-4 mb-6">
+        <div className="grid grid-cols-6 gap-4 mb-6">
           <div className="bg-white rounded-xl shadow-lg p-4">
             <div className="flex items-center justify-between">
               <div>
@@ -440,10 +490,59 @@ const InventoryManager = () => {
               </div>
             </div>
           </div>
+          <div className={`bg-white rounded-xl shadow-lg p-4 ${stats.nearExpire > 0 ? 'animate-pulse' : ''}`}>
+            <div className="flex items-center justify-between">
+              <div>
+                <p className="text-xs font-medium text-slate-600 mb-1">Near Expire</p>
+                <p className="text-xl font-bold text-orange-600">{stats.nearExpire}</p>
+              </div>
+              <div className="w-10 h-10 rounded-lg bg-gradient-to-r from-orange-500 to-orange-600 flex items-center justify-center">
+                <Clock className="h-5 w-5 text-white" />
+              </div>
+            </div>
+          </div>
         </div>
 
         {/* Search and Filters */}
         <div className="bg-white rounded-xl shadow-lg p-4 mb-6">
+          {/* Active Filters Display */}
+          {(searchTerm || statusFilter || categoryFilter) && (
+            <div className="mb-4 flex flex-wrap gap-2">
+              {searchTerm && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                  Search: "{searchTerm}"
+                  <button
+                    onClick={() => setSearchTerm('')}
+                    className="ml-1 hover:bg-blue-200 rounded-full p-0.5"
+                  >
+                    <XCircle className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {statusFilter && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                  Status: {statusFilter}
+                  <button
+                    onClick={() => setStatusFilter('')}
+                    className="ml-1 hover:bg-green-200 rounded-full p-0.5"
+                  >
+                    <XCircle className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+              {categoryFilter && (
+                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                  Category: {categoryFilter.replace('-', ' ')}
+                  <button
+                    onClick={() => setCategoryFilter('')}
+                    className="ml-1 hover:bg-purple-200 rounded-full p-0.5"
+                  >
+                    <XCircle className="h-3 w-3" />
+                  </button>
+                </span>
+              )}
+            </div>
+          )}
           <div className="flex items-center gap-4">
             <div className="flex-1 relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-slate-400" />
@@ -468,6 +567,33 @@ const InventoryManager = () => {
                 <option value="inactive">Inactive</option>
               </select>
             </div>
+            <div className="flex items-center gap-2">
+              <Filter className="h-4 w-4 text-slate-400" />
+              <select
+                value={categoryFilter}
+                onChange={(e) => setCategoryFilter(e.target.value)}
+                className="px-3 py-2 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              >
+                <option value="">All Categories</option>
+                <option value="expired">Expired</option>
+                <option value="pending">Pending</option>
+                <option value="near-expire">Near Expire</option>
+                <option value="low-stock">Low Stock</option>
+              </select>
+            </div>
+            {(searchTerm || statusFilter || categoryFilter) && (
+              <button
+                onClick={() => {
+                  setSearchTerm('');
+                  setStatusFilter('');
+                  setCategoryFilter('');
+                }}
+                className="px-3 py-2 text-sm text-slate-600 hover:text-slate-800 hover:bg-slate-100 rounded-lg transition-colors flex items-center gap-1"
+              >
+                <XCircle className="h-4 w-4" />
+                Clear Filters
+              </button>
+            )}
           </div>
         </div>
 
