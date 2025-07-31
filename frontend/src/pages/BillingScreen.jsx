@@ -17,8 +17,8 @@ import {
 } from 'lucide-react';
 import { inventoryAPI, salesAPI } from '../services/api';
 
-const Receipt = ({ sale, items }) => (
-  <div className="font-mono text-xs">
+const Receipt = ({ sale, items, isDarkMode = true }) => (
+  <div className={`font-mono text-xs ${isDarkMode ? 'text-white' : 'text-black'}`}>
     <div className="text-center mb-2">
       <h3 className="font-bold">STORE RECEIPT</h3>
       <p>{new Date().toLocaleString()}</p>
@@ -30,7 +30,7 @@ const Receipt = ({ sale, items }) => (
             <span className="font-semibold">{item.name}</span>
             <span>Rs {(item.price * item.quantity).toFixed(2)}</span>
           </div>
-          <div className="flex justify-between text-gray-600">
+          <div className={`flex justify-between ${isDarkMode ? 'text-gray-300' : 'text-gray-600'}`}>
             <span>Qty: {item.quantity} x Rs {item.price.toFixed(2)}</span>
             <span>Exp: {item.expiry_date}</span>
           </div>
@@ -561,7 +561,7 @@ const BillingScreen = ({ isDarkMode = true }) => {
                </button>
              </div>
              <div className={`p-4 overflow-y-auto max-h-[60vh] transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-gray-50'}`}>
-               <Receipt sale={printData.sale} items={printData.items} />
+               <Receipt sale={printData.sale} items={printData.items} isDarkMode={isDarkMode} />
              </div>
              <div className={`p-4 border-t transition-all duration-500 ${isDarkMode ? 'border-[#3A3A3A] bg-[#2A2A2A]' : 'border-gray-200 bg-white'}`}>
                              <div className="flex gap-3">

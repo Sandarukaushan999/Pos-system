@@ -119,7 +119,7 @@ const Layout = ({ children }) => {
                     ? `${isDarkMode ? 'bg-[#202020]' : 'bg-white'} group-hover:scale-110 group-hover:rotate-3` 
                     : `${isDarkMode ? 'bg-[#3A3A3A] text-[#F8F8F8]' : 'bg-gray-200 text-gray-700'} group-hover:scale-110 group-hover:rotate-3`
                 }`}>
-                  <item.icon className={`h-4 w-4 ${isActive ? 'text-white group-hover:animate-bounce group-active:icon-glow' : `${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'} group-hover:animate-pulse group-active:icon-glow`}`} />
+                  <item.icon className={`h-4 w-4 ${isActive ? `${isDarkMode ? 'text-white' : 'text-black'} group-hover:animate-bounce group-active:icon-glow` : `${isDarkMode ? 'text-[#F8F8F8]' : 'text-black'} group-hover:animate-pulse group-active:icon-glow`}`} />
                 </div>
                 {!sidebarCollapsed && (
                   <span className="ml-3 font-semibold group-hover:scale-105 transition-transform duration-200 group-active:text-highlight">{item.name}</span>

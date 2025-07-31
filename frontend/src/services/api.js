@@ -47,7 +47,6 @@ export const authAPI = {
   register: (username, password, role) => api.post('/auth/register', { username, password, role }),
   getProfile: () => api.get('/auth/profile'),
   changePassword: (passwords) => api.put('/auth/change-password', passwords),
-  getUsers: () => api.get('/auth/users'),
   deleteUser: (id) => api.delete(`/users/${id}`), // Use /users endpoint for deletion
 };
 

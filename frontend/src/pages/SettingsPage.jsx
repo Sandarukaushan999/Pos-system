@@ -298,13 +298,13 @@ const SettingsPage = ({ isDarkMode = true }) => {
     };
 
     return (
-      <div className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6">
+      <div className={`rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 p-6 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-white'}`}>
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-sm font-medium text-slate-600 mb-1">{title}</p>
-            <p className="text-2xl font-bold text-slate-900">{value}</p>
+            <p className={`text-sm font-medium mb-1 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-slate-600'}`}>{title}</p>
+            <p className={`text-2xl font-bold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-slate-900'}`}>{value}</p>
             {subtitle && (
-              <p className="text-xs text-slate-500 mt-1">{subtitle}</p>
+              <p className={`text-xs mt-1 ${isDarkMode ? 'text-[#F8F8F8]/70' : 'text-slate-500'}`}>{subtitle}</p>
             )}
           </div>
           <div className={`w-12 h-12 rounded-xl ${colorClasses[color].split(' ')[2]} flex items-center justify-center`}>
@@ -325,15 +325,15 @@ const SettingsPage = ({ isDarkMode = true }) => {
     };
 
     return (
-      <div className="bg-white rounded-xl border-2 border-slate-200 p-6 hover:shadow-lg transition-all duration-300">
+      <div className={`rounded-xl border-2 p-6 hover:shadow-lg transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-slate-200'}`}>
         <div className="flex items-start justify-between">
           <div className="flex items-center">
             <div className={`w-10 h-10 rounded-xl ${colorClasses[color].split(' ')[2]} flex items-center justify-center mr-4`}>
               <Icon className={`h-5 w-5 ${colorClasses[color].split(' ')[3]}`} />
             </div>
             <div>
-              <h3 className="text-lg font-semibold text-slate-900">{title}</h3>
-              <p className="text-sm text-slate-600 mt-1">{description}</p>
+              <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-slate-900'}`}>{title}</h3>
+              <p className={`text-sm mt-1 ${isDarkMode ? 'text-[#F8F8F8]/70' : 'text-slate-600'}`}>{description}</p>
             </div>
           </div>
           <button
@@ -549,7 +549,7 @@ const SettingsPage = ({ isDarkMode = true }) => {
                 <div className={`rounded-xl overflow-hidden hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-[#3A3A3A]">
-                      <thead className="bg-[#202020]">
+                      <thead className={isDarkMode ? 'bg-[#202020]' : 'bg-gray-50'}>
                         <tr>
                           <th className="px-6 py-3 text-left text-xs font-medium text-[#A5BF13] uppercase tracking-wider">
                             Username
@@ -565,15 +565,15 @@ const SettingsPage = ({ isDarkMode = true }) => {
                           </th>
                         </tr>
                       </thead>
-                      <tbody className="bg-[#2A2A2A] divide-y divide-[#3A3A3A]">
+                      <tbody className={`divide-y ${isDarkMode ? 'bg-[#2A2A2A] divide-[#3A3A3A]' : 'bg-white divide-gray-200'}`}>
                         {users.map((userItem) => (
-                          <tr key={userItem.id} className="hover:bg-[#3A3A3A] transition-colors">
+                          <tr key={userItem.id} className={`transition-colors ${isDarkMode ? 'hover:bg-[#3A3A3A]' : 'hover:bg-gray-50'}`}>
                             <td className="px-6 py-4 whitespace-nowrap">
                               <div className="flex items-center">
                                 <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center mr-3">
                                   <User className="h-4 w-4 text-black" />
                                 </div>
-                                <span className="text-sm font-medium text-[#F8F8F8]">{userItem.username}</span>
+                                <span className={`text-sm font-medium ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{userItem.username}</span>
                               </div>
                             </td>
                             <td className="px-6 py-4 whitespace-nowrap">
@@ -623,12 +623,12 @@ const SettingsPage = ({ isDarkMode = true }) => {
             {activeTab === 'system' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                  <div className="bg-[#2A2A2A] border border-[#A5BF13] rounded-xl p-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+                  <div className={`border border-[#A5BF13] rounded-xl p-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-white'}`}>
                     <div className="flex items-center mb-4">
                       <div className="w-10 h-10 rounded-xl bg-[#A5BF13] flex items-center justify-center mr-3">
                         <Database className="h-5 w-5 text-black" />
                       </div>
-                      <h4 className="text-lg font-semibold text-[#F8F8F8]">Backup Information</h4>
+                      <h4 className={`text-lg font-semibold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Backup Information</h4>
                     </div>
                     <p className="text-sm text-[#A5BF13]">
                       Reports are automatically saved to the POSBackups folder. 
@@ -636,12 +636,12 @@ const SettingsPage = ({ isDarkMode = true }) => {
                     </p>
                   </div>
                   
-                  <div className="bg-[#2A2A2A] border border-[#F79824] rounded-xl p-6 hover:shadow-xl hover:shadow-[#F79824]/20 transition-all duration-300">
+                  <div className={`border border-[#F79824] rounded-xl p-6 hover:shadow-xl hover:shadow-[#F79824]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-white'}`}>
                     <div className="flex items-center mb-4">
                       <div className="w-10 h-10 rounded-xl bg-[#F79824] flex items-center justify-center mr-3">
                         <SettingsIcon className="h-5 w-5 text-black" />
                       </div>
-                      <h4 className="text-lg font-semibold text-[#F8F8F8]">System Requirements</h4>
+                      <h4 className={`text-lg font-semibold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>System Requirements</h4>
                     </div>
                     <ul className="text-sm text-[#A5BF13] space-y-1">
                       <li>• Windows 10 or later</li>
@@ -658,14 +658,14 @@ const SettingsPage = ({ isDarkMode = true }) => {
             {activeTab === 'data' && user?.role === 'admin' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 gap-6">
-                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl p-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+                  <div className={`border rounded-xl p-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 rounded-xl bg-[#A5BF13] flex items-center justify-center mr-4">
                           <Download className="h-5 w-5 text-black" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-[#F8F8F8]">Export Data</h3>
+                          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Export Data</h3>
                           <p className="text-sm text-[#A5BF13] mt-1">Export all system data including inventory, sales, expenses, and user data to a JSON file.</p>
                         </div>
                       </div>
@@ -682,14 +682,14 @@ const SettingsPage = ({ isDarkMode = true }) => {
                     </div>
                   </div>
 
-                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl p-6 hover:shadow-xl hover:shadow-[#F79824]/20 transition-all duration-300">
+                  <div className={`border rounded-xl p-6 hover:shadow-xl hover:shadow-[#F79824]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 rounded-xl bg-[#F79824] flex items-center justify-center mr-4">
                           <Upload className="h-5 w-5 text-black" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-[#F8F8F8]">Import Data</h3>
+                          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Import Data</h3>
                           <p className="text-sm text-[#A5BF13] mt-1">Import previously exported data. This will replace all existing data.</p>
                         </div>
                       </div>
@@ -706,14 +706,14 @@ const SettingsPage = ({ isDarkMode = true }) => {
                     </div>
                   </div>
 
-                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl p-6 hover:shadow-xl hover:shadow-[#B4182D]/20 transition-all duration-300">
+                  <div className={`border rounded-xl p-6 hover:shadow-xl hover:shadow-[#B4182D]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                     <div className="flex items-start justify-between">
                       <div className="flex items-center">
                         <div className="w-10 h-10 rounded-xl bg-[#B4182D] flex items-center justify-center mr-4">
                           <RotateCcw className="h-5 w-5 text-white" />
                         </div>
                         <div>
-                          <h3 className="text-lg font-semibold text-[#F8F8F8]">Reset System</h3>
+                          <h3 className={`text-lg font-semibold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Reset System</h3>
                           <p className="text-sm text-[#A5BF13] mt-1">Clear all data and reset the system to factory settings. This action cannot be undone.</p>
                         </div>
                       </div>
@@ -731,11 +731,11 @@ const SettingsPage = ({ isDarkMode = true }) => {
                   </div>
                 </div>
 
-                <div className="bg-[#2A2A2A] border border-[#B4182D] rounded-xl p-6 hover:shadow-xl hover:shadow-[#B4182D]/20 transition-all duration-300">
+                <div className={`border rounded-xl p-6 hover:shadow-xl hover:shadow-[#B4182D]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A] border-[#B4182D]' : 'bg-white border-red-200'}`}>
                   <div className="flex items-start">
                     <AlertTriangle className="h-5 w-5 text-[#B4182D] mt-0.5 mr-3 animate-pulse" />
                     <div>
-                      <h4 className="text-sm font-medium text-[#F8F8F8] mb-2">⚠️ Important Notes</h4>
+                      <h4 className={`text-sm font-medium mb-2 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>⚠️ Important Notes</h4>
                       <ul className="text-sm text-[#A5BF13] space-y-1">
                         <li>• Always export your data before making any changes</li>
                         <li>• Import will replace all existing data</li>

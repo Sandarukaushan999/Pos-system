@@ -1,0 +1,228 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "$2a$10$7.g264ypjA2oXTeakwC6z.hLkVyWVVyXyMWyFqoGfBR1I2aC8bAl.",
+      "role": "admin",
+      "created_at": "2025-07-23 16:44:55",
+      "updated_at": "2025-07-23 16:44:55",
+      "name": "Administrator"
+    },
+    {
+      "id": 2,
+      "username": "salesman",
+      "password_hash": "$2a$10$psE/T7bF5e2Vm0R9GNwle.gYuVidv3JyD5S/nEYMbNQp6wpeEcudy",
+      "role": "salesman",
+      "created_at": "2025-07-23 17:30:34",
+      "updated_at": "2025-07-23 17:30:34",
+      "name": "Sales Manager"
+    },
+    {
+      "id": 7,
+      "username": "dataenter",
+      "password_hash": "$2a$10$YccQgcBpnfl0PslS/kOHDeK3v6nrEeOwic9.EIk9Mz7Tysh1oBrxq",
+      "role": "dataentry",
+      "created_at": "2025-07-24 07:36:34",
+      "updated_at": "2025-07-24 07:36:34",
+      "name": "Data Entry"
+    },
+    {
+      "id": 11,
+      "username": "Admin",
+      "password_hash": "$2a$10$oqlz8YpPuB8NwxpWPIqakunjMp6qPmBdmZHwZBfSJEflMqyvzXvzq",
+      "role": "admin",
+      "created_at": "2025-07-28 20:55:52",
+      "updated_at": "2025-07-28 20:55:52",
+      "name": "Administrator"
+    },
+    {
+      "id": 12,
+      "username": "testuser",
+      "password_hash": "$2b$10$test.hash.for.testing",
+      "role": "admin",
+      "created_at": "2025-07-31 07:42:02",
+      "updated_at": "2025-07-31 07:42:02",
+      "name": "Administrator"
+    }
+  ],
+  "stock_items": [
+    {
+      "id": 1,
+      "barcode": "77777777",
+      "name": "sunquck",
+      "quantity": 45,
+      "price": 1500,
+      "buying_price": 1400,
+      "expiry_date": "2025-08-30",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 08:22:17",
+      "updated_at": "2025-07-31 08:23:04"
+    },
+    {
+      "id": 2,
+      "barcode": "88888888",
+      "name": "paprica",
+      "quantity": 83,
+      "price": 400,
+      "buying_price": 350,
+      "expiry_date": "2025-08-21",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 08:22:53",
+      "updated_at": "2025-07-31 12:16:04"
+    },
+    {
+      "id": 3,
+      "barcode": "99999999",
+      "name": "Coca-cola",
+      "quantity": 14,
+      "price": 150,
+      "buying_price": 100,
+      "expiry_date": "2025-07-01",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 08:30:59",
+      "updated_at": "2025-07-31 12:09:05"
+    }
+  ],
+  "sales": [
+    {
+      "id": 1,
+      "invoice_number": "INV-20250731-001",
+      "total_amount": 400,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-31 08:23:15",
+      "total_profit": 50
+    },
+    {
+      "id": 2,
+      "invoice_number": "INV-20250731-002",
+      "total_amount": 400,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-31 08:26:40",
+      "total_profit": 50
+    },
+    {
+      "id": 3,
+      "invoice_number": "INV-20250731-003",
+      "total_amount": 550,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-31 09:12:25",
+      "total_profit": 100
+    },
+    {
+      "id": 4,
+      "invoice_number": "INV-20250731-004",
+      "total_amount": 1600,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-31 12:16:04",
+      "total_profit": 200
+    }
+  ],
+  "sales_items": [
+    {
+      "id": 1,
+      "sale_id": 1,
+      "barcode": "88888888",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 400,
+      "expiry_date": "2025-08-21",
+      "created_at": "2025-07-31 08:23:15",
+      "buying_price": 350
+    },
+    {
+      "id": 2,
+      "sale_id": 2,
+      "barcode": "88888888",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 400,
+      "expiry_date": "2025-08-21",
+      "created_at": "2025-07-31 08:26:40",
+      "buying_price": 350
+    },
+    {
+      "id": 3,
+      "sale_id": 3,
+      "barcode": "88888888",
+      "name": "paprica",
+      "quantity": 1,
+      "price": 400,
+      "expiry_date": "2025-08-21",
+      "created_at": "2025-07-31 09:12:25",
+      "buying_price": 350
+    },
+    {
+      "id": 4,
+      "sale_id": 3,
+      "barcode": "99999999",
+      "name": "Coca-cola",
+      "quantity": 1,
+      "price": 150,
+      "expiry_date": "2025-09-30",
+      "created_at": "2025-07-31 09:12:25",
+      "buying_price": 100
+    },
+    {
+      "id": 5,
+      "sale_id": 4,
+      "barcode": "88888888",
+      "name": "paprica",
+      "quantity": 4,
+      "price": 400,
+      "expiry_date": "2025-08-21",
+      "created_at": "2025-07-31 12:16:04",
+      "buying_price": 350
+    }
+  ],
+  "expenses": [],
+  "user_activity": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":400,\"quantity\":1}",
+      "created_at": "2025-07-31 08:23:15"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":400,\"quantity\":1}",
+      "created_at": "2025-07-31 08:26:40"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":400,\"quantity\":1}",
+      "created_at": "2025-07-31 09:12:25"
+    },
+    {
+      "id": 4,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Coca-cola\",\"amount\":150,\"quantity\":1}",
+      "created_at": "2025-07-31 09:12:25"
+    },
+    {
+      "id": 5,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"paprica\",\"amount\":400,\"quantity\":4}",
+      "created_at": "2025-07-31 12:16:04"
+    }
+  ]
+}
