@@ -107,18 +107,18 @@ const StockApproval = ({ isDarkMode = true }) => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 group">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Total Pending</p>
-                <p className="text-xl font-bold text-[#F8F8F8]">{stats.total}</p>
+                <p className={`text-xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{stats.total}</p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <Package className="h-5 w-5 text-black" />
               </div>
             </div>
           </div>
-          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">High Value</p>
@@ -129,7 +129,7 @@ const StockApproval = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Near Expiry</p>
@@ -140,7 +140,7 @@ const StockApproval = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 group">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Urgent</p>
@@ -155,19 +155,19 @@ const StockApproval = ({ isDarkMode = true }) => {
 
         {/* Error/Success messages */}
         {error && (
-          <div className="mb-4 bg-[#2A2A2A] border border-[#B4182D] rounded-lg p-3 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300">
+          <div className={`mb-4 border border-[#B4182D] rounded-lg p-3 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-red-50'}`}>
             <div className="flex items-center">
               <AlertTriangle className="h-4 w-4 text-[#B4182D] mr-2 animate-pulse" />
-              <p className="text-[#F8F8F8] text-sm">{error}</p>
+              <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-red-800'}`}>{error}</p>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 bg-[#2A2A2A] border border-[#A5BF13] rounded-lg p-3 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
+          <div className={`mb-4 border border-[#A5BF13] rounded-lg p-3 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-green-50'}`}>
             <div className="flex items-center">
               <Check className="h-4 w-4 text-[#A5BF13] mr-2 animate-pulse" />
-              <p className="text-[#F8F8F8] text-sm">{success}</p>
+              <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-green-800'}`}>{success}</p>
             </div>
           </div>
         )}
@@ -180,10 +180,10 @@ const StockApproval = ({ isDarkMode = true }) => {
             </div>
           ) : pendingItems.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-[#2A2A2A] rounded-full flex items-center justify-center mx-auto mb-4 hover:scale-110 transition-all duration-300">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 hover:scale-110 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-gray-100'}`}>
                 <Package className="h-8 w-8 text-[#A5BF13]" />
               </div>
-              <h3 className="text-lg font-semibold text-[#F8F8F8] mb-2">No pending items</h3>
+              <h3 className={`text-lg font-semibold mb-2 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>No pending items</h3>
               <p className="text-[#A5BF13]">All items have been reviewed and processed.</p>
             </div>
           ) : (

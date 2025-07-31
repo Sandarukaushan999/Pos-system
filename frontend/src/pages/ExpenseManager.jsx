@@ -353,18 +353,18 @@ const ExpenseManager = ({ isDarkMode = true }) => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 group">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Total Expenses</p>
-                <p className="text-xl font-bold text-[#F8F8F8]">{stats.total}</p>
+                <p className={`text-xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{stats.total}</p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                 <DollarSign className="h-5 w-5 text-black" />
               </div>
             </div>
           </div>
-          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 group">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Total Amount</p>
@@ -375,7 +375,7 @@ const ExpenseManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">This Month</p>
@@ -386,7 +386,7 @@ const ExpenseManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 group">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Avg Per Expense</p>
@@ -400,13 +400,13 @@ const ExpenseManager = ({ isDarkMode = true }) => {
         </div>
 
         {/* Filters - Compact Design */}
-        <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-3 mb-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+        <div className={`rounded-xl shadow-lg p-3 mb-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-[#A5BF13] rounded-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
                 <Filter className="h-3 w-3 text-black" />
               </div>
-              <h3 className="text-sm font-semibold text-[#F8F8F8]">Filters</h3>
+              <h3 className={`text-sm font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Filters</h3>
             </div>
             <div className="text-xs text-[#A5BF13]">
               Filter expenses by criteria
@@ -420,7 +420,7 @@ const ExpenseManager = ({ isDarkMode = true }) => {
                   type="text"
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full pl-7 pr-3 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] placeholder-[#A5BF13] focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300"
+                  className={`w-full pl-7 pr-3 py-1 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8] placeholder-[#A5BF13]' : 'bg-white border-gray-300 text-gray-800 placeholder-gray-500'}`}
                   placeholder="Search by category or notes..."
                 />
               </div>
@@ -429,7 +429,7 @@ const ExpenseManager = ({ isDarkMode = true }) => {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="w-full px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300"
+                className={`w-full px-2 py-1 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
               >
                 <option value="">All Categories</option>
                 {expenseCategories.map(category => (
@@ -442,19 +442,19 @@ const ExpenseManager = ({ isDarkMode = true }) => {
                 type="date"
                 value={dateRange.start}
                 onChange={(e) => setDateRange(prev => ({ ...prev, start: e.target.value }))}
-                className="w-32 px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300"
+                className={`w-32 px-2 py-1 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
               />
               <input
                 type="date"
                 value={dateRange.end}
                 onChange={(e) => setDateRange(prev => ({ ...prev, end: e.target.value }))}
-                className="w-32 px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300"
+                className={`w-32 px-2 py-1 rounded-lg text-xs focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
               />
             </div>
             <div>
               <button
                 onClick={clearFilters}
-                className="px-3 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg text-xs text-[#F8F8F8] font-medium hover:bg-[#3A3A3A] transition-all flex items-center justify-center gap-1 hover:shadow-lg hover:shadow-[#A5BF13]/20"
+                className={`px-3 py-1 rounded-lg text-xs font-medium transition-all flex items-center justify-center gap-1 hover:shadow-lg hover:shadow-[#A5BF13]/20 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8] hover:bg-[#3A3A3A]' : 'bg-white border-gray-300 text-gray-700 hover:bg-gray-100'}`}
               >
                 <X className="h-3 w-3" />
                 Clear
@@ -465,19 +465,19 @@ const ExpenseManager = ({ isDarkMode = true }) => {
 
         {/* Error/Success messages */}
         {error && (
-          <div className="mb-4 bg-[#2A2A2A] border border-[#B4182D] rounded-lg p-3 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300">
+          <div className={`mb-4 border border-[#B4182D] rounded-lg p-3 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-red-50'}`}>
             <div className="flex items-center">
               <AlertTriangle className="h-4 w-4 text-[#B4182D] mr-2 animate-pulse" />
-              <p className="text-[#F8F8F8] text-sm">{error}</p>
+              <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-red-800'}`}>{error}</p>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 bg-[#2A2A2A] border border-[#A5BF13] rounded-lg p-3 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
+          <div className={`mb-4 border border-[#A5BF13] rounded-lg p-3 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-green-50'}`}>
             <div className="flex items-center">
               <CheckCircle className="h-4 w-4 text-[#A5BF13] mr-2 animate-pulse" />
-              <p className="text-[#F8F8F8] text-sm">{success}</p>
+              <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-green-800'}`}>{success}</p>
             </div>
           </div>
         )}
@@ -490,10 +490,10 @@ const ExpenseManager = ({ isDarkMode = true }) => {
             </div>
           ) : paginatedExpenses.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-[#2A2A2A] rounded-full flex items-center justify-center mx-auto mb-4 hover:scale-110 transition-all duration-300">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 hover:scale-110 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-gray-100'}`}>
                 <DollarSign className="h-8 w-8 text-[#A5BF13]" />
               </div>
-              <h3 className="text-lg font-semibold text-[#F8F8F8] mb-2">No expenses found</h3>
+              <h3 className={`text-lg font-semibold mb-2 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>No expenses found</h3>
               <p className="text-[#A5BF13]">
                 {searchTerm || categoryFilter || dateRange.start || dateRange.end 
                   ? 'Try adjusting your filters.' 
@@ -503,10 +503,10 @@ const ExpenseManager = ({ isDarkMode = true }) => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {paginatedExpenses.map((expense) => (
-                <div key={expense.id} className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group">
+                <div key={expense.id} className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-[#F8F8F8] text-sm group-hover:text-[#A5BF13] transition-colors duration-300">{expense.category}</h3>
+                      <h3 className={`font-semibold text-sm group-hover:text-[#A5BF13] transition-colors duration-300 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{expense.category}</h3>
                       <p className="text-xs text-[#A5BF13] flex items-center gap-1 mt-1">
                         <Calendar className="h-3 w-3" />
                         {new Date(expense.date).toLocaleDateString()}

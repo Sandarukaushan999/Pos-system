@@ -128,7 +128,7 @@ const ReportsPage = ({ isDarkMode = true }) => {
               <p className="text-sm text-[#A5BF13]">Generate and download business reports</p>
             </div>
             <div className="flex items-center gap-2">
-              <div className="text-xs text-[#A5BF13] bg-[#2A2A2A] px-3 py-1 rounded-lg border border-[#3A3A3A] hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
+              <div className={`text-xs text-[#A5BF13] px-3 py-1 rounded-lg border hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-100 border-gray-300'}`}>
                 <Clock className="inline h-3 w-3 mr-1" />
                 Auto-save to POSBackups
               </div>
@@ -137,13 +137,13 @@ const ReportsPage = ({ isDarkMode = true }) => {
         </div>
 
         {/* Report Parameters - Compact Design */}
-        <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-3 mb-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+        <div className={`rounded-xl shadow-lg p-3 mb-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <div className="w-6 h-6 bg-[#A5BF13] rounded-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
                 <Calendar className="h-3 w-3 text-black" />
               </div>
-              <h3 className="text-sm font-semibold text-[#F8F8F8]">Report Parameters</h3>
+              <h3 className={`text-sm font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Report Parameters</h3>
             </div>
             <div className="text-xs text-[#A5BF13]">
               Quick filters for report generation
@@ -158,7 +158,7 @@ const ReportsPage = ({ isDarkMode = true }) => {
                 type="date"
                 value={reportParams.start_date}
                 onChange={(e) => setReportParams({...reportParams, start_date: e.target.value})}
-                className="block w-full px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300"
+                className={`block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
               />
             </div>
             <div className="flex-1">
@@ -169,7 +169,7 @@ const ReportsPage = ({ isDarkMode = true }) => {
                 type="date"
                 value={reportParams.end_date}
                 onChange={(e) => setReportParams({...reportParams, end_date: e.target.value})}
-                className="block w-full px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300"
+                className={`block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
               />
             </div>
             <div className="flex-1">
@@ -179,7 +179,7 @@ const ReportsPage = ({ isDarkMode = true }) => {
               <select
                 value={reportParams.period}
                 onChange={(e) => setReportParams({...reportParams, period: e.target.value})}
-                className="block w-full px-2 py-1 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs text-[#F8F8F8] hover:border-[#A5BF13] transition-all duration-300"
+                className={`block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
               >
                 <option value="today">Today</option>
                 <option value="week">This Week</option>
@@ -192,19 +192,19 @@ const ReportsPage = ({ isDarkMode = true }) => {
 
         {/* Error/Success messages */}
         {error && (
-          <div className="mb-4 bg-[#2A2A2A] border border-[#B4182D] rounded-lg p-3 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300">
+          <div className={`mb-4 border border-[#B4182D] rounded-lg p-3 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-red-50'}`}>
             <div className="flex items-center">
               <AlertTriangle className="h-4 w-4 text-[#B4182D] mr-2 animate-pulse" />
-              <p className="text-[#F8F8F8] text-sm">{error}</p>
+              <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-red-800'}`}>{error}</p>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 bg-[#2A2A2A] border border-[#A5BF13] rounded-lg p-3 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
+          <div className={`mb-4 border border-[#A5BF13] rounded-lg p-3 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-green-50'}`}>
             <div className="flex items-center">
               <CheckCircle className="h-4 w-4 text-[#A5BF13] mr-2 animate-pulse" />
-              <p className="text-[#F8F8F8] text-sm">{success}</p>
+              <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-green-800'}`}>{success}</p>
             </div>
           </div>
         )}
@@ -215,14 +215,14 @@ const ReportsPage = ({ isDarkMode = true }) => {
             {reportTypes.map((report) => {
               const Icon = report.icon;
               return (
-                <div key={report.id} className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group">
+                <div key={report.id} className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg bg-[${report.color}] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300`}>
                         <Icon className="h-5 w-5 text-black" />
                       </div>
                       <div>
-                        <h3 className="text-lg font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-300">{report.name}</h3>
+                        <h3 className={`text-lg font-semibold group-hover:text-[#A5BF13] transition-colors duration-300 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{report.name}</h3>
                         <p className="text-sm text-[#A5BF13]">{report.description}</p>
                       </div>
                     </div>
@@ -231,7 +231,7 @@ const ReportsPage = ({ isDarkMode = true }) => {
                   <div className="space-y-3">
                     <div className="flex items-center justify-between text-xs text-[#A5BF13]">
                       <span>Format:</span>
-                      <span className="font-medium text-[#F8F8F8]">Excel (.xlsx)</span>
+                      <span className={`font-medium transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Excel (.xlsx)</span>
                     </div>
                     <div className="flex items-center justify-between text-xs text-[#A5BF13]">
                       <span>Auto-save:</span>
@@ -266,13 +266,13 @@ const ReportsPage = ({ isDarkMode = true }) => {
         </div>
 
         {/* Report Info Card */}
-        <div className="mt-6 bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+        <div className={`mt-6 rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
           <div className="flex items-start gap-3">
             <div className="w-8 h-8 bg-[#A5BF13] rounded-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
               <Info className="h-4 w-4 text-black" />
             </div>
             <div className="flex-1">
-              <h3 className="text-sm font-semibold text-[#F8F8F8] mb-2">Report Information</h3>
+              <h3 className={`text-sm font-semibold mb-2 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Report Information</h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-[#A5BF13]">
                 <div className="space-y-1">
                   <div className="flex items-center gap-2">

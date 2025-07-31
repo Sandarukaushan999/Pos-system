@@ -369,32 +369,32 @@ const SettingsPage = ({ isDarkMode = true }) => {
 
         {/* Error/Success messages */}
         {error && (
-          <div className="bg-[#2A2A2A] border border-[#B4182D] rounded-xl p-4 mb-6 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300">
+          <div className={`border border-[#B4182D] rounded-xl p-4 mb-6 hover:shadow-lg hover:shadow-[#B4182D]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-red-50'}`}>
             <div className="flex">
               <AlertTriangle className="h-5 w-5 text-[#B4182D] mt-0.5 animate-pulse" />
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-[#F8F8F8]">Error</h3>
-                <div className="mt-1 text-sm text-[#F8F8F8]">{error}</div>
+                <h3 className={`text-sm font-medium transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-red-800'}`}>Error</h3>
+                <div className={`mt-1 text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-red-700'}`}>{error}</div>
               </div>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="bg-[#2A2A2A] border border-[#A5BF13] rounded-xl p-4 mb-6 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300">
+          <div className={`border border-[#A5BF13] rounded-xl p-4 mb-6 hover:shadow-lg hover:shadow-[#A5BF13]/20 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-green-50'}`}>
             <div className="flex">
               <CheckCircle className="h-5 w-5 text-[#A5BF13] mt-0.5 animate-pulse" />
               <div className="ml-3">
-                <h3 className="text-sm font-medium text-[#F8F8F8]">Success</h3>
-                <div className="mt-1 text-sm text-[#F8F8F8]">{success}</div>
+                <h3 className={`text-sm font-medium transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-green-800'}`}>Success</h3>
+                <div className={`mt-1 text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-green-700'}`}>{success}</div>
               </div>
             </div>
           </div>
         )}
 
         {/* Tabs */}
-        <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg mb-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
-          <div className="border-b border-[#3A3A3A]">
+        <div className={`rounded-xl shadow-lg mb-6 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+          <div className={`border-b transition-all duration-500 ${isDarkMode ? 'border-[#3A3A3A]' : 'border-gray-200'}`}>
             <nav className="flex space-x-8 px-6">
               {tabs.map((tab) => {
                 const Icon = tab.icon;
@@ -405,7 +405,7 @@ const SettingsPage = ({ isDarkMode = true }) => {
                     className={`py-4 px-1 border-b-2 font-medium text-sm flex items-center gap-2 transition-all duration-200 ${
                       activeTab === tab.id
                         ? `border-[#A5BF13] text-[#A5BF13]`
-                        : 'border-transparent text-[#A5BF13] hover:text-[#F8F8F8] hover:border-[#3A3A3A]'
+                        : `border-transparent text-[#A5BF13] hover:${isDarkMode ? 'text-[#F8F8F8] hover:border-[#3A3A3A]' : 'text-gray-800 hover:border-gray-300'}`
                     }`}
                   >
                     <Icon size={16} />
@@ -421,33 +421,33 @@ const SettingsPage = ({ isDarkMode = true }) => {
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-6 group">
+                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-[#A5BF13] mb-1">Username</p>
-                        <p className="text-2xl font-bold text-[#F8F8F8]">{user?.username}</p>
+                        <p className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{user?.username}</p>
                       </div>
                       <div className="w-12 h-12 rounded-xl bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                         <User className="h-6 w-6 text-black" />
                       </div>
                     </div>
                   </div>
-                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-6 group">
+                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-[#A5BF13] mb-1">Role</p>
-                        <p className="text-2xl font-bold text-[#F8F8F8]">{user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}</p>
+                        <p className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}</p>
                       </div>
                       <div className="w-12 h-12 rounded-xl bg-[#F79824] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                         <Shield className="h-6 w-6 text-black" />
                       </div>
                     </div>
                   </div>
-                  <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 p-6 group">
+                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                     <div className="flex items-center justify-between">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-[#A5BF13] mb-1">Account Created</p>
-                        <p className="text-2xl font-bold text-[#F8F8F8]">{user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>
+                        <p className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>
                       </div>
                       <div className="w-12 h-12 rounded-xl bg-[#C1E8FF] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300">
                         <Key className="h-6 w-6 text-black" />
@@ -461,7 +461,7 @@ const SettingsPage = ({ isDarkMode = true }) => {
             {/* Password Tab */}
             {activeTab === 'password' && (
               <div className="max-w-md">
-                <h3 className="text-lg font-semibold text-[#F8F8F8] mb-4">Change Password</h3>
+                <h3 className={`text-lg font-semibold mb-4 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Change Password</h3>
                 <form onSubmit={handlePasswordChange} className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium text-[#A5BF13] mb-2">
@@ -472,7 +472,7 @@ const SettingsPage = ({ isDarkMode = true }) => {
                       required
                       value={passwordForm.currentPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, currentPassword: e.target.value})}
-                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
+                      className={`block w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 hover:border-[#A5BF13] ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
                       placeholder="Enter current password"
                     />
                   </div>
@@ -486,7 +486,7 @@ const SettingsPage = ({ isDarkMode = true }) => {
                         required
                         value={passwordForm.newPassword}
                         onChange={(e) => setPasswordForm({...passwordForm, newPassword: e.target.value})}
-                        className="block w-full px-4 py-3 pr-12 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
+                        className={`block w-full px-4 py-3 pr-12 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 hover:border-[#A5BF13] ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
                         placeholder="Enter new password"
                       />
                       <button
@@ -511,7 +511,7 @@ const SettingsPage = ({ isDarkMode = true }) => {
                       required
                       value={passwordForm.confirmPassword}
                       onChange={(e) => setPasswordForm({...passwordForm, confirmPassword: e.target.value})}
-                      className="block w-full px-4 py-3 bg-[#202020] border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 text-[#F8F8F8] hover:border-[#A5BF13]"
+                      className={`block w-full px-4 py-3 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-[#A5BF13] transition-all duration-200 hover:border-[#A5BF13] ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
                       placeholder="Confirm new password"
                     />
                   </div>
@@ -533,7 +533,7 @@ const SettingsPage = ({ isDarkMode = true }) => {
             {activeTab === 'users' && user?.role === 'admin' && (
               <div className="space-y-6">
                 <div className="flex justify-between items-center">
-                  <h3 className="text-lg font-semibold text-[#F8F8F8]">User Management</h3>
+                  <h3 className={`text-lg font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>User Management</h3>
                   <button
                     onClick={() => setShowAddUserModal(true)}
                     className="bg-[#A5BF13] text-black px-4 py-2 rounded-lg hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:ring-offset-2 transition-all duration-200 flex items-center gap-2 ripple relative overflow-hidden group"
@@ -546,7 +546,7 @@ const SettingsPage = ({ isDarkMode = true }) => {
                   </button>
                 </div>
                 
-                <div className="bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl overflow-hidden hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300">
+                <div className={`rounded-xl overflow-hidden hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                   <div className="overflow-x-auto">
                     <table className="min-w-full divide-y divide-[#3A3A3A]">
                       <thead className="bg-[#202020]">
