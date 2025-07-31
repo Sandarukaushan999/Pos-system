@@ -20,7 +20,7 @@ import {
 } from 'lucide-react';
 import { expensesAPI } from '../services/api';
 
-const ExpenseManager = () => {
+const ExpenseManager = ({ isDarkMode = true }) => {
   const [expenses, setExpenses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -317,13 +317,13 @@ const ExpenseManager = () => {
   };
 
   return (
-    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
+    <div className={`h-screen p-6 overflow-hidden transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#F8F8F8]">Expense Management</h1>
+              <h1 className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Expense Management</h1>
               <p className="text-sm text-[#A5BF13]">Track and manage business expenses</p>
             </div>
             <div className="flex items-center gap-2">

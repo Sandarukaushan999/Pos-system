@@ -17,7 +17,7 @@ import {
 } from 'lucide-react';
 import { inventoryAPI } from '../services/api';
 
-const InventoryManager = () => {
+const InventoryManager = ({ isDarkMode = true }) => {
   const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -451,13 +451,13 @@ const InventoryManager = () => {
   });
 
   return (
-    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
+    <div className={`h-screen p-6 overflow-hidden transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#F8F8F8]">Inventory Management</h1>
+              <h1 className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Inventory Management</h1>
               <p className="text-sm text-[#A5BF13]">Manage your stock items and track inventory</p>
             </div>
             <button
@@ -475,10 +475,10 @@ const InventoryManager = () => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-6 gap-4 mb-6">
-          <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group cursor-pointer">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#F8F8F8] mb-1 group-hover:text-[#A5BF13] transition-colors duration-200">Total Items</p>
+                <p className={`text-xs font-medium mb-1 group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Total Items</p>
                 <p className="text-xl font-bold text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{stats.total}</p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
@@ -486,10 +486,10 @@ const InventoryManager = () => {
               </div>
             </div>
           </div>
-          <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group cursor-pointer">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#F8F8F8] mb-1 group-hover:text-[#A5BF13] transition-colors duration-200">Active</p>
+                <p className={`text-xs font-medium mb-1 group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Active</p>
                 <p className="text-xl font-bold text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{stats.active}</p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
@@ -497,10 +497,10 @@ const InventoryManager = () => {
               </div>
             </div>
           </div>
-          <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group cursor-pointer">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#F8F8F8] mb-1 group-hover:text-[#F79824] transition-colors duration-200">Pending</p>
+                <p className={`text-xs font-medium mb-1 group-hover:text-[#F79824] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Pending</p>
                 <p className="text-xl font-bold text-[#F79824] group-hover:scale-105 transition-transform duration-200">{stats.pending}</p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-[#F79824] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
@@ -508,10 +508,10 @@ const InventoryManager = () => {
               </div>
             </div>
           </div>
-          <div className={`bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group cursor-pointer ${stats.lowStock > 0 ? 'animate-pulse' : ''}`}>
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.lowStock > 0 ? 'animate-pulse' : ''}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#F8F8F8] mb-1 group-hover:text-[#B4182D] transition-colors duration-200">Low Stock</p>
+                <p className={`text-xs font-medium mb-1 group-hover:text-[#B4182D] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Low Stock</p>
                 <p className="text-xl font-bold text-[#B4182D] group-hover:scale-105 transition-transform duration-200">{stats.lowStock}</p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-[#B4182D] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
@@ -519,10 +519,10 @@ const InventoryManager = () => {
               </div>
             </div>
           </div>
-          <div className={`bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group cursor-pointer ${stats.expired > 0 ? 'animate-pulse' : ''}`}>
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.expired > 0 ? 'animate-pulse' : ''}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#F8F8F8] mb-1 group-hover:text-[#B4182D] transition-colors duration-200">Expired</p>
+                <p className={`text-xs font-medium mb-1 group-hover:text-[#B4182D] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Expired</p>
                 <p className="text-xl font-bold text-[#B4182D] group-hover:scale-105 transition-transform duration-200">{stats.expired}</p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-[#B4182D] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
@@ -530,10 +530,10 @@ const InventoryManager = () => {
               </div>
             </div>
           </div>
-          <div className={`bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group cursor-pointer ${stats.nearExpire > 0 ? 'animate-pulse' : ''}`}>
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.nearExpire > 0 ? 'animate-pulse' : ''}`}>
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-xs font-medium text-[#F8F8F8] mb-1 group-hover:text-[#F79824] transition-colors duration-200">Near Expire</p>
+                <p className={`text-xs font-medium mb-1 group-hover:text-[#F79824] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Near Expire</p>
                 <p className="text-xl font-bold text-[#F79824] group-hover:scale-105 transition-transform duration-200">{stats.nearExpire}</p>
               </div>
               <div className="w-10 h-10 rounded-lg bg-[#F79824] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
@@ -544,7 +544,7 @@ const InventoryManager = () => {
         </div>
 
         {/* Search and Filters */}
-        <div className="bg-[#2A2A2A] rounded-xl shadow-lg p-4 mb-6 border border-[#3A3A3A]">
+        <div className={`rounded-xl shadow-lg p-4 mb-6 border transition-all duration-500 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
           {/* Active Filters Display */}
           {(searchTerm || statusFilter || categoryFilter) && (
             <div className="mb-4 flex flex-wrap gap-2">
@@ -585,21 +585,21 @@ const InventoryManager = () => {
           )}
           <div className="flex items-center gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#F8F8F8]" />
+              <Search className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`} />
               <input
                 type="text"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 border border-[#3A3A3A] rounded-lg text-sm bg-[#202020] placeholder-[#F8F8F8]/50 text-[#F8F8F8] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300"
+                className={`w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300 ${isDarkMode ? 'border-[#3A3A3A] bg-[#202020] placeholder-[#F8F8F8]/50 text-[#F8F8F8]' : 'border-gray-300 bg-white placeholder-gray-500 text-gray-800'}`}
                 placeholder="Search by name or barcode..."
               />
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-[#F8F8F8]" />
+              <Filter className={`h-4 w-4 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`} />
               <select
                 value={statusFilter}
                 onChange={(e) => setStatusFilter(e.target.value)}
-                className="px-3 py-2 border border-[#3A3A3A] rounded-lg text-sm bg-[#202020] text-[#F8F8F8] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300"
+                className={`px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300 ${isDarkMode ? 'border-[#3A3A3A] bg-[#202020] text-[#F8F8F8]' : 'border-gray-300 bg-white text-gray-800'}`}
               >
                 <option value="">All Status</option>
                 <option value="active">Active</option>
@@ -608,11 +608,11 @@ const InventoryManager = () => {
               </select>
             </div>
             <div className="flex items-center gap-2">
-              <Filter className="h-4 w-4 text-[#F8F8F8]" />
+              <Filter className={`h-4 w-4 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`} />
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="px-3 py-2 border border-[#3A3A3A] rounded-lg text-sm bg-[#202020] text-[#F8F8F8] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300"
+                className={`px-3 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300 ${isDarkMode ? 'border-[#3A3A3A] bg-[#202020] text-[#F8F8F8]' : 'border-gray-300 bg-white text-gray-800'}`}
               >
                 <option value="">All Categories</option>
                 <option value="expired">Expired</option>
@@ -628,7 +628,7 @@ const InventoryManager = () => {
                   setStatusFilter('');
                   setCategoryFilter('');
                 }}
-                className="px-3 py-2 text-sm text-[#F8F8F8] hover:text-[#A5BF13] hover:bg-[#202020] rounded-lg transition-all duration-300 flex items-center gap-1 group"
+                className={`px-3 py-2 text-sm rounded-lg transition-all duration-300 flex items-center gap-1 group ${isDarkMode ? 'text-[#F8F8F8] hover:text-[#A5BF13] hover:bg-[#202020]' : 'text-gray-700 hover:text-[#A5BF13] hover:bg-gray-100'}`}
               >
                 <XCircle className="h-4 w-4 group-hover:animate-pulse" />
                 Clear Filters
@@ -639,19 +639,19 @@ const InventoryManager = () => {
 
         {/* Error/Success messages */}
         {error && (
-          <div className="mb-4 bg-[#2A2A2A] border border-[#B4182D] rounded-lg p-3">
+          <div className={`mb-4 border border-[#B4182D] rounded-lg p-3 transition-all duration-500 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-red-50'}`}>
             <div className="flex items-center">
               <AlertTriangle className="h-4 w-4 text-[#B4182D] mr-2 animate-pulse" />
-              <p className="text-[#F8F8F8] text-sm">{error}</p>
+              <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-red-800'}`}>{error}</p>
             </div>
           </div>
         )}
 
         {success && (
-          <div className="mb-4 bg-[#2A2A2A] border border-[#A5BF13] rounded-lg p-3">
+          <div className={`mb-4 border border-[#A5BF13] rounded-lg p-3 transition-all duration-500 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-green-50'}`}>
             <div className="flex items-center">
               <CheckCircle className="h-4 w-4 text-[#A5BF13] mr-2 animate-pulse" />
-              <p className="text-[#F8F8F8] text-sm">{success}</p>
+              <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-green-800'}`}>{success}</p>
             </div>
           </div>
         )}
@@ -664,10 +664,10 @@ const InventoryManager = () => {
             </div>
           ) : filteredItems.length === 0 ? (
             <div className="text-center py-12">
-              <div className="w-16 h-16 bg-[#2A2A2A] rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300">
+              <div className={`w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:scale-110 transition-all duration-300 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-gray-100'}`}>
                 <Package className="h-8 w-8 text-[#A5BF13] group-hover:animate-pulse" />
               </div>
-              <h3 className="text-lg font-semibold text-[#F8F8F8] mb-2">No items found</h3>
+              <h3 className={`text-lg font-semibold mb-2 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>No items found</h3>
               <p className="text-[#A5BF13]">
                 {searchTerm ? 'Try adjusting your search terms.' : 'Get started by adding your first item.'}
               </p>
@@ -679,14 +679,14 @@ const InventoryManager = () => {
                 const { isLowStock, isExpired } = calculateItemStatus(item);
 
                 return (
-                  <div key={item.id} className={`bg-[#2A2A2A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 border border-[#3A3A3A] group cursor-pointer ${
+                  <div key={item.id} className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'} ${
                     isLowStock ? 'border-2 border-[#F79824] animate-pulse' : ''
                   } ${
                     isExpired ? 'border-2 border-[#B4182D] animate-pulse' : ''
                   }`}>
                     <div className="flex items-start justify-between mb-3">
                       <div className="flex-1">
-                        <h3 className="font-semibold text-[#F8F8F8] text-sm group-hover:text-[#A5BF13] transition-colors duration-200">{item.name}</h3>
+                        <h3 className={`font-semibold text-sm group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{item.name}</h3>
                         <p className="text-xs text-[#A5BF13] flex items-center gap-1 mt-1">
                           <Scan className="h-3 w-3 group-hover:animate-pulse" />
                           {item.barcode}
@@ -699,7 +699,7 @@ const InventoryManager = () => {
                     
                     <div className="space-y-2 mb-3">
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-[#F8F8F8]">Quantity:</span>
+                        <span className={`text-xs ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>Quantity:</span>
                         <span className={`text-sm font-semibold ${
                           isLowStock ? 'text-[#F79824]' : 'text-[#A5BF13]'
                         } group-hover:scale-110 transition-transform duration-200`}>
@@ -710,26 +710,26 @@ const InventoryManager = () => {
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-[#F8F8F8]">Selling Price:</span>
+                        <span className={`text-xs ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>Selling Price:</span>
                         <span className="text-sm font-semibold text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">Rs {item.price.toLocaleString()}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-[#F8F8F8]">Buying Price:</span>
+                        <span className={`text-xs ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>Buying Price:</span>
                         <span className="text-sm text-[#A5BF13]">Rs {(item.buying_price || item.price).toLocaleString()}</span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-[#F8F8F8]">Profit Margin:</span>
+                        <span className={`text-xs ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>Profit Margin:</span>
                         <span className="text-xs font-medium text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">
                           Rs {(item.price - (item.buying_price || item.price)).toLocaleString()}
                         </span>
                       </div>
                       <div className="flex items-center justify-between">
-                        <span className="text-xs text-[#F8F8F8]">Reorder Level:</span>
+                        <span className={`text-xs ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>Reorder Level:</span>
                         <span className="text-xs text-[#A5BF13]">{item.reorder_level}</span>
                       </div>
                       {item.expiry_date && (
                         <div className="flex items-center justify-between">
-                          <span className="text-xs text-[#F8F8F8]">Expiry:</span>
+                          <span className={`text-xs ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>Expiry:</span>
                           <span className={`text-xs ${
                             isExpired 
                               ? 'text-[#B4182D]' 
@@ -746,7 +746,7 @@ const InventoryManager = () => {
                       )}
                     </div>
                     
-                    <div className="flex items-center gap-2 pt-3 border-t border-[#3A3A3A]">
+                    <div className={`flex items-center gap-2 pt-3 border-t transition-all duration-500 ${isDarkMode ? 'border-[#3A3A3A]' : 'border-gray-200'}`}>
                       <button
                         onClick={() => openEditModal(item)}
                         className="w-20 px-2 py-1.5 bg-[#A5BF13] text-black rounded-lg text-xs font-medium hover:bg-[#94A90F] transition-all duration-300 flex items-center justify-center gap-1 group hover:scale-105 ripple relative overflow-hidden"
@@ -779,42 +779,42 @@ const InventoryManager = () => {
       {/* Add Item Modal */}
       {showAddModal && (
         <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-          <div className="bg-[#2A2A2A] rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden border border-[#3A3A3A]">
-            <div className="flex items-center justify-between p-4 border-b border-[#3A3A3A]">
-              <h3 className="text-lg font-semibold text-[#F8F8F8]">Add New Item</h3>
-              <button
-                onClick={() => {
-                  setShowAddModal(false);
-                  setNewItem({
-                    barcode: '',
-                    name: '',
-                    quantity: '',
-                    price: '',
-                    buying_price: '',
-                    expiry_date: '',
-                    reorder_level: '10'
-                  });
-                  setExistingItems([]);
-                  setSelectedExistingItem(null);
-                  setBarcodeError('');
-                }}
-                className="w-8 h-8 rounded-lg bg-[#202020] hover:bg-[#A5BF13] hover:text-black flex items-center justify-center transition-all duration-300 group ripple"
-              >
-                <XCircle className="h-4 w-4 text-[#F8F8F8] group-hover:animate-pulse" />
-              </button>
+          <div className={`rounded-lg shadow-xl max-w-md w-full mx-4 max-h-[90vh] overflow-hidden border transition-all duration-500 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+            <div className={`flex items-center justify-between p-4 border-b transition-all duration-500 ${isDarkMode ? 'border-[#3A3A3A]' : 'border-gray-200'}`}>
+              <h3 className={`text-lg font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Add New Item</h3>
+                              <button
+                  onClick={() => {
+                    setShowAddModal(false);
+                    setNewItem({
+                      barcode: '',
+                      name: '',
+                      quantity: '',
+                      price: '',
+                      buying_price: '',
+                      expiry_date: '',
+                      reorder_level: '10'
+                    });
+                    setExistingItems([]);
+                    setSelectedExistingItem(null);
+                    setBarcodeError('');
+                  }}
+                  className={`w-8 h-8 rounded-lg flex items-center justify-center transition-all duration-300 group ripple ${isDarkMode ? 'bg-[#202020] hover:bg-[#A5BF13] hover:text-black' : 'bg-gray-100 hover:bg-[#A5BF13] hover:text-black'}`}
+                >
+                  <XCircle className={`h-4 w-4 group-hover:animate-pulse ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`} />
+                </button>
             </div>
-            <div className="p-4 overflow-y-auto max-h-[60vh] bg-[#202020]">
+            <div className={`p-4 overflow-y-auto max-h-[60vh] transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-gray-50'}`}>
               <p className="text-sm text-[#A5BF13] mb-4">
                 💡 <strong>Tip:</strong> When you scan or enter a barcode, the system will automatically detect if the item already exists and offer to fill in the details for you.
               </p>
               <form onSubmit={handleAddItem}>
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-[#F8F8F8] mb-1">
+                    <label className={`block text-sm font-medium mb-1 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>
                       Barcode *
                     </label>
                     <div className="relative">
-                      <Scan className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-[#F8F8F8]" />
+                      <Scan className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`} />
                       <input
                         type="text"
                         required
@@ -826,7 +826,7 @@ const InventoryManager = () => {
                             autoFillForm();
                           }
                         }}
-                        className="block w-full pl-10 pr-12 py-2 border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm bg-[#202020] text-[#F8F8F8] placeholder-[#F8F8F8]/50 transition-all duration-300"
+                        className={`block w-full pl-10 pr-12 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm transition-all duration-300 ${isDarkMode ? 'border-[#3A3A3A] bg-[#202020] text-[#F8F8F8] placeholder-[#F8F8F8]/50' : 'border-gray-300 bg-white text-gray-800 placeholder-gray-500'}`}
                         placeholder="Scan or enter barcode (press Enter to auto-fill)"
                       />
                       {barcodeLoading && (
@@ -847,8 +847,8 @@ const InventoryManager = () => {
                       )}
                     </div>
                     {existingItems.length > 0 && (
-                      <div className="mt-2 p-3 bg-[#2A2A2A] border border-[#A5BF13] rounded-lg">
-                        <div className="text-sm text-[#F8F8F8] mb-2">
+                      <div className={`mt-2 p-3 border border-[#A5BF13] rounded-lg transition-all duration-500 ${isDarkMode ? 'bg-[#2A2A2A]' : 'bg-green-50'}`}>
+                        <div className={`text-sm mb-2 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-green-800'}`}>
                           <strong>Existing items found ({existingItems.length}):</strong>
                         </div>
                         <div className="space-y-2 max-h-40 overflow-y-auto">
@@ -857,12 +857,12 @@ const InventoryManager = () => {
                               key={item.id} 
                               className={`p-2 rounded border cursor-pointer transition-all duration-200 ${
                                 selectedExistingItem?.id === item.id 
-                                  ? 'border-[#A5BF13] bg-[#3A3A3A]' 
-                                  : 'border-[#3A3A3A] hover:border-[#A5BF13]'
+                                  ? `border-[#A5BF13] ${isDarkMode ? 'bg-[#3A3A3A]' : 'bg-green-100'}` 
+                                  : `${isDarkMode ? 'border-[#3A3A3A]' : 'border-gray-300'} hover:border-[#A5BF13]`
                               }`}
                               onClick={() => setSelectedExistingItem(item)}
                             >
-                              <div className="text-xs text-[#F8F8F8] font-medium">
+                              <div className={`text-xs font-medium transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>
                                 {item.name}
                               </div>
                               <div className="text-xs text-[#A5BF13] mt-1">
@@ -874,8 +874,8 @@ const InventoryManager = () => {
                           ))}
                         </div>
                         {selectedExistingItem && (
-                          <div className="mt-3 p-2 bg-[#3A3A3A] rounded border border-[#A5BF13]">
-                            <div className="text-xs text-[#F8F8F8] mb-2">
+                          <div className={`mt-3 p-2 rounded border border-[#A5BF13] transition-all duration-500 ${isDarkMode ? 'bg-[#3A3A3A]' : 'bg-green-100'}`}>
+                            <div className={`text-xs mb-2 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>
                               <strong>Selected:</strong> {selectedExistingItem.name}
                             </div>
                             <div className="flex gap-2">
@@ -902,7 +902,7 @@ const InventoryManager = () => {
                               <button
                                 type="button"
                                 onClick={() => setSelectedExistingItem(null)}
-                                className="text-xs bg-[#3A3A3A] text-[#F8F8F8] px-2 py-1 rounded hover:bg-[#202020] transition-all duration-300"
+                                className={`text-xs px-2 py-1 rounded transition-all duration-300 ${isDarkMode ? 'bg-[#3A3A3A] text-[#F8F8F8] hover:bg-[#202020]' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                               >
                                 Clear selection
                               </button>
@@ -913,7 +913,7 @@ const InventoryManager = () => {
                           <button
                             type="button"
                             onClick={clearAutoFill}
-                            className="text-xs bg-[#3A3A3A] text-[#F8F8F8] px-2 py-1 rounded hover:bg-[#202020] transition-all duration-300"
+                            className={`text-xs px-2 py-1 rounded transition-all duration-300 ${isDarkMode ? 'bg-[#3A3A3A] text-[#F8F8F8] hover:bg-[#202020]' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
                           >
                             Add as new item
                           </button>
@@ -927,7 +927,7 @@ const InventoryManager = () => {
                     )}
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-[#F8F8F8] mb-1">
+                    <label className={`block text-sm font-medium mb-1 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>
                       Name *
                     </label>
                     <input
@@ -935,13 +935,13 @@ const InventoryManager = () => {
                       required
                       value={newItem.name}
                       onChange={(e) => setNewItem({...newItem, name: e.target.value})}
-                      className="block w-full px-3 py-2 border border-[#3A3A3A] rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm bg-[#202020] text-[#F8F8F8] placeholder-[#F8F8F8]/50 transition-all duration-300"
+                      className={`block w-full px-3 py-2 border rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent text-sm transition-all duration-300 ${isDarkMode ? 'border-[#3A3A3A] bg-[#202020] text-[#F8F8F8] placeholder-[#F8F8F8]/50' : 'border-gray-300 bg-white text-gray-800 placeholder-gray-500'}`}
                       placeholder="Item name"
                     />
                   </div>
                   <div className="grid grid-cols-3 gap-4">
                     <div>
-                      <label className="block text-sm font-medium text-[#F8F8F8] mb-1">
+                      <label className={`block text-sm font-medium mb-1 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>
                         Quantity *
                       </label>
                       <input

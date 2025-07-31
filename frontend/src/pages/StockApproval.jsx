@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { inventoryAPI } from '../services/api';
 
-const StockApproval = () => {
+const StockApproval = ({ isDarkMode = true }) => {
   const [pendingItems, setPendingItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -75,20 +75,20 @@ const StockApproval = () => {
 
   if (loading && pendingItems.length === 0) {
     return (
-      <div className="h-screen bg-[#202020] flex items-center justify-center">
+      <div className={`h-screen flex items-center justify-center transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
         <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#A5BF13]"></div>
       </div>
     );
   }
 
   return (
-    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
+    <div className={`h-screen p-6 overflow-hidden transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#F8F8F8]">Stock Approval</h1>
+              <h1 className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Stock Approval</h1>
               <p className="text-sm text-[#A5BF13]">Review and approve pending stock items</p>
             </div>
             <button
@@ -189,7 +189,7 @@ const StockApproval = () => {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               {pendingItems.map((item) => (
-                <div key={item.id} className={`bg-[#2A2A2A] border border-[#3A3A3A] rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group ${
+                <div key={item.id} className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'} border ${
                   item.expiry_date && new Date(item.expiry_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
                     ? 'border-2 border-[#B4182D]'
                     : item.expiry_date && new Date(item.expiry_date) < new Date(Date.now() + 30 * 24 * 60 * 60 * 1000)
@@ -198,7 +198,7 @@ const StockApproval = () => {
                 }`}>
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1">
-                      <h3 className="font-semibold text-[#F8F8F8] text-sm group-hover:text-[#A5BF13] transition-colors duration-300">{item.name}</h3>
+                      <h3 className={`font-semibold text-sm group-hover:text-[#A5BF13] transition-colors duration-300 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{item.name}</h3>
                       <p className="text-xs text-[#A5BF13] mt-1">{item.barcode}</p>
                       {item.expiry_date && new Date(item.expiry_date) < new Date(Date.now() + 7 * 24 * 60 * 60 * 1000) && (
                         <span className="inline-flex items-center px-2 py-1 text-xs font-medium bg-[#B4182D] text-white rounded-full mt-1 animate-pulse">
@@ -215,7 +215,7 @@ const StockApproval = () => {
                       )}
                     </div>
                     <div className="text-right">
-                      <p className="text-sm font-semibold text-[#F8F8F8]">Rs {item.price.toLocaleString()}</p>
+                      <p className={`text-sm font-semibold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Rs {item.price.toLocaleString()}</p>
                       <p className="text-xs text-[#A5BF13]">each</p>
                     </div>
                   </div>
@@ -223,7 +223,7 @@ const StockApproval = () => {
                   <div className="space-y-2 mb-3">
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-[#A5BF13]">Quantity:</span>
-                      <span className="text-sm font-semibold text-[#F8F8F8]">{item.quantity}</span>
+                      <span className={`text-sm font-semibold ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{item.quantity}</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-xs text-[#A5BF13]">Reorder Level:</span>
@@ -252,7 +252,7 @@ const StockApproval = () => {
                     </div>
                   </div>
                   
-                  <div className="flex items-center gap-2 pt-3 border-t border-[#3A3A3A]">
+                  <div className={`flex items-center gap-2 pt-3 border-t transition-all duration-500 ${isDarkMode ? 'border-[#3A3A3A]' : 'border-gray-200'}`}>
                     <button
                       onClick={() => handleApproval(item.id, 'approve')}
                       disabled={loading}

@@ -21,7 +21,7 @@ import {
 import { useAuthStore } from '../stores/authStore';
 import { authAPI, usersAPI, settingsAPI } from '../services/api';
 
-const SettingsPage = () => {
+const SettingsPage = ({ isDarkMode = true }) => {
   const { user, changePassword } = useAuthStore();
   const [activeTab, setActiveTab] = useState('profile');
   const [loading, setLoading] = useState(false);
@@ -355,13 +355,13 @@ const SettingsPage = () => {
   };
 
   return (
-    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
+    <div className={`h-screen p-6 overflow-hidden transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#F8F8F8]">Settings</h1>
+              <h1 className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Settings</h1>
               <p className="text-sm text-[#A5BF13]">Manage system settings and user preferences</p>
             </div>
           </div>

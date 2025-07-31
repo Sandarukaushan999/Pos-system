@@ -24,7 +24,7 @@ import { reportsAPI, salesAPI, usersAPI } from '../services/api';
 import { useAuthStore } from '../stores/authStore';
 import { LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, CartesianGrid } from 'recharts';
 
-const Dashboard = () => {
+const Dashboard = ({ isDarkMode = true }) => {
   const [dashboardData, setDashboardData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -116,10 +116,10 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="h-screen bg-[#202020] flex items-center justify-center">
+      <div className={`h-screen flex items-center justify-center transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
         <div className="text-center">
           <div className="animate-spin rounded-full h-16 w-16 border-4 border-[#A5BF13] border-t-transparent mx-auto mb-4"></div>
-          <p className="text-[#F8F8F8] text-lg">Loading dashboard...</p>
+          <p className={`text-lg transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Loading dashboard...</p>
         </div>
       </div>
     );
@@ -127,10 +127,10 @@ const Dashboard = () => {
 
   if (error && !dashboardData) {
     return (
-      <div className="h-screen bg-[#202020] flex items-center justify-center">
-        <div className="text-center p-8 bg-[#2A2A2A] rounded-2xl shadow-lg border border-[#3A3A3A]">
+      <div className={`h-screen flex items-center justify-center transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
+        <div className={`text-center p-8 rounded-2xl shadow-lg border transition-all duration-500 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
           <AlertTriangle className="h-12 w-12 text-[#A5BF13] mx-auto mb-4" />
-          <p className="text-[#F8F8F8] text-lg mb-4">{error || 'Failed to load dashboard data'}</p>
+          <p className={`text-lg mb-4 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{error || 'Failed to load dashboard data'}</p>
           <button 
             onClick={handleRefresh}
             className="px-4 py-2 bg-[#A5BF13] text-black rounded-lg hover:bg-[#94A90F] transition-all font-medium"
@@ -194,26 +194,46 @@ const Dashboard = () => {
       amber: 'bg-[#2A2A2A] text-[#A5BF13] border-[#3A3A3A]'
     };
 
+    // Custom colors for specific stats
+    const getCustomColor = (title) => {
+      switch (title) {
+        case "Today's Revenue":
+          return '#A5BF13'; // Original green color
+        case "Today's Profit":
+          return '#14D4F8'; // Blue color
+        case "Today's Expenses":
+          return '#FB3811'; // Red color
+        case "Total Items":
+          return '#B82EFA'; // Purple color
+        case "Active Users":
+          return '#FBB314'; // Orange color
+        default:
+          return '#A5BF13'; // Default green
+      }
+    };
+
+    const customColor = getCustomColor(title);
+
     return (
-      <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group cursor-pointer">
+      <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
         <div className="flex items-center justify-between">
           <div className="flex-1">
-            <p className="text-xs font-medium text-[#F8F8F8] mb-1 group-hover:text-[#A5BF13] transition-colors duration-200">{title}</p>
-            <p className="text-xl font-bold text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{value}</p>
+            <p className={`text-xs font-medium mb-1 group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>{title}</p>
+            <p className="text-xl font-bold group-hover:scale-105 transition-transform duration-200" style={{ color: customColor }}>{value}</p>
             {change && (
               <div className="flex items-center mt-1">
                 {change > 0 ? (
-                  <TrendingUp className="h-3 w-3 text-[#A5BF13] mr-1 group-hover:animate-pulse" />
+                  <TrendingUp className="h-3 w-3 mr-1 group-hover:animate-pulse" style={{ color: customColor }} />
                 ) : (
-                  <TrendingDown className="h-3 w-3 text-[#A5BF13] mr-1 group-hover:animate-pulse" />
+                  <TrendingDown className="h-3 w-3 mr-1 group-hover:animate-pulse" style={{ color: customColor }} />
                 )}
-                <span className={`text-xs font-medium text-[#A5BF13] group-hover:scale-110 transition-transform duration-200`}>
+                <span className={`text-xs font-medium group-hover:scale-110 transition-transform duration-200`} style={{ color: customColor }}>
                   {change > 0 ? '+' : ''}{change}%
                 </span>
               </div>
             )}
           </div>
-          <div className={`w-10 h-10 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`}>
+          <div className={`w-10 h-10 rounded-lg flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300`} style={{ backgroundColor: customColor }}>
             <Icon className="h-5 w-5 text-black group-hover:animate-bounce" />
           </div>
         </div>
@@ -234,7 +254,7 @@ const Dashboard = () => {
     return (
       <button 
         onClick={onClick}
-        className="bg-[#2A2A2A] rounded-xl border border-[#3A3A3A] p-3 hover:shadow-xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 w-full text-left group hover:bg-[#3A3A3A] relative overflow-hidden"
+        className={`rounded-xl border p-3 hover:shadow-xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 w-full text-left group relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A] hover:bg-[#3A3A3A]' : 'bg-gray-50 border-gray-200 hover:bg-gray-100'}`}
       >
         {/* Ripple effect background */}
         <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
@@ -245,11 +265,11 @@ const Dashboard = () => {
               <Icon className="h-4 w-4 group-hover:animate-pulse" />
             </div>
             <div>
-              <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">{title}</h3>
+              <h3 className={`text-sm font-semibold group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>{title}</h3>
               <p className="text-lg font-bold text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{count}</p>
             </div>
           </div>
-          <ChevronRight className="h-4 w-4 text-[#F8F8F8] group-hover:text-[#A5BF13] group-hover:translate-x-1 transition-all duration-300" />
+          <ChevronRight className={`h-4 w-4 group-hover:text-[#A5BF13] group-hover:translate-x-1 transition-all duration-300 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`} />
         </div>
       </button>
     );
@@ -258,12 +278,12 @@ const Dashboard = () => {
   const total = month?.salesByPayment?.reduce((sum, item) => sum + item.total, 0) || 0;
 
   return (
-    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
+    <div className={`h-screen p-6 overflow-hidden transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
       <div className="h-full flex flex-col">
         {/* Header with Refresh Button */}
         <div className="flex items-center justify-between mb-4">
           <div>
-            <h1 className="text-2xl font-bold text-[#F8F8F8]">Dashboard</h1>
+            <h1 className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Dashboard</h1>
             <div className="flex items-center gap-2 text-[#A5BF13] text-sm">
               <span>Business overview</span>
             </div>
@@ -329,8 +349,8 @@ const Dashboard = () => {
             </div>
 
             {/* Alert Actions */}
-            <div className="bg-[#2A2A2A] rounded-xl shadow-lg p-4 border border-[#3A3A3A]">
-              <h3 className="text-sm font-semibold text-[#F8F8F8] mb-3">Quick Actions</h3>
+            <div className={`rounded-xl shadow-lg p-4 border transition-all duration-500 ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
+              <h3 className={`text-sm font-semibold mb-3 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Quick Actions</h3>
               <div className="space-y-3">
                 <AlertActionCard
                   title="Low Stock"
@@ -361,9 +381,9 @@ const Dashboard = () => {
           <div className="col-span-5 flex flex-col gap-4">
             
             {/* Sales Chart - Reduced Space */}
-            <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group">
+            <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border group ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">Sales Trend</h3>
+                <h3 className={`text-sm font-semibold group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Sales Trend</h3>
                 <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                   <Activity className="h-4 w-4 text-black group-hover:animate-pulse" />
                 </div>
@@ -371,13 +391,17 @@ const Dashboard = () => {
               <div className="h-70">
                 <ResponsiveContainer width="100%" height="100%">
                   <LineChart data={processedChartData} margin={{ top: 5, right: 5, left: 0, bottom: 5 }}>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#3A3A3A" />
-                    <XAxis dataKey="date" tick={{ fontSize: 12, fill: '#F8F8F8' }} />
-                    <YAxis tick={{ fontSize: 11, fill: '#F8F8F8' }} />
+                    <CartesianGrid strokeDasharray="3 3" stroke={isDarkMode ? "#3A3A3A" : "#E5E7EB"} />
+                    <XAxis dataKey="date" tick={{ fontSize: 12, fill: isDarkMode ? '#F8F8F8' : '#374151' }} />
+                    <YAxis tick={{ fontSize: 11, fill: isDarkMode ? '#F8F8F8' : '#374151' }} />
                     <Tooltip 
                       formatter={(value) => [`Rs ${value.toLocaleString()}`, 'Revenue']}
                       labelFormatter={(label) => `Date: ${label}`}
-                      contentStyle={{ backgroundColor: '#2A2A2A', border: '1px solid #3A3A3A', color: '#F8F8F8' }}
+                      contentStyle={{ 
+                        backgroundColor: isDarkMode ? '#2A2A2A' : '#FFFFFF', 
+                        border: `1px solid ${isDarkMode ? '#3A3A3A' : '#E5E7EB'}`, 
+                        color: isDarkMode ? '#F8F8F8' : '#374151' 
+                      }}
                     />
                     <Line type="monotone" dataKey="total" stroke="#F79824" strokeWidth={2} dot={false} />
                   </LineChart>
@@ -386,19 +410,19 @@ const Dashboard = () => {
             </div>
 
             {/* Payment Methods */}
-            <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group">
+            <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border group ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">Payment Methods</h3>
+                <h3 className={`text-sm font-semibold group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Payment Methods</h3>
                 <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                   <CreditCard className="h-4 w-4 text-black group-hover:animate-pulse" />
                 </div>
               </div>
               <div className="space-y-3">
                 {month?.salesByPayment?.map((payment, index) => (
-                  <div key={index} className="flex items-center justify-between p-3 bg-[#202020] rounded-lg border border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30 hover:scale-105 transition-all duration-200 group cursor-pointer">
+                  <div key={index} className={`flex items-center justify-between p-3 rounded-lg border hover:scale-105 transition-all duration-200 group cursor-pointer ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30' : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-[#A5BF13]/30'}`}>
                     <div className="flex items-center gap-2">
                       <div className="w-3 h-3 rounded-full bg-[#A5BF13] group-hover:scale-125 group-hover:animate-pulse transition-all duration-200"></div>
-                      <span className="text-sm font-medium text-[#F8F8F8] capitalize group-hover:text-[#A5BF13] transition-colors duration-200">{payment.payment_type}</span>
+                      <span className={`text-sm font-medium capitalize group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>{payment.payment_type}</span>
                     </div>
                     <span className="text-sm font-semibold text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">Rs {payment.total.toLocaleString()}</span>
                   </div>
@@ -411,23 +435,23 @@ const Dashboard = () => {
           <div className="col-span-3 flex flex-col gap-4">
             
             {/* Recent Sales */}
-            <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group">
+            <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border group ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">Recent Sales</h3>
+                <h3 className={`text-sm font-semibold group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Recent Sales</h3>
                 <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                   <Receipt className="h-4 w-4 text-black group-hover:animate-pulse" />
                 </div>
               </div>
               <div className="space-y-3 max-h-48 overflow-y-auto">
                 {recentSales?.slice(0, 6).map((sale) => (
-                  <div key={sale.id} className="flex items-center justify-between p-2 bg-[#202020] rounded-lg border border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30 hover:scale-105 transition-all duration-200 group cursor-pointer">
+                  <div key={sale.id} className={`flex items-center justify-between p-2 rounded-lg border hover:scale-105 transition-all duration-200 group cursor-pointer ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30' : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-[#A5BF13]/30'}`}>
                     <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium text-[#F8F8F8] truncate group-hover:text-[#A5BF13] transition-colors duration-200">{sale.invoice_number}</p>
+                      <p className={`text-xs font-medium truncate group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>{sale.invoice_number}</p>
                       <p className="text-xs text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{sale.cashier_name}</p>
                     </div>
                     <div className="text-right">
                       <p className="text-xs font-semibold text-[#A5BF13] group-hover:scale-110 transition-transform duration-200">Rs {sale.total_amount.toLocaleString()}</p>
-                      <p className="text-xs text-[#F8F8F8] capitalize group-hover:text-[#A5BF13] transition-colors duration-200">{sale.payment_type}</p>
+                      <p className={`text-xs capitalize group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>{sale.payment_type}</p>
                     </div>
                   </div>
                 ))}
@@ -435,22 +459,22 @@ const Dashboard = () => {
             </div>
 
             {/* Top Items */}
-            <div className="bg-[#2A2A2A] rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border border-[#3A3A3A] group">
+            <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/10 hover:-translate-y-1 transition-all duration-300 p-4 border group ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-sm font-semibold text-[#F8F8F8] group-hover:text-[#A5BF13] transition-colors duration-200">Top Items</h3>
+                <h3 className={`text-sm font-semibold group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Top Items</h3>
                 <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
                   <Package className="h-4 w-4 text-black group-hover:animate-pulse" />
                 </div>
               </div>
               <div className="space-y-3">
                 {topItems?.slice(0, 4).map((item, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-[#202020] rounded-lg border border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30 hover:scale-105 transition-all duration-200 group cursor-pointer">
+                  <div key={index} className={`flex items-center justify-between p-2 rounded-lg border hover:scale-105 transition-all duration-200 group cursor-pointer ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] hover:bg-[#2A2A2A] hover:border-[#A5BF13]/30' : 'bg-white border-gray-200 hover:bg-gray-50 hover:border-[#A5BF13]/30'}`}>
                     <div className="flex items-center gap-2">
                       <div className="w-6 h-6 rounded-full bg-[#A5BF13] flex items-center justify-center group-hover:scale-125 group-hover:animate-pulse transition-all duration-200">
                         <span className="text-xs font-bold text-black group-hover:scale-110 transition-transform duration-200">{index + 1}</span>
                       </div>
                       <div className="flex-1 min-w-0">
-                        <p className="text-xs font-medium text-[#F8F8F8] truncate group-hover:text-[#A5BF13] transition-colors duration-200">{item.name}</p>
+                        <p className={`text-xs font-medium truncate group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>{item.name}</p>
                         <p className="text-xs text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">Qty: {item.total_quantity}</p>
                       </div>
                     </div>

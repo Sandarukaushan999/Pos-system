@@ -15,7 +15,7 @@ import {
 } from 'lucide-react';
 import { reportsAPI } from '../services/api';
 
-const ReportsPage = () => {
+const ReportsPage = ({ isDarkMode = true }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
@@ -118,13 +118,13 @@ const ReportsPage = () => {
   ];
 
   return (
-    <div className="h-screen bg-[#202020] p-6 overflow-hidden">
+    <div className={`h-screen p-6 overflow-hidden transition-all duration-500 ${isDarkMode ? 'bg-[#202020]' : 'bg-white'}`}>
       <div className="h-full flex flex-col">
         {/* Header */}
         <div className="mb-6">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-2xl font-bold text-[#F8F8F8]">Reports</h1>
+              <h1 className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Reports</h1>
               <p className="text-sm text-[#A5BF13]">Generate and download business reports</p>
             </div>
             <div className="flex items-center gap-2">
