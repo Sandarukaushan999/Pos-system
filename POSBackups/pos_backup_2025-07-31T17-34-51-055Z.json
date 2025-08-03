@@ -1,0 +1,163 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "$2a$10$7.g264ypjA2oXTeakwC6z.hLkVyWVVyXyMWyFqoGfBR1I2aC8bAl.",
+      "role": "admin",
+      "created_at": "2025-07-23 16:44:55",
+      "updated_at": "2025-07-23 16:44:55",
+      "name": "Administrator"
+    },
+    {
+      "id": 2,
+      "username": "salesman",
+      "password_hash": "$2a$10$7.v4zrcAaui6gJKqLVCxVOBfdepu0wQ8tk4Ee4Pez9Fx8ZuMOinoC",
+      "role": "salesman",
+      "created_at": "2025-07-23 17:30:34",
+      "updated_at": "2025-07-23 17:30:34",
+      "name": "Sales Manager"
+    },
+    {
+      "id": 7,
+      "username": "dataenter",
+      "password_hash": "$2a$10$YccQgcBpnfl0PslS/kOHDeK3v6nrEeOwic9.EIk9Mz7Tysh1oBrxq",
+      "role": "dataentry",
+      "created_at": "2025-07-24 07:36:34",
+      "updated_at": "2025-07-24 07:36:34",
+      "name": "Data Entry"
+    },
+    {
+      "id": 11,
+      "username": "Admin",
+      "password_hash": "$2a$10$oqlz8YpPuB8NwxpWPIqakunjMp6qPmBdmZHwZBfSJEflMqyvzXvzq",
+      "role": "admin",
+      "created_at": "2025-07-28 20:55:52",
+      "updated_at": "2025-07-28 20:55:52",
+      "name": "Administrator"
+    },
+    {
+      "id": 13,
+      "username": "salesman3",
+      "password_hash": "$2a$10$t9ualx4cQ4zyZGmx3EbyReJ7JbPY6pNAALXGmo5YSKWskxJCKbD4i",
+      "role": "salesman",
+      "created_at": "2025-07-31 17:34:38",
+      "updated_at": "2025-07-31 17:34:38",
+      "name": null
+    }
+  ],
+  "stock_items": [
+    {
+      "id": 1,
+      "barcode": "1234567890",
+      "name": "Coca-cpla",
+      "quantity": 7,
+      "price": 200,
+      "buying_price": 150,
+      "expiry_date": "2025-08-31",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:29:41",
+      "updated_at": "2025-07-31 17:31:27"
+    },
+    {
+      "id": 2,
+      "barcode": "29991122233",
+      "name": "expire check ",
+      "quantity": 40,
+      "price": 140,
+      "buying_price": 100,
+      "expiry_date": "2025-07-01",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:30:53",
+      "updated_at": "2025-07-31 17:30:56"
+    },
+    {
+      "id": 3,
+      "barcode": "2288881122",
+      "name": "near ex check ",
+      "quantity": 70,
+      "price": 100,
+      "buying_price": 50,
+      "expiry_date": "2025-08-21",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:32:34",
+      "updated_at": "2025-07-31 17:32:38"
+    }
+  ],
+  "sales": [
+    {
+      "id": 1,
+      "invoice_number": "INV-20250731-001",
+      "total_amount": 1000,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-31 17:30:09",
+      "total_profit": 250
+    },
+    {
+      "id": 2,
+      "invoice_number": "INV-20250731-002",
+      "total_amount": 1600,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-31 17:31:27",
+      "total_profit": 400
+    }
+  ],
+  "sales_items": [
+    {
+      "id": 1,
+      "sale_id": 1,
+      "barcode": "1234567890",
+      "name": "Coca-cpla",
+      "quantity": 5,
+      "price": 200,
+      "expiry_date": "2025-08-31",
+      "created_at": "2025-07-31 17:30:09",
+      "buying_price": 150
+    },
+    {
+      "id": 2,
+      "sale_id": 2,
+      "barcode": "1234567890",
+      "name": "Coca-cpla",
+      "quantity": 8,
+      "price": 200,
+      "expiry_date": "2025-08-31",
+      "created_at": "2025-07-31 17:31:27",
+      "buying_price": 150
+    }
+  ],
+  "expenses": [
+    {
+      "id": 1,
+      "date": "2025-07-31",
+      "category": "Rent",
+      "amount": 1000,
+      "notes": "monthly rent ",
+      "created_by": 1,
+      "created_at": "2025-07-31 17:33:34"
+    }
+  ],
+  "user_activity": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Coca-cpla\",\"amount\":200,\"quantity\":5}",
+      "created_at": "2025-07-31 17:30:09"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"Coca-cpla\",\"amount\":200,\"quantity\":8}",
+      "created_at": "2025-07-31 17:31:27"
+    }
+  ]
+}

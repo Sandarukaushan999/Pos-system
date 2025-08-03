@@ -16,7 +16,7 @@ import {
   Moon
 } from 'lucide-react';
 import { useAuthStore } from '../stores/authStore';
-import ZentroPOSLogo from '../assets/ZentroPOS.png';
+import VoxoLogo from '../assets/voxo V.png';
 
 const Layout = ({ children }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -84,11 +84,11 @@ const Layout = ({ children }) => {
             {/* Ripple effect */}
             <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/10 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
             
-            <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center group-hover:scale-110 group-hover:rotate-3 transition-all duration-300 relative z-10">
-              <img src={ZentroPOSLogo} alt="ZentroPOS" className="h-6 w-6 object-contain group-hover:animate-pulse" />
+            <div className="w-8 h-8 rounded-lg bg-[#A5BF13] flex items-center justify-center transition-all duration-300 relative z-10">
+              <img src={VoxoLogo} alt="Voxo Software Solutions" className="h-full w-full object-contain" />
             </div>
             {!sidebarCollapsed && (
-              <span className={`text-lg font-bold transition-colors duration-200 relative z-10 ${isDarkMode ? 'text-[#F8F8F8] group-hover:text-[#A5BF13]' : 'text-gray-800 group-hover:text-[#A5BF13]'}`}>ZentroPOS</span>
+              <span className={`text-lg font-bold transition-colors duration-200 relative z-10 ${isDarkMode ? 'text-[#F8F8F8] group-hover:text-[#A5BF13]' : 'text-gray-800 group-hover:text-[#A5BF13]'}`}>VOXO Solutions</span>
             )}
           </button>
 
@@ -214,6 +214,15 @@ const Layout = ({ children }) => {
         <main className="flex-1">
           {React.cloneElement(children, { isDarkMode })}
         </main>
+
+        {/* Footer with Copyright */}
+        <footer className={`py-4 px-6 border-t transition-all duration-500 ${isDarkMode ? 'border-[#3A3A3A] bg-[#2A2A2A]' : 'border-gray-200 bg-gray-50'}`}>
+          <div className="flex items-center justify-center">
+            <p className={`text-sm transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]/70' : 'text-gray-600'}`}>
+              © 2024 VOXO Solutions. All rights reserved.
+            </p>
+          </div>
+        </footer>
       </div>
     </div>
   );

@@ -1,0 +1,216 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "$2a$10$7.g264ypjA2oXTeakwC6z.hLkVyWVVyXyMWyFqoGfBR1I2aC8bAl.",
+      "role": "admin",
+      "created_at": "2025-07-23 16:44:55",
+      "updated_at": "2025-07-23 16:44:55",
+      "name": "Administrator"
+    },
+    {
+      "id": 2,
+      "username": "salesman",
+      "password_hash": "$2a$10$7.v4zrcAaui6gJKqLVCxVOBfdepu0wQ8tk4Ee4Pez9Fx8ZuMOinoC",
+      "role": "salesman",
+      "created_at": "2025-07-23 17:30:34",
+      "updated_at": "2025-07-23 17:30:34",
+      "name": "Sales Manager"
+    },
+    {
+      "id": 7,
+      "username": "dataenter",
+      "password_hash": "$2a$10$YccQgcBpnfl0PslS/kOHDeK3v6nrEeOwic9.EIk9Mz7Tysh1oBrxq",
+      "role": "dataentry",
+      "created_at": "2025-07-24 07:36:34",
+      "updated_at": "2025-07-24 07:36:34",
+      "name": "Data Entry"
+    },
+    {
+      "id": 11,
+      "username": "Admin",
+      "password_hash": "$2a$10$oqlz8YpPuB8NwxpWPIqakunjMp6qPmBdmZHwZBfSJEflMqyvzXvzq",
+      "role": "admin",
+      "created_at": "2025-07-28 20:55:52",
+      "updated_at": "2025-07-28 20:55:52",
+      "name": "Administrator"
+    }
+  ],
+  "stock_items": [
+    {
+      "id": 1,
+      "barcode": "111111",
+      "name": "test 1",
+      "quantity": 20,
+      "price": 200,
+      "buying_price": 150,
+      "expiry_date": "2025-09-27",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:41:56",
+      "updated_at": "2025-07-31 17:42:01"
+    },
+    {
+      "id": 2,
+      "barcode": "222222",
+      "name": "test expired item ",
+      "quantity": 20,
+      "price": 200,
+      "buying_price": 130,
+      "expiry_date": "2025-07-01",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:42:32",
+      "updated_at": "2025-07-31 17:42:36"
+    },
+    {
+      "id": 3,
+      "barcode": "333333",
+      "name": "test near expire item ",
+      "quantity": 15,
+      "price": 298,
+      "buying_price": 200,
+      "expiry_date": "2025-08-21",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:43:21",
+      "updated_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 4,
+      "barcode": "444444",
+      "name": "test low stock item ",
+      "quantity": 10,
+      "price": 219,
+      "buying_price": 200,
+      "expiry_date": "2025-09-19",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:44:12",
+      "updated_at": "2025-07-31 17:44:16"
+    },
+    {
+      "id": 5,
+      "barcode": "000000",
+      "name": "item 1 test ",
+      "quantity": 18,
+      "price": 300,
+      "buying_price": 150,
+      "expiry_date": "2025-08-22",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:47:20",
+      "updated_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 7,
+      "barcode": "12345678",
+      "name": "test item demo",
+      "quantity": 10,
+      "price": 500,
+      "buying_price": 390,
+      "expiry_date": "2025-08-29",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:52:30",
+      "updated_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 8,
+      "barcode": "767676",
+      "name": "strock approval test 1",
+      "quantity": 20,
+      "price": 400,
+      "buying_price": 350,
+      "expiry_date": "2025-09-05",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 18:04:20",
+      "updated_at": "2025-07-31 18:05:10"
+    }
+  ],
+  "sales": [
+    {
+      "id": 1,
+      "invoice_number": "INV-20250731-001",
+      "total_amount": 3696,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-31 17:54:38",
+      "total_profit": 1046
+    }
+  ],
+  "sales_items": [
+    {
+      "id": 1,
+      "sale_id": 1,
+      "barcode": "12345678",
+      "name": "test item demo",
+      "quantity": 5,
+      "price": 500,
+      "expiry_date": "2025-08-29",
+      "created_at": "2025-07-31 17:54:38",
+      "buying_price": 390
+    },
+    {
+      "id": 2,
+      "sale_id": 1,
+      "barcode": "000000",
+      "name": "item 1 test ",
+      "quantity": 2,
+      "price": 300,
+      "expiry_date": "2025-08-22",
+      "created_at": "2025-07-31 17:54:38",
+      "buying_price": 150
+    },
+    {
+      "id": 3,
+      "sale_id": 1,
+      "barcode": "333333",
+      "name": "test near expire item ",
+      "quantity": 2,
+      "price": 298,
+      "expiry_date": "2025-08-21",
+      "created_at": "2025-07-31 17:54:38",
+      "buying_price": 200
+    }
+  ],
+  "expenses": [
+    {
+      "id": 2,
+      "date": "2025-07-31",
+      "category": "Salaries",
+      "amount": 1000,
+      "notes": null,
+      "created_by": 1,
+      "created_at": "2025-07-31 18:11:29"
+    }
+  ],
+  "user_activity": [
+    {
+      "id": 1,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"test item demo\",\"amount\":500,\"quantity\":5}",
+      "created_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 2,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"item 1 test \",\"amount\":300,\"quantity\":2}",
+      "created_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 3,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"test near expire item \",\"amount\":298,\"quantity\":2}",
+      "created_at": "2025-07-31 17:54:38"
+    }
+  ]
+}
