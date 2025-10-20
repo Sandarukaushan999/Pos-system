@@ -53,6 +53,7 @@ const BillingScreen = ({ isDarkMode = true }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [paymentType, setPaymentType] = useState('cash');
+  const [customerGivenAmount, setCustomerGivenAmount] = useState('');
   const barcodeInputRef = useRef(null);
   const [printData, setPrintData] = useState(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
@@ -176,6 +177,24 @@ const BillingScreen = ({ isDarkMode = true }) => {
     return cart.reduce((total, item) => total + (item.price * item.quantity), 0);
   };
 
+  const getBalance = () => {
+    const total = getTotal();
+    const givenAmount = parseFloat(customerGivenAmount) || 0;
+    return givenAmount - total;
+  };
+
+  const handleCustomerGivenAmountChange = (value) => {
+    // Only allow numbers and decimal point
+    const numericValue = value.replace(/[^0-9.]/g, '');
+    // Prevent multiple decimal points
+    const parts = numericValue.split('.');
+    if (parts.length > 2) {
+      setCustomerGivenAmount(parts[0] + '.' + parts.slice(1).join(''));
+    } else {
+      setCustomerGivenAmount(numericValue);
+    }
+  };
+
   const processPayment = async () => {
     if (cart.length === 0) {
       setError('Cart is empty. Please add items before checkout.');
@@ -191,6 +210,17 @@ const BillingScreen = ({ isDarkMode = true }) => {
       const expiredItemNames = expiredItems.map(item => item.name).join(', ');
       setError(`Cannot complete sale: The following items are expired: ${expiredItemNames}`);
       return;
+    }
+
+    // For cash payments, validate that customer given amount is sufficient
+    if (paymentType === 'cash') {
+      const total = getTotal();
+      const givenAmount = parseFloat(customerGivenAmount) || 0;
+      
+      if (givenAmount < total) {
+        setError(`Insufficient payment. Total: Rs ${total.toFixed(2)}, Given: Rs ${givenAmount.toFixed(2)}, Short by: Rs ${(total - givenAmount).toFixed(2)}`);
+        return;
+      }
     }
     
     try {
@@ -219,6 +249,7 @@ const BillingScreen = ({ isDarkMode = true }) => {
         setShowReceiptModal(true);
         setTimeout(() => setSuccess(''), 3000);
         setCart([]);
+        setCustomerGivenAmount('');
         setPaymentType('cash');
         
         // Trigger dashboard refresh
@@ -249,6 +280,7 @@ const BillingScreen = ({ isDarkMode = true }) => {
 
   const clearCart = () => {
     setCart([]);
+    setCustomerGivenAmount('');
     setError('');
     setSuccess('');
   };
@@ -516,6 +548,53 @@ const BillingScreen = ({ isDarkMode = true }) => {
                    </div>
                  </div>
                </div>
+
+               {/* Cash Payment Section */}
+               {paymentType === 'cash' && (
+                 <div className={`rounded-lg p-4 border transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+                   <div className="space-y-4">
+                     <div>
+                       <label className={`block text-sm font-medium mb-2 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>
+                         Customer Given Amount
+                       </label>
+                       <div className="relative">
+                         <DollarSign className={`absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`} />
+                         <input
+                           type="text"
+                           value={customerGivenAmount}
+                           onChange={(e) => handleCustomerGivenAmountChange(e.target.value)}
+                           className={`w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300 ${isDarkMode ? 'border-[#3A3A3A] bg-[#202020] placeholder-[#F8F8F8]/50 text-[#F8F8F8]' : 'border-gray-300 bg-white placeholder-gray-500 text-gray-800'}`}
+                           placeholder="Enter amount given by customer..."
+                         />
+                       </div>
+                     </div>
+                     
+                     {customerGivenAmount && (
+                       <div className={`rounded-lg p-3 border transition-all duration-300 hover:shadow-xl hover:shadow-[#A5BF13]/10 ${
+                         getBalance() >= 0 
+                           ? `${isDarkMode ? 'bg-[#202020] border-[#A5BF13]' : 'bg-green-50 border-[#A5BF13]'}` 
+                           : `${isDarkMode ? 'bg-[#202020] border-[#B4182D]' : 'bg-red-50 border-[#B4182D]'}`
+                       }`}>
+                         <div className="flex justify-between items-center">
+                           <span className={`font-medium transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>
+                             {getBalance() >= 0 ? 'Balance to Return:' : 'Amount Short:'}
+                           </span>
+                           <span className={`text-lg font-bold transition-colors duration-500 ${
+                             getBalance() >= 0 ? 'text-[#A5BF13]' : 'text-[#B4182D]'
+                           }`}>
+                             Rs {Math.abs(getBalance()).toFixed(2)}
+                           </span>
+                         </div>
+                         {getBalance() < 0 && (
+                           <p className={`text-xs mt-1 transition-colors duration-500 ${isDarkMode ? 'text-[#B4182D]' : 'text-red-600'}`}>
+                             Customer needs to pay Rs {(getTotal() - parseFloat(customerGivenAmount)).toFixed(2)} more
+                           </p>
+                         )}
+                       </div>
+                     )}
+                   </div>
+                 </div>
+               )}
               
                              <div className="flex gap-3">
                  <button
