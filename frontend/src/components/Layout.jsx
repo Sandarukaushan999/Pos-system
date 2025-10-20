@@ -51,7 +51,8 @@ const Layout = ({ children }) => {
 
   const handleLogout = () => {
     logout();
-    navigate('/login');
+    // Let React Router handle the navigation
+    window.location.reload();
   };
 
   const toggleTheme = () => {

@@ -35,7 +35,7 @@ class ErrorBoundary extends Component {
             style={{ marginTop: 24, padding: '8px 24px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 4, fontSize: 16, cursor: 'pointer' }}
             onClick={() => {
               localStorage.clear();
-              window.location.href = '/login';
+              window.location.reload();
             }}
           >
             Clear Session & Go to Login

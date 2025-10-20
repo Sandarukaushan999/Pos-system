@@ -1,0 +1,55 @@
+{
+  "appId": "com.voxosolutions.pos",
+  "productName": "VOXO POS System",
+  "directories": {
+    "output": "dist",
+    "buildResources": "build"
+  },
+  "files": [
+    "dist/**/*",
+    "electron.js",
+    "preload.js",
+    "package.json"
+  ],
+  "extraResources": [
+    {
+      "from": "../database.db",
+      "to": "database.db"
+    },
+    {
+      "from": "../POSBackups",
+      "to": "POSBackups"
+    }
+  ],
+  "win": {
+    "target": [
+      {
+        "target": "nsis",
+        "arch": ["x64"]
+      },
+      {
+        "target": "portable",
+        "arch": ["x64"]
+      }
+    ],
+    "icon": "build/icon.ico",
+    "requestedExecutionLevel": "asInvoker",
+    "publisherName": "VOXO Solutions"
+  },
+  "nsis": {
+    "oneClick": false,
+    "allowToChangeInstallationDirectory": true,
+    "installerIcon": "build/icon.ico",
+    "uninstallerIcon": "build/icon.ico",
+    "installerHeaderIcon": "build/icon.ico",
+    "createDesktopShortcut": true,
+    "createStartMenuShortcut": true,
+    "shortcutName": "VOXO POS System",
+    "include": "build/installer.nsh"
+  },
+  "portable": {
+    "artifactName": "VOXO-POS-Portable.exe"
+  },
+  "publish": null
+}
+

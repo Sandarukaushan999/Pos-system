@@ -1,7 +1,11 @@
-const { app, BrowserWindow, shell } = require('electron');
-const path = require('path');
+import { app, BrowserWindow, shell } from 'electron';
+import path from 'path';
+import { fileURLToPath } from 'url';
 
-const isDev = process.env.NODE_ENV === 'development';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+const isDev = process.env.NODE_ENV === 'development' && process.env.ELECTRON_DEV === 'true';
 let mainWindow;
 
 function createWindow() {
@@ -25,10 +29,29 @@ function createWindow() {
   });
 
   if (isDev) {
+    console.log('Loading development server...');
     mainWindow.loadURL('http://localhost:5173');
     mainWindow.webContents.openDevTools();
   } else {
-    mainWindow.loadFile(path.join(__dirname, 'dist', 'index.html'));
+    const indexPath = path.join(__dirname, 'dist', 'index.html');
+    console.log('Loading production build from:', indexPath);
+    mainWindow.loadFile(indexPath);
+    
+    // Handle navigation to prevent file:// protocol issues
+    mainWindow.webContents.on('will-navigate', (event, navigationUrl) => {
+      const parsedUrl = new URL(navigationUrl);
+      
+      // Allow navigation within the app (file:// protocol)
+      if (parsedUrl.origin !== 'file://') {
+        event.preventDefault();
+      }
+    });
+    
+    // Handle new window requests
+    mainWindow.webContents.setWindowOpenHandler(({ url }) => {
+      shell.openExternal(url);
+      return { action: 'deny' };
+    });
   }
 
   mainWindow.on('closed', () => {
