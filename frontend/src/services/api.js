@@ -72,6 +72,7 @@ export const salesAPI = {
   getStats: (params) => api.get('/sales/stats/overview', { params }),
   getTopItems: (params) => api.get('/sales/stats/top-items', { params }),
   getGrouped: () => api.get('/sales/grouped'),
+  sendInvoice: (id, mobileNumber) => api.post(`/sales/${id}/send-invoice`, { mobileNumber }),
 };
 
 export const expensesAPI = {

@@ -3,7 +3,6 @@ import {
   Download, 
   FileText, 
   BarChart3, 
-  Calendar,
   DollarSign,
   Package,
   TrendingUp,
@@ -19,11 +18,6 @@ const ReportsPage = ({ isDarkMode = true }) => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
-  const [reportParams, setReportParams] = useState({
-    start_date: '',
-    end_date: '',
-    period: 'month'
-  });
 
   const handleGenerateReport = async (reportType) => {
     try {
@@ -32,20 +26,19 @@ const ReportsPage = ({ isDarkMode = true }) => {
       setSuccess('');
 
       let response;
-      const params = { ...reportParams };
       let downloadType = reportType;
       switch (reportType) {
         case 'sales':
-          response = await reportsAPI.generateSalesReport(params);
+          response = await reportsAPI.generateSalesReport();
           break;
         case 'inventory':
-          response = await reportsAPI.generateInventoryReport(params);
+          response = await reportsAPI.generateInventoryReport();
           break;
         case 'expenses':
-          response = await reportsAPI.generateExpensesReport(params);
+          response = await reportsAPI.generateExpensesReport();
           break;
         case 'business':
-          response = await reportsAPI.generateBusinessReport(params);
+          response = await reportsAPI.generateBusinessReport();
           break;
         default:
           throw new Error('Invalid report type');
@@ -136,59 +129,6 @@ const ReportsPage = ({ isDarkMode = true }) => {
           </div>
         </div>
 
-        {/* Report Parameters - Compact Design */}
-        <div className={`rounded-xl shadow-lg p-3 mb-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 transition-all duration-300 border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 bg-[#A5BF13] rounded-lg flex items-center justify-center hover:scale-110 transition-all duration-300">
-                <Calendar className="h-3 w-3 text-black" />
-              </div>
-              <h3 className={`text-sm font-semibold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Report Parameters</h3>
-            </div>
-            <div className="text-xs text-[#A5BF13]">
-              Quick filters for report generation
-            </div>
-          </div>
-          <div className="flex items-center gap-3">
-            <div className="flex-1">
-              <label className="block text-xs font-medium text-[#A5BF13] mb-1">
-                Start Date
-              </label>
-              <input
-                type="date"
-                value={reportParams.start_date}
-                onChange={(e) => setReportParams({...reportParams, start_date: e.target.value})}
-                className={`block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-xs font-medium text-[#A5BF13] mb-1">
-                End Date
-              </label>
-              <input
-                type="date"
-                value={reportParams.end_date}
-                onChange={(e) => setReportParams({...reportParams, end_date: e.target.value})}
-                className={`block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
-              />
-            </div>
-            <div className="flex-1">
-              <label className="block text-xs font-medium text-[#A5BF13] mb-1">
-                Period
-              </label>
-              <select
-                value={reportParams.period}
-                onChange={(e) => setReportParams({...reportParams, period: e.target.value})}
-                className={`block w-full px-2 py-1 rounded-lg shadow-sm focus:outline-none focus:ring-1 focus:ring-[#A5BF13] focus:border-transparent text-xs hover:border-[#A5BF13] transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8]' : 'bg-white border-gray-300 text-gray-800'}`}
-              >
-                <option value="today">Today</option>
-                <option value="week">This Week</option>
-                <option value="month">This Month</option>
-                <option value="year">This Year</option>
-              </select>
-            </div>
-          </div>
-        </div>
 
         {/* Error/Success messages */}
         {error && (

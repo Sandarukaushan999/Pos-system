@@ -2,6 +2,7 @@ const express = require('express');
 const { authenticateToken, requireAuth } = require('../middleware/auth');
 const { getDb } = require('../models/database');
 const moment = require('moment');
+const smsService = require('../services/smsService');
 
 const router = express.Router();
 
@@ -40,7 +41,7 @@ router.get('/:id', authenticateToken, requireAuth, (req, res) => {
 // Create new sale (billing)
 router.post('/', authenticateToken, requireAuth, async (req, res) => {
   const db = getDb();
-  const { items, paymentType, total } = req.body;
+  const { items, paymentType, total, customerMobile, customerName } = req.body;
   console.log('Checkout request:', req.body);
   console.log('User:', req.user);
   
@@ -81,9 +82,9 @@ router.post('/', authenticateToken, requireAuth, async (req, res) => {
     db.serialize(() => {
       db.run('BEGIN TRANSACTION');
       
-      // Insert sale with proper invoice number
-      db.run('INSERT INTO sales (invoice_number, total_amount, payment_type, cashier_id, total_profit) VALUES (?, ?, ?, ?, ?)',
-        [invoice_number, total, paymentType, req.user.id, 0],
+      // Insert sale with proper invoice number and customer info
+      db.run('INSERT INTO sales (invoice_number, total_amount, payment_type, cashier_id, total_profit, customer_mobile, customer_name) VALUES (?, ?, ?, ?, ?, ?, ?)',
+        [invoice_number, total, paymentType, req.user.id, 0, customerMobile || null, customerName || null],
         function(err) {
           if (err) {
             db.run('ROLLBACK');
@@ -243,6 +244,84 @@ router.get('/debug/all-users-sales', (req, res) => {
       res.json({ users, sales });
     });
   });
+});
+
+// Send invoice via SMS
+router.post('/:id/send-invoice', authenticateToken, requireAuth, async (req, res) => {
+  const db = getDb();
+  const { id } = req.params;
+  const { mobileNumber } = req.body;
+  
+  console.log('Send invoice request:', { id, mobileNumber });
+  
+  if (!mobileNumber) {
+    console.log('Error: Mobile number is required');
+    return res.status(400).json({ error: 'Mobile number is required' });
+  }
+  
+  // Validate and format phone number
+  const formattedNumber = smsService.validatePhoneNumber(mobileNumber);
+  console.log('Formatted phone number:', formattedNumber);
+  
+  if (!formattedNumber) {
+    console.log('Error: Invalid phone number format');
+    return res.status(400).json({ error: 'Invalid phone number format' });
+  }
+  
+  try {
+    // Get sale details with items
+    const sale = await new Promise((resolve, reject) => {
+      db.get('SELECT s.*, u.username as cashier_name FROM sales s LEFT JOIN users u ON s.cashier_id = u.id WHERE s.id = ?', [id], (err, row) => {
+        if (err) return reject(err);
+        resolve(row);
+      });
+    });
+    
+    if (!sale) {
+      return res.status(404).json({ error: 'Sale not found' });
+    }
+    
+    // Get sale items
+    const items = await new Promise((resolve, reject) => {
+      db.all('SELECT * FROM sales_items WHERE sale_id = ?', [id], (err, rows) => {
+        if (err) return reject(err);
+        resolve(rows);
+      });
+    });
+    
+    // Send SMS invoice
+    console.log('Sending SMS invoice to:', formattedNumber);
+    console.log('Sale data:', sale);
+    console.log('Items data:', items);
+    
+    const smsResult = await smsService.sendInvoice(formattedNumber, { sale, items });
+    console.log('SMS result:', smsResult);
+    
+    if (smsResult.success) {
+      // Update sale with sent status (optional)
+      db.run('UPDATE sales SET customer_mobile = ? WHERE id = ?', [formattedNumber, id], (err) => {
+        if (err) {
+          console.log('Failed to update customer mobile:', err);
+        }
+      });
+      
+      res.json({ 
+        success: true, 
+        message: 'Invoice sent successfully',
+        messageId: smsResult.messageId,
+        phoneNumber: formattedNumber
+      });
+    } else {
+      res.status(500).json({ 
+        success: false, 
+        error: 'Failed to send SMS: ' + smsResult.error 
+      });
+    }
+    
+  } catch (error) {
+    console.error('Send invoice error:', error);
+    res.status(500).json({ error: 'Failed to send invoice' });
+  }
 });
 
 module.exports = router; 

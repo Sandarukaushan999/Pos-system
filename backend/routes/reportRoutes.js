@@ -116,7 +116,47 @@ async function exportToExcel(type, data, fileName, columns, summaryRows = []) {
 // Sales report
 router.get('/sales/excel', authenticateToken, requireAuth, async (req, res) => {
   const db = getDb();
-  db.all('SELECT s.*, u.username as cashier_name FROM sales s LEFT JOIN users u ON s.cashier_id = u.id ORDER BY s.created_at DESC', [], async (err, sales) => {
+  const { start_date, end_date, period } = req.query;
+  
+  // Build date filter based on parameters
+  let dateFilter = '';
+  let queryParams = [];
+  
+  if (start_date && end_date) {
+    dateFilter = 'WHERE DATE(s.created_at) BETWEEN ? AND ?';
+    queryParams = [start_date, end_date];
+  } else if (period) {
+    const today = moment();
+    switch (period) {
+      case 'today':
+        dateFilter = 'WHERE DATE(s.created_at) = ?';
+        queryParams = [today.format('YYYY-MM-DD')];
+        break;
+      case 'week':
+        const weekStart = today.startOf('week').format('YYYY-MM-DD');
+        const weekEnd = today.endOf('week').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(s.created_at) BETWEEN ? AND ?';
+        queryParams = [weekStart, weekEnd];
+        break;
+      case 'month':
+        const monthStart = today.startOf('month').format('YYYY-MM-DD');
+        const monthEnd = today.endOf('month').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(s.created_at) BETWEEN ? AND ?';
+        queryParams = [monthStart, monthEnd];
+        break;
+      case 'year':
+        const yearStart = today.startOf('year').format('YYYY-MM-DD');
+        const yearEnd = today.endOf('year').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(s.created_at) BETWEEN ? AND ?';
+        queryParams = [yearStart, yearEnd];
+        break;
+    }
+  }
+  
+  const query = `SELECT s.*, u.username as cashier_name FROM sales s LEFT JOIN users u ON s.cashier_id = u.id ${dateFilter} ORDER BY s.created_at DESC`;
+  console.log('Sales report query:', query, 'Params:', queryParams);
+  
+  db.all(query, queryParams, async (err, sales) => {
     if (err) return res.status(500).json({ error: 'Failed to get sales' });
     const columns = [
       { header: 'Invoice #', key: 'invoice_number', width: 15 },
@@ -145,7 +185,48 @@ router.get('/sales/excel', authenticateToken, requireAuth, async (req, res) => {
 // Inventory report
 router.get('/inventory/excel', authenticateToken, requireAuth, async (req, res) => {
   const db = getDb();
-  db.all('SELECT * FROM stock_items ORDER BY created_at DESC', [], async (err, items) => {
+  const { start_date, end_date, period } = req.query;
+  
+  // Build date filter based on parameters (for inventory, we filter by created_at or updated_at)
+  let dateFilter = '';
+  let queryParams = [];
+  
+  if (start_date && end_date) {
+    dateFilter = 'WHERE DATE(created_at) BETWEEN ? AND ? OR DATE(updated_at) BETWEEN ? AND ?';
+    queryParams = [start_date, end_date, start_date, end_date];
+  } else if (period) {
+    const today = moment();
+    switch (period) {
+      case 'today':
+        dateFilter = 'WHERE DATE(created_at) = ? OR DATE(updated_at) = ?';
+        const todayStr = today.format('YYYY-MM-DD');
+        queryParams = [todayStr, todayStr];
+        break;
+      case 'week':
+        const weekStart = today.startOf('week').format('YYYY-MM-DD');
+        const weekEnd = today.endOf('week').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(created_at) BETWEEN ? AND ? OR DATE(updated_at) BETWEEN ? AND ?';
+        queryParams = [weekStart, weekEnd, weekStart, weekEnd];
+        break;
+      case 'month':
+        const monthStart = today.startOf('month').format('YYYY-MM-DD');
+        const monthEnd = today.endOf('month').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(created_at) BETWEEN ? AND ? OR DATE(updated_at) BETWEEN ? AND ?';
+        queryParams = [monthStart, monthEnd, monthStart, monthEnd];
+        break;
+      case 'year':
+        const yearStart = today.startOf('year').format('YYYY-MM-DD');
+        const yearEnd = today.endOf('year').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(created_at) BETWEEN ? AND ? OR DATE(updated_at) BETWEEN ? AND ?';
+        queryParams = [yearStart, yearEnd, yearStart, yearEnd];
+        break;
+    }
+  }
+  
+  const query = `SELECT * FROM stock_items ${dateFilter} ORDER BY created_at DESC`;
+  console.log('Inventory report query:', query, 'Params:', queryParams);
+  
+  db.all(query, queryParams, async (err, items) => {
     if (err) return res.status(500).json({ error: 'Failed to get inventory' });
     const columns = [
       { header: 'Barcode', key: 'barcode', width: 15 },
@@ -174,7 +255,47 @@ router.get('/inventory/excel', authenticateToken, requireAuth, async (req, res) 
 // Expenses report
 router.get('/expenses/excel', authenticateToken, requireAuth, async (req, res) => {
   const db = getDb();
-  db.all('SELECT e.*, u.username as created_by_name FROM expenses e LEFT JOIN users u ON e.created_by = u.id ORDER BY e.date DESC', [], async (err, expenses) => {
+  const { start_date, end_date, period } = req.query;
+  
+  // Build date filter based on parameters
+  let dateFilter = '';
+  let queryParams = [];
+  
+  if (start_date && end_date) {
+    dateFilter = 'WHERE DATE(e.date) BETWEEN ? AND ?';
+    queryParams = [start_date, end_date];
+  } else if (period) {
+    const today = moment();
+    switch (period) {
+      case 'today':
+        dateFilter = 'WHERE DATE(e.date) = ?';
+        queryParams = [today.format('YYYY-MM-DD')];
+        break;
+      case 'week':
+        const weekStart = today.startOf('week').format('YYYY-MM-DD');
+        const weekEnd = today.endOf('week').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(e.date) BETWEEN ? AND ?';
+        queryParams = [weekStart, weekEnd];
+        break;
+      case 'month':
+        const monthStart = today.startOf('month').format('YYYY-MM-DD');
+        const monthEnd = today.endOf('month').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(e.date) BETWEEN ? AND ?';
+        queryParams = [monthStart, monthEnd];
+        break;
+      case 'year':
+        const yearStart = today.startOf('year').format('YYYY-MM-DD');
+        const yearEnd = today.endOf('year').format('YYYY-MM-DD');
+        dateFilter = 'WHERE DATE(e.date) BETWEEN ? AND ?';
+        queryParams = [yearStart, yearEnd];
+        break;
+    }
+  }
+  
+  const query = `SELECT e.*, u.username as created_by_name FROM expenses e LEFT JOIN users u ON e.created_by = u.id ${dateFilter} ORDER BY e.date DESC`;
+  console.log('Expenses report query:', query, 'Params:', queryParams);
+  
+  db.all(query, queryParams, async (err, expenses) => {
     if (err) return res.status(500).json({ error: 'Failed to get expenses' });
     const columns = [
       { header: 'Date', key: 'date', width: 15 },
@@ -199,8 +320,64 @@ router.get('/expenses/excel', authenticateToken, requireAuth, async (req, res) =
 // Business summary report
 router.get('/business/excel', authenticateToken, requireAuth, async (req, res) => {
   const db = getDb();
-  db.all('SELECT s.*, u.username as cashier_name FROM sales s LEFT JOIN users u ON s.cashier_id = u.id ORDER BY s.created_at DESC', [], async (err, sales) => {
-    db.all('SELECT e.*, u.username as created_by_name FROM expenses e LEFT JOIN users u ON e.created_by = u.id ORDER BY e.date DESC', [], async (err2, expenses) => {
+  const { start_date, end_date, period } = req.query;
+  
+  // Build date filter based on parameters
+  let salesDateFilter = '';
+  let expensesDateFilter = '';
+  let salesQueryParams = [];
+  let expensesQueryParams = [];
+  
+  if (start_date && end_date) {
+    salesDateFilter = 'WHERE DATE(s.created_at) BETWEEN ? AND ?';
+    expensesDateFilter = 'WHERE DATE(e.date) BETWEEN ? AND ?';
+    salesQueryParams = [start_date, end_date];
+    expensesQueryParams = [start_date, end_date];
+  } else if (period) {
+    const today = moment();
+    switch (period) {
+      case 'today':
+        salesDateFilter = 'WHERE DATE(s.created_at) = ?';
+        expensesDateFilter = 'WHERE DATE(e.date) = ?';
+        const todayStr = today.format('YYYY-MM-DD');
+        salesQueryParams = [todayStr];
+        expensesQueryParams = [todayStr];
+        break;
+      case 'week':
+        const weekStart = today.startOf('week').format('YYYY-MM-DD');
+        const weekEnd = today.endOf('week').format('YYYY-MM-DD');
+        salesDateFilter = 'WHERE DATE(s.created_at) BETWEEN ? AND ?';
+        expensesDateFilter = 'WHERE DATE(e.date) BETWEEN ? AND ?';
+        salesQueryParams = [weekStart, weekEnd];
+        expensesQueryParams = [weekStart, weekEnd];
+        break;
+      case 'month':
+        const monthStart = today.startOf('month').format('YYYY-MM-DD');
+        const monthEnd = today.endOf('month').format('YYYY-MM-DD');
+        salesDateFilter = 'WHERE DATE(s.created_at) BETWEEN ? AND ?';
+        expensesDateFilter = 'WHERE DATE(e.date) BETWEEN ? AND ?';
+        salesQueryParams = [monthStart, monthEnd];
+        expensesQueryParams = [monthStart, monthEnd];
+        break;
+      case 'year':
+        const yearStart = today.startOf('year').format('YYYY-MM-DD');
+        const yearEnd = today.endOf('year').format('YYYY-MM-DD');
+        salesDateFilter = 'WHERE DATE(s.created_at) BETWEEN ? AND ?';
+        expensesDateFilter = 'WHERE DATE(e.date) BETWEEN ? AND ?';
+        salesQueryParams = [yearStart, yearEnd];
+        expensesQueryParams = [yearStart, yearEnd];
+        break;
+    }
+  }
+  
+  const salesQuery = `SELECT s.*, u.username as cashier_name FROM sales s LEFT JOIN users u ON s.cashier_id = u.id ${salesDateFilter} ORDER BY s.created_at DESC`;
+  const expensesQuery = `SELECT e.*, u.username as created_by_name FROM expenses e LEFT JOIN users u ON e.created_by = u.id ${expensesDateFilter} ORDER BY e.date DESC`;
+  
+  console.log('Business report sales query:', salesQuery, 'Params:', salesQueryParams);
+  console.log('Business report expenses query:', expensesQuery, 'Params:', expensesQueryParams);
+  
+  db.all(salesQuery, salesQueryParams, async (err, sales) => {
+    db.all(expensesQuery, expensesQueryParams, async (err2, expenses) => {
       db.all('SELECT * FROM stock_items WHERE status = "active"', [], async (err3, inventory) => {
         const workbook = new ExcelJS.Workbook();
         // Sales Summary

@@ -13,7 +13,8 @@ import {
   Check,
   Smartphone,
   Banknote,
-  QrCode
+  QrCode,
+  Send
 } from 'lucide-react';
 import { inventoryAPI, salesAPI } from '../services/api';
 
@@ -53,6 +54,9 @@ const BillingScreen = ({ isDarkMode = true }) => {
   const [error, setError] = useState('');
   const [success, setSuccess] = useState('');
   const [paymentType, setPaymentType] = useState('cash');
+  const [customerMobile, setCustomerMobile] = useState('');
+  const [customerName, setCustomerName] = useState('');
+  const [sendingInvoice, setSendingInvoice] = useState(false);
   const barcodeInputRef = useRef(null);
   const [printData, setPrintData] = useState(null);
   const [showReceiptModal, setShowReceiptModal] = useState(false);
@@ -207,7 +211,9 @@ const BillingScreen = ({ isDarkMode = true }) => {
           expiry_date: item.expiry_date
         })),
         total: getTotal(),
-        paymentType
+        paymentType,
+        customerMobile: customerMobile.trim() || null,
+        customerName: customerName.trim() || null
       };
       
       // Use real sales API to create the sale
@@ -215,7 +221,10 @@ const BillingScreen = ({ isDarkMode = true }) => {
       
       if (response.data.success) {
         setSuccess('Sale completed successfully!');
-        setPrintData({ sale: saleData, items: saleData.items });
+        setPrintData({ 
+          sale: { ...saleData, id: response.data.sale?.id }, 
+          items: saleData.items 
+        });
         setShowReceiptModal(true);
         setTimeout(() => setSuccess(''), 3000);
         setCart([]);
@@ -277,6 +286,46 @@ const BillingScreen = ({ isDarkMode = true }) => {
   const closeReceiptModal = () => {
     setShowReceiptModal(false);
     setPrintData(null);
+  };
+
+  const sendInvoiceToCustomer = async () => {
+    console.log('Send invoice clicked');
+    console.log('Customer mobile:', customerMobile);
+    console.log('Print data:', printData);
+    
+    if (!customerMobile.trim()) {
+      setError('Please enter customer mobile number to send invoice');
+      return;
+    }
+
+    if (!printData?.sale?.id) {
+      setError('No sale data available to send');
+      return;
+    }
+
+    try {
+      setSendingInvoice(true);
+      setError('');
+      
+      console.log('Sending invoice for sale ID:', printData.sale.id);
+      console.log('To mobile:', customerMobile.trim());
+      
+      const response = await salesAPI.sendInvoice(printData.sale.id, customerMobile.trim());
+      
+      console.log('SMS API response:', response);
+      
+      if (response.data.success) {
+        setSuccess(`Invoice sent successfully to ${response.data.phoneNumber}`);
+        setTimeout(() => setSuccess(''), 3000);
+      } else {
+        setError(response.data.error || 'Failed to send invoice');
+      }
+    } catch (error) {
+      console.error('Send invoice error:', error);
+      setError('Failed to send invoice. Please try again.');
+    } finally {
+      setSendingInvoice(false);
+    }
   };
 
   return (
@@ -507,6 +556,40 @@ const BillingScreen = ({ isDarkMode = true }) => {
                    ))}
                  </div>
                </div>
+               
+               {/* Customer Information */}
+               <div className="space-y-3">
+                 <h4 className={`text-sm font-medium transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Customer Information (Optional)</h4>
+                 <div className="space-y-2">
+                   <div>
+                     <label className={`block text-xs font-medium mb-1 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>
+                       Customer Name
+                     </label>
+                     <input
+                       type="text"
+                       value={customerName}
+                       onChange={(e) => setCustomerName(e.target.value)}
+                       className={`w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8] placeholder-[#F8F8F8]/50' : 'bg-white border-gray-300 text-gray-800 placeholder-gray-500'}`}
+                       placeholder="Enter customer name..."
+                     />
+                   </div>
+                   <div>
+                     <label className={`block text-xs font-medium mb-1 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-600'}`}>
+                       Mobile Number
+                     </label>
+                     <input
+                       type="tel"
+                       value={customerMobile}
+                       onChange={(e) => setCustomerMobile(e.target.value)}
+                       className={`w-full px-3 py-2 rounded-lg border text-sm focus:outline-none focus:ring-2 focus:ring-[#A5BF13] focus:border-transparent transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A] text-[#F8F8F8] placeholder-[#F8F8F8]/50' : 'bg-white border-gray-300 text-gray-800 placeholder-gray-500'}`}
+                       placeholder="07XXXXXXXX or +947XXXXXXXX"
+                     />
+                     <p className={`text-xs mt-1 transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]/70' : 'text-gray-500'}`}>
+                       Enter mobile number to send invoice via SMS
+                     </p>
+                   </div>
+                 </div>
+               </div>
               
                              <div className={`rounded-lg p-4 border hover:shadow-xl hover:shadow-[#A5BF13]/10 transition-all duration-300 ${isDarkMode ? 'bg-[#202020] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
                  <div className="space-y-2">
@@ -564,25 +647,54 @@ const BillingScreen = ({ isDarkMode = true }) => {
                <Receipt sale={printData.sale} items={printData.items} isDarkMode={isDarkMode} />
              </div>
              <div className={`p-4 border-t transition-all duration-500 ${isDarkMode ? 'border-[#3A3A3A] bg-[#2A2A2A]' : 'border-gray-200 bg-white'}`}>
-                             <div className="flex gap-3">
-                 <button
-                   onClick={closeReceiptModal}
-                   className={`flex-1 px-4 py-2 border rounded-lg font-medium transition-all duration-300 btn-press hover:shadow-lg hover:shadow-[#A5BF13]/10 hover:-translate-y-1 group ripple ${isDarkMode ? 'border-[#3A3A3A] text-[#F8F8F8] hover:bg-[#202020]' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
-                 >
-                   Close
-                 </button>
-                <button
-                  onClick={handlePrintReceipt}
-                  className="flex-1 px-4 py-2 bg-[#A5BF13] text-black rounded-lg font-semibold hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] transition-all duration-300 btn-press hover:shadow-xl hover:shadow-[#A5BF13]/30 hover:-translate-y-1 group ripple relative overflow-hidden"
-                >
-                  {/* Ripple effect */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
-                  
-                  <div className="flex items-center justify-center relative z-10">
-                    <Printer className="h-4 w-4 mr-2 group-hover:animate-pulse" />
-                    Print Receipt
-                  </div>
-                </button>
+                             <div className="space-y-3">
+                 {/* Send Invoice Button */}
+                 {customerMobile.trim() && (
+                   <button
+                     onClick={sendInvoiceToCustomer}
+                     disabled={sendingInvoice}
+                     className="w-full px-4 py-2 bg-[#F79824] text-black rounded-lg font-semibold hover:bg-[#E88A1A] disabled:opacity-50 transition-all duration-300 btn-press hover:shadow-xl hover:shadow-[#F79824]/30 hover:-translate-y-1 group ripple relative overflow-hidden"
+                   >
+                     {/* Ripple effect */}
+                     <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                     
+                     <div className="flex items-center justify-center relative z-10">
+                       {sendingInvoice ? (
+                         <>
+                           <div className="animate-spin rounded-full h-4 w-4 border-2 border-black border-t-transparent mr-2"></div>
+                           Sending...
+                         </>
+                       ) : (
+                         <>
+                           <Send className="h-4 w-4 mr-2 group-hover:animate-pulse" />
+                           Send Invoice to {customerMobile}
+                         </>
+                       )}
+                     </div>
+                   </button>
+                 )}
+                 
+                 {/* Action Buttons */}
+                 <div className="flex gap-3">
+                   <button
+                     onClick={closeReceiptModal}
+                     className={`flex-1 px-4 py-2 border rounded-lg font-medium transition-all duration-300 btn-press hover:shadow-lg hover:shadow-[#A5BF13]/10 hover:-translate-y-1 group ripple ${isDarkMode ? 'border-[#3A3A3A] text-[#F8F8F8] hover:bg-[#202020]' : 'border-gray-300 text-gray-700 hover:bg-gray-100'}`}
+                   >
+                     Close
+                   </button>
+                  <button
+                    onClick={handlePrintReceipt}
+                    className="flex-1 px-4 py-2 bg-[#A5BF13] text-black rounded-lg font-semibold hover:bg-[#94A90F] focus:outline-none focus:ring-2 focus:ring-[#A5BF13] transition-all duration-300 btn-press hover:shadow-xl hover:shadow-[#A5BF13]/30 hover:-translate-y-1 group ripple relative overflow-hidden"
+                  >
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    
+                    <div className="flex items-center justify-center relative z-10">
+                      <Printer className="h-4 w-4 mr-2 group-hover:animate-pulse" />
+                      Print Receipt
+                    </div>
+                  </button>
+                </div>
               </div>
             </div>
           </div>
