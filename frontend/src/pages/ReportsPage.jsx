@@ -215,8 +215,10 @@ const ReportsPage = ({ isDarkMode = true }) => {
             {reportTypes.map((report) => {
               const Icon = report.icon;
               return (
-                <div key={report.id} className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-                  <div className="flex items-start justify-between mb-4">
+                <div key={report.id} className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-2 transition-all duration-300 group border relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+                  {/* Ripple effect */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                  <div className="flex items-start justify-between mb-4 relative z-10">
                     <div className="flex items-center gap-3">
                       <div className={`w-10 h-10 rounded-lg bg-[${report.color}] flex items-center justify-center group-hover:scale-110 group-hover:rotate-12 transition-all duration-300`}>
                         <Icon className="h-5 w-5 text-black" />
@@ -228,7 +230,7 @@ const ReportsPage = ({ isDarkMode = true }) => {
                     </div>
                   </div>
                   
-                  <div className="space-y-3">
+                  <div className="space-y-3 relative z-10">
                     <div className="flex items-center justify-between text-xs text-[#A5BF13]">
                       <span>Format:</span>
                       <span className={`font-medium transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>Excel (.xlsx)</span>

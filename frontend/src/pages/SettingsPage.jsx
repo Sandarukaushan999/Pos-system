@@ -421,8 +421,10 @@ const SettingsPage = ({ isDarkMode = true }) => {
             {activeTab === 'profile' && (
               <div className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-                    <div className="flex items-center justify-between">
+                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <div className="flex items-center justify-between relative z-10">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-[#A5BF13] mb-1">Username</p>
                         <p className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{user?.username}</p>
@@ -432,8 +434,10 @@ const SettingsPage = ({ isDarkMode = true }) => {
                       </div>
                     </div>
                   </div>
-                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-                    <div className="flex items-center justify-between">
+                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#F79824]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <div className="flex items-center justify-between relative z-10">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-[#A5BF13] mb-1">Role</p>
                         <p className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{user?.role?.charAt(0).toUpperCase() + user?.role?.slice(1)}</p>
@@ -443,8 +447,10 @@ const SettingsPage = ({ isDarkMode = true }) => {
                       </div>
                     </div>
                   </div>
-                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-                    <div className="flex items-center justify-between">
+                  <div className={`rounded-xl shadow-lg hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 p-6 group border relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+                    {/* Ripple effect */}
+                    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C1E8FF]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+                    <div className="flex items-center justify-between relative z-10">
                       <div className="flex-1">
                         <p className="text-sm font-medium text-[#A5BF13] mb-1">Account Created</p>
                         <p className={`text-2xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{user?.created_at ? new Date(user.created_at).toLocaleDateString() : 'N/A'}</p>

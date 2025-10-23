@@ -353,8 +353,10 @@ const ExpenseManager = ({ isDarkMode = true }) => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-4 gap-4 mb-6">
-          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 group border relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Total Expenses</p>
                 <p className={`text-xl font-bold transition-colors duration-500 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-800'}`}>{stats.total}</p>
@@ -364,8 +366,10 @@ const ExpenseManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 group border relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#B4182D]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Total Amount</p>
                 <p className="text-xl font-bold text-[#B4182D]">Rs {stats.totalAmount.toLocaleString()}</p>
@@ -375,8 +379,10 @@ const ExpenseManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 group border relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#F79824]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">This Month</p>
                 <p className="text-xl font-bold text-[#F79824]">Rs {stats.thisMonth.toLocaleString()}</p>
@@ -386,8 +392,10 @@ const ExpenseManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 group border ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg p-4 hover:shadow-xl hover:shadow-[#C1E8FF]/20 hover:-translate-y-1 transition-all duration-300 group border relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-white border-gray-200'}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#C1E8FF]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className="text-xs font-medium text-[#A5BF13] mb-1">Avg Per Expense</p>
                 <p className="text-xl font-bold text-[#C1E8FF]">Rs {stats.avgPerExpense.toFixed(0)}</p>

@@ -475,8 +475,10 @@ const InventoryManager = ({ isDarkMode = true }) => {
 
         {/* Stats Cards */}
         <div className="grid grid-cols-6 gap-4 mb-6">
-          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className={`text-xs font-medium mb-1 group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Total Items</p>
                 <p className="text-xl font-bold text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{stats.total}</p>
@@ -486,8 +488,10 @@ const InventoryManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#A5BF13]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#A5BF13]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className={`text-xs font-medium mb-1 group-hover:text-[#A5BF13] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Active</p>
                 <p className="text-xl font-bold text-[#A5BF13] group-hover:scale-105 transition-transform duration-200">{stats.active}</p>
@@ -497,8 +501,10 @@ const InventoryManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#F79824]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className={`text-xs font-medium mb-1 group-hover:text-[#F79824] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Pending</p>
                 <p className="text-xl font-bold text-[#F79824] group-hover:scale-105 transition-transform duration-200">{stats.pending}</p>
@@ -508,8 +514,10 @@ const InventoryManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.lowStock > 0 ? 'animate-pulse' : ''}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.lowStock > 0 ? 'animate-pulse' : ''}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#B4182D]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className={`text-xs font-medium mb-1 group-hover:text-[#B4182D] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Low Stock</p>
                 <p className="text-xl font-bold text-[#B4182D] group-hover:scale-105 transition-transform duration-200">{stats.lowStock}</p>
@@ -519,8 +527,10 @@ const InventoryManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.expired > 0 ? 'animate-pulse' : ''}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#B4182D]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.expired > 0 ? 'animate-pulse' : ''}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#B4182D]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className={`text-xs font-medium mb-1 group-hover:text-[#B4182D] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Expired</p>
                 <p className="text-xl font-bold text-[#B4182D] group-hover:scale-105 transition-transform duration-200">{stats.expired}</p>
@@ -530,8 +540,10 @@ const InventoryManager = ({ isDarkMode = true }) => {
               </div>
             </div>
           </div>
-          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.nearExpire > 0 ? 'animate-pulse' : ''}`}>
-            <div className="flex items-center justify-between">
+          <div className={`rounded-xl shadow-lg hover:shadow-2xl hover:shadow-[#F79824]/20 hover:-translate-y-1 transition-all duration-300 p-4 border group cursor-pointer relative overflow-hidden ${isDarkMode ? 'bg-[#2A2A2A] border-[#3A3A3A]' : 'bg-gray-50 border-gray-200'} ${stats.nearExpire > 0 ? 'animate-pulse' : ''}`}>
+            {/* Ripple effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-[#F79824]/5 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-700"></div>
+            <div className="flex items-center justify-between relative z-10">
               <div>
                 <p className={`text-xs font-medium mb-1 group-hover:text-[#F79824] transition-colors duration-200 ${isDarkMode ? 'text-[#F8F8F8]' : 'text-gray-700'}`}>Near Expire</p>
                 <p className="text-xl font-bold text-[#F79824] group-hover:scale-105 transition-transform duration-200">{stats.nearExpire}</p>
