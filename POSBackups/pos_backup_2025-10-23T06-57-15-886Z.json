@@ -1,0 +1,1300 @@
+{
+  "users": [
+    {
+      "id": 1,
+      "username": "admin",
+      "password_hash": "$2a$10$7.g264ypjA2oXTeakwC6z.hLkVyWVVyXyMWyFqoGfBR1I2aC8bAl.",
+      "role": "admin",
+      "created_at": "2025-07-23 16:44:55",
+      "updated_at": "2025-07-23 16:44:55",
+      "name": "Administrator"
+    },
+    {
+      "id": 2,
+      "username": "salesman",
+      "password_hash": "$2a$10$gtaDLOuBOa8ZaBXprEHF3el42QPHDmk7nMsrmUT5gVvfpPd2X1d06",
+      "role": "salesman",
+      "created_at": "2025-07-23 17:30:34",
+      "updated_at": "2025-07-23 17:30:34",
+      "name": "Sales Manager"
+    },
+    {
+      "id": 7,
+      "username": "dataenter",
+      "password_hash": "$2a$10$YccQgcBpnfl0PslS/kOHDeK3v6nrEeOwic9.EIk9Mz7Tysh1oBrxq",
+      "role": "dataentry",
+      "created_at": "2025-07-24 07:36:34",
+      "updated_at": "2025-07-24 07:36:34",
+      "name": "Data Entry"
+    },
+    {
+      "id": 11,
+      "username": "Admin",
+      "password_hash": "$2a$10$oqlz8YpPuB8NwxpWPIqakunjMp6qPmBdmZHwZBfSJEflMqyvzXvzq",
+      "role": "admin",
+      "created_at": "2025-07-28 20:55:52",
+      "updated_at": "2025-07-28 20:55:52",
+      "name": "Administrator"
+    },
+    {
+      "id": 14,
+      "username": "hardware_admin",
+      "password_hash": "$2a$10$wzSouJp44l2eBE/fUUVwgO2an6irnS9pevyVc1bNxUVpuuuaqNzMC",
+      "role": "admin",
+      "created_at": "2025-10-23 04:20:20",
+      "updated_at": "2025-10-23 04:20:20",
+      "name": null
+    }
+  ],
+  "stock_items": [
+    {
+      "id": 11,
+      "barcode": "111111",
+      "name": "test 1",
+      "quantity": 20,
+      "price": 200,
+      "buying_price": 150,
+      "expiry_date": "2025-09-27",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:41:56",
+      "updated_at": "2025-07-31 17:42:01"
+    },
+    {
+      "id": 12,
+      "barcode": "222222",
+      "name": "test expired item ",
+      "quantity": 20,
+      "price": 200,
+      "buying_price": 130,
+      "expiry_date": "2025-07-01",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:42:32",
+      "updated_at": "2025-07-31 17:42:36"
+    },
+    {
+      "id": 13,
+      "barcode": "333333",
+      "name": "test near expire item ",
+      "quantity": 15,
+      "price": 298,
+      "buying_price": 200,
+      "expiry_date": "2025-08-21",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:43:21",
+      "updated_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 14,
+      "barcode": "444444",
+      "name": "test low stock item ",
+      "quantity": 10,
+      "price": 219,
+      "buying_price": 200,
+      "expiry_date": "2025-09-19",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:44:12",
+      "updated_at": "2025-07-31 17:44:16"
+    },
+    {
+      "id": 15,
+      "barcode": "000000",
+      "name": "item 1 test ",
+      "quantity": 17,
+      "price": 300,
+      "buying_price": 150,
+      "expiry_date": "2025-08-22",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:47:20",
+      "updated_at": "2025-07-31 18:15:08"
+    },
+    {
+      "id": 16,
+      "barcode": "12345678",
+      "name": "test item demo",
+      "quantity": 9,
+      "price": 500,
+      "buying_price": 390,
+      "expiry_date": "2025-08-29",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 17:52:30",
+      "updated_at": "2025-08-02 17:23:31"
+    },
+    {
+      "id": 17,
+      "barcode": "767676",
+      "name": "strock approval test 1",
+      "quantity": 20,
+      "price": 400,
+      "buying_price": 350,
+      "expiry_date": "2025-09-05",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-07-31 18:04:20",
+      "updated_at": "2025-07-31 18:05:10"
+    },
+    {
+      "id": 18,
+      "barcode": "44554455",
+      "name": "data enter sample test ",
+      "quantity": 44,
+      "price": 700,
+      "buying_price": 500,
+      "expiry_date": "2025-10-04",
+      "status": "active",
+      "reorder_level": 12,
+      "created_at": "2025-07-31 18:16:24",
+      "updated_at": "2025-08-04 05:35:30"
+    },
+    {
+      "id": 19,
+      "barcode": "55667788",
+      "name": "test item 07",
+      "quantity": 36,
+      "price": 200,
+      "buying_price": 170,
+      "expiry_date": "2025-11-20",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-08-02 17:24:35",
+      "updated_at": "2025-09-30 07:41:33"
+    },
+    {
+      "id": 20,
+      "barcode": "6633777288",
+      "name": "data enter test ",
+      "quantity": 47,
+      "price": 300,
+      "buying_price": 150,
+      "expiry_date": "2025-09-12",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-08-02 17:27:40",
+      "updated_at": "2025-08-04 07:19:52"
+    },
+    {
+      "id": 21,
+      "barcode": "6688552233",
+      "name": "ddrdr",
+      "quantity": 20,
+      "price": 2000,
+      "buying_price": 1800,
+      "expiry_date": "2025-11-08",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-09-30 15:47:52",
+      "updated_at": "2025-10-02 16:14:56"
+    },
+    {
+      "id": 22,
+      "barcode": "5577889966",
+      "name": "client bar code ",
+      "quantity": 10,
+      "price": 500,
+      "buying_price": 450,
+      "expiry_date": "2025-11-28",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-10-01 14:15:08",
+      "updated_at": "2025-10-20 05:41:08"
+    },
+    {
+      "id": 23,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 12,
+      "price": 400,
+      "buying_price": 300,
+      "expiry_date": "2025-11-21",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-10-11 03:23:05",
+      "updated_at": "2025-10-20 06:19:08"
+    },
+    {
+      "id": 24,
+      "barcode": "456456456",
+      "name": "peper",
+      "quantity": 28,
+      "price": 500,
+      "buying_price": 400,
+      "expiry_date": "2025-11-30",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-10-20 04:06:35",
+      "updated_at": "2025-10-23 05:01:36"
+    },
+    {
+      "id": 26,
+      "barcode": "2062R24090004",
+      "name": "scanner",
+      "quantity": 64,
+      "price": 500,
+      "buying_price": 400,
+      "expiry_date": "2025-11-29",
+      "status": "active",
+      "reorder_level": 10,
+      "created_at": "2025-10-23 06:29:23",
+      "updated_at": "2025-10-23 06:43:18"
+    }
+  ],
+  "sales": [
+    {
+      "id": 10,
+      "invoice_number": "INV-20250731-001",
+      "total_amount": 3696,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-07-31 17:54:38",
+      "total_profit": 1046,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 11,
+      "invoice_number": "INV-20250731-002",
+      "total_amount": 300,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-07-31 18:15:08",
+      "total_profit": 150,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 12,
+      "invoice_number": "INV-20250801-001",
+      "total_amount": 700,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-01 01:54:18",
+      "total_profit": 200,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 13,
+      "invoice_number": "INV-20250802-001",
+      "total_amount": 700,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-02 05:27:40",
+      "total_profit": 200,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 14,
+      "invoice_number": "INV-20250802-002",
+      "total_amount": 700,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-02 05:28:19",
+      "total_profit": 200,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 15,
+      "invoice_number": "INV-20250802-003",
+      "total_amount": 700,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-02 17:22:55",
+      "total_profit": 200,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 16,
+      "invoice_number": "INV-20250802-004",
+      "total_amount": 500,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-02 17:23:31",
+      "total_profit": 110,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 17,
+      "invoice_number": "INV-20250802-005",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-02 17:24:50",
+      "total_profit": 30,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 18,
+      "invoice_number": "INV-20250802-006",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-08-02 17:27:00",
+      "total_profit": 30,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 19,
+      "invoice_number": "INV-20250804-001",
+      "total_amount": 700,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-04 05:31:14",
+      "total_profit": 200,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 20,
+      "invoice_number": "INV-20250804-002",
+      "total_amount": 700,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-04 05:35:30",
+      "total_profit": 200,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 21,
+      "invoice_number": "INV-20250804-003",
+      "total_amount": 300,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-04 05:36:42",
+      "total_profit": 150,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 22,
+      "invoice_number": "INV-20250804-004",
+      "total_amount": 300,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-08-04 05:37:20",
+      "total_profit": 150,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 23,
+      "invoice_number": "INV-20250804-005",
+      "total_amount": 300,
+      "payment_type": "cash",
+      "cashier_id": 2,
+      "created_at": "2025-08-04 07:19:52",
+      "total_profit": 150,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 24,
+      "invoice_number": "INV-20250930-001",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-09-30 07:41:15",
+      "total_profit": 30,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 25,
+      "invoice_number": "INV-20250930-002",
+      "total_amount": 200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-09-30 07:41:33",
+      "total_profit": 30,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 26,
+      "invoice_number": "INV-20251002-001",
+      "total_amount": 500,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-02 15:40:31",
+      "total_profit": 50,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 27,
+      "invoice_number": "INV-20251003-001",
+      "total_amount": 1500,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-03 04:43:28",
+      "total_profit": 150,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 28,
+      "invoice_number": "INV-20251011-001",
+      "total_amount": 400,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-11 05:22:44",
+      "total_profit": 100,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 29,
+      "invoice_number": "INV-20251011-002",
+      "total_amount": 400,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-11 05:23:14",
+      "total_profit": 100,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 30,
+      "invoice_number": "INV-20251011-003",
+      "total_amount": 400,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-11 05:23:20",
+      "total_profit": 100,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 31,
+      "invoice_number": "INV-20251011-004",
+      "total_amount": 2800,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-11 05:23:38",
+      "total_profit": 700,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 32,
+      "invoice_number": "INV-20251011-005",
+      "total_amount": 4400,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-11 05:29:11",
+      "total_profit": 1100,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 33,
+      "invoice_number": "INV-20251020-001",
+      "total_amount": 400,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-20 03:30:22",
+      "total_profit": 100,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 34,
+      "invoice_number": "INV-20251020-002",
+      "total_amount": 1200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-20 03:42:36",
+      "total_profit": 300,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 35,
+      "invoice_number": "INV-20251020-003",
+      "total_amount": 3200,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-20 03:43:38",
+      "total_profit": 800,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 36,
+      "invoice_number": "INV-20251020-004",
+      "total_amount": 1900,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-20 03:46:03",
+      "total_profit": 250,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 37,
+      "invoice_number": "INV-20251020-005",
+      "total_amount": 1500,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-20 05:41:08",
+      "total_profit": 150,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 38,
+      "invoice_number": "INV-20251020-006",
+      "total_amount": 500,
+      "payment_type": "cash",
+      "cashier_id": 1,
+      "created_at": "2025-10-20 06:20:41",
+      "total_profit": 100,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 39,
+      "invoice_number": "INV-20251023-001",
+      "total_amount": 500,
+      "payment_type": "cash",
+      "cashier_id": 14,
+      "created_at": "2025-10-23 04:46:18",
+      "total_profit": 100,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 40,
+      "invoice_number": "INV-20251023-002",
+      "total_amount": 500,
+      "payment_type": "cash",
+      "cashier_id": 14,
+      "created_at": "2025-10-23 04:47:35",
+      "total_profit": 100,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 41,
+      "invoice_number": "INV-20251023-003",
+      "total_amount": 2000,
+      "payment_type": "cash",
+      "cashier_id": 14,
+      "created_at": "2025-10-23 05:01:36",
+      "total_profit": 400,
+      "customer_mobile": null,
+      "customer_name": null
+    },
+    {
+      "id": 42,
+      "invoice_number": "INV-20251023-004",
+      "total_amount": 500,
+      "payment_type": "cash",
+      "cashier_id": 14,
+      "created_at": "2025-10-23 06:29:52",
+      "total_profit": 100,
+      "customer_mobile": null,
+      "customer_name": null
+    }
+  ],
+  "sales_items": [
+    {
+      "id": 12,
+      "sale_id": 1,
+      "barcode": "12345678",
+      "name": "test item demo",
+      "quantity": 5,
+      "price": 500,
+      "expiry_date": "2025-08-29",
+      "created_at": "2025-07-31 17:54:38",
+      "buying_price": 390
+    },
+    {
+      "id": 13,
+      "sale_id": 1,
+      "barcode": "000000",
+      "name": "item 1 test ",
+      "quantity": 2,
+      "price": 300,
+      "expiry_date": "2025-08-22",
+      "created_at": "2025-07-31 17:54:38",
+      "buying_price": 150
+    },
+    {
+      "id": 14,
+      "sale_id": 1,
+      "barcode": "333333",
+      "name": "test near expire item ",
+      "quantity": 2,
+      "price": 298,
+      "expiry_date": "2025-08-21",
+      "created_at": "2025-07-31 17:54:38",
+      "buying_price": 200
+    },
+    {
+      "id": 15,
+      "sale_id": 2,
+      "barcode": "000000",
+      "name": "item 1 test ",
+      "quantity": 1,
+      "price": 300,
+      "expiry_date": "2025-08-22",
+      "created_at": "2025-07-31 18:15:08",
+      "buying_price": 150
+    },
+    {
+      "id": 16,
+      "sale_id": 3,
+      "barcode": "44554455",
+      "name": "data enter sample test ",
+      "quantity": 1,
+      "price": 700,
+      "expiry_date": "2025-10-04",
+      "created_at": "2025-08-01 01:54:18",
+      "buying_price": 500
+    },
+    {
+      "id": 17,
+      "sale_id": 4,
+      "barcode": "44554455",
+      "name": "data enter sample test ",
+      "quantity": 1,
+      "price": 700,
+      "expiry_date": "2025-10-04",
+      "created_at": "2025-08-02 05:27:40",
+      "buying_price": 500
+    },
+    {
+      "id": 18,
+      "sale_id": 5,
+      "barcode": "44554455",
+      "name": "data enter sample test ",
+      "quantity": 1,
+      "price": 700,
+      "expiry_date": "2025-10-04",
+      "created_at": "2025-08-02 05:28:19",
+      "buying_price": 500
+    },
+    {
+      "id": 19,
+      "sale_id": 6,
+      "barcode": "44554455",
+      "name": "data enter sample test ",
+      "quantity": 1,
+      "price": 700,
+      "expiry_date": "2025-10-04",
+      "created_at": "2025-08-02 17:22:55",
+      "buying_price": 500
+    },
+    {
+      "id": 20,
+      "sale_id": 7,
+      "barcode": "12345678",
+      "name": "test item demo",
+      "quantity": 1,
+      "price": 500,
+      "expiry_date": "2025-08-29",
+      "created_at": "2025-08-02 17:23:31",
+      "buying_price": 390
+    },
+    {
+      "id": 21,
+      "sale_id": 8,
+      "barcode": "55667788",
+      "name": "test item 07",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-11-20",
+      "created_at": "2025-08-02 17:24:50",
+      "buying_price": 170
+    },
+    {
+      "id": 22,
+      "sale_id": 9,
+      "barcode": "55667788",
+      "name": "test item 07",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-11-20",
+      "created_at": "2025-08-02 17:27:00",
+      "buying_price": 170
+    },
+    {
+      "id": 23,
+      "sale_id": 10,
+      "barcode": "44554455",
+      "name": "data enter sample test ",
+      "quantity": 1,
+      "price": 700,
+      "expiry_date": "2025-10-04",
+      "created_at": "2025-08-04 05:31:14",
+      "buying_price": 500
+    },
+    {
+      "id": 24,
+      "sale_id": 11,
+      "barcode": "44554455",
+      "name": "data enter sample test ",
+      "quantity": 1,
+      "price": 700,
+      "expiry_date": "2025-10-04",
+      "created_at": "2025-08-04 05:35:30",
+      "buying_price": 500
+    },
+    {
+      "id": 25,
+      "sale_id": 12,
+      "barcode": "6633777288",
+      "name": "data enter test ",
+      "quantity": 1,
+      "price": 300,
+      "expiry_date": "2025-09-12",
+      "created_at": "2025-08-04 05:36:42",
+      "buying_price": 150
+    },
+    {
+      "id": 26,
+      "sale_id": 13,
+      "barcode": "6633777288",
+      "name": "data enter test ",
+      "quantity": 1,
+      "price": 300,
+      "expiry_date": "2025-09-12",
+      "created_at": "2025-08-04 05:37:20",
+      "buying_price": 150
+    },
+    {
+      "id": 27,
+      "sale_id": 14,
+      "barcode": "6633777288",
+      "name": "data enter test ",
+      "quantity": 1,
+      "price": 300,
+      "expiry_date": "2025-09-12",
+      "created_at": "2025-08-04 07:19:52",
+      "buying_price": 150
+    },
+    {
+      "id": 28,
+      "sale_id": 15,
+      "barcode": "55667788",
+      "name": "test item 07",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-11-20",
+      "created_at": "2025-09-30 07:41:15",
+      "buying_price": 170
+    },
+    {
+      "id": 29,
+      "sale_id": 16,
+      "barcode": "55667788",
+      "name": "test item 07",
+      "quantity": 1,
+      "price": 200,
+      "expiry_date": "2025-11-20",
+      "created_at": "2025-09-30 07:41:33",
+      "buying_price": 170
+    },
+    {
+      "id": 30,
+      "sale_id": 17,
+      "barcode": "5577889966",
+      "name": "client bar code ",
+      "quantity": 1,
+      "price": 500,
+      "expiry_date": "2025-11-28",
+      "created_at": "2025-10-02 15:40:31",
+      "buying_price": 450
+    },
+    {
+      "id": 31,
+      "sale_id": 18,
+      "barcode": "5577889966",
+      "name": "client bar code ",
+      "quantity": 3,
+      "price": 500,
+      "expiry_date": "2025-11-28",
+      "created_at": "2025-10-03 04:43:28",
+      "buying_price": 450
+    },
+    {
+      "id": 32,
+      "sale_id": 19,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 1,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-11 05:22:44",
+      "buying_price": 300
+    },
+    {
+      "id": 33,
+      "sale_id": 20,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 1,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-11 05:23:14",
+      "buying_price": 300
+    },
+    {
+      "id": 34,
+      "sale_id": 21,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 1,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-11 05:23:20",
+      "buying_price": 300
+    },
+    {
+      "id": 35,
+      "sale_id": 22,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 7,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-11 05:23:38",
+      "buying_price": 300
+    },
+    {
+      "id": 36,
+      "sale_id": 23,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 11,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-11 05:29:11",
+      "buying_price": 300
+    },
+    {
+      "id": 37,
+      "sale_id": 33,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 1,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-20 03:30:22",
+      "buying_price": 300
+    },
+    {
+      "id": 38,
+      "sale_id": 34,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 3,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-20 03:42:36",
+      "buying_price": 300
+    },
+    {
+      "id": 39,
+      "sale_id": 35,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 8,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-20 03:43:38",
+      "buying_price": 300
+    },
+    {
+      "id": 40,
+      "sale_id": 36,
+      "barcode": "5577889966",
+      "name": "client bar code ",
+      "quantity": 3,
+      "price": 500,
+      "expiry_date": "2025-11-28",
+      "created_at": "2025-10-20 03:46:03",
+      "buying_price": 450
+    },
+    {
+      "id": 41,
+      "sale_id": 36,
+      "barcode": "85585588558",
+      "name": "kasun",
+      "quantity": 1,
+      "price": 400,
+      "expiry_date": "2025-11-21",
+      "created_at": "2025-10-20 03:46:03",
+      "buying_price": 300
+    },
+    {
+      "id": 42,
+      "sale_id": 37,
+      "barcode": "5577889966",
+      "name": "client bar code ",
+      "quantity": 3,
+      "price": 500,
+      "expiry_date": "2025-11-28",
+      "created_at": "2025-10-20 05:41:08",
+      "buying_price": 450
+    },
+    {
+      "id": 43,
+      "sale_id": 38,
+      "barcode": "456456456",
+      "name": "peper",
+      "quantity": 1,
+      "price": 500,
+      "expiry_date": "2025-11-29",
+      "created_at": "2025-10-20 06:20:41",
+      "buying_price": 400
+    },
+    {
+      "id": 44,
+      "sale_id": 39,
+      "barcode": "456456456",
+      "name": "peper",
+      "quantity": 1,
+      "price": 500,
+      "expiry_date": "2025-11-30",
+      "created_at": "2025-10-23 04:46:19",
+      "buying_price": 400
+    },
+    {
+      "id": 45,
+      "sale_id": 40,
+      "barcode": "456456456",
+      "name": "peper",
+      "quantity": 1,
+      "price": 500,
+      "expiry_date": "2025-11-30",
+      "created_at": "2025-10-23 04:47:35",
+      "buying_price": 400
+    },
+    {
+      "id": 46,
+      "sale_id": 41,
+      "barcode": "456456456",
+      "name": "peper",
+      "quantity": 4,
+      "price": 500,
+      "expiry_date": "2025-11-30",
+      "created_at": "2025-10-23 05:01:36",
+      "buying_price": 400
+    },
+    {
+      "id": 47,
+      "sale_id": 42,
+      "barcode": "2062R24090004",
+      "name": "scanner",
+      "quantity": 1,
+      "price": 500,
+      "expiry_date": "2025-11-29",
+      "created_at": "2025-10-23 06:29:52",
+      "buying_price": 400
+    }
+  ],
+  "expenses": [],
+  "user_activity": [
+    {
+      "id": 12,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"test item demo\",\"amount\":500,\"quantity\":5}",
+      "created_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 13,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"item 1 test \",\"amount\":300,\"quantity\":2}",
+      "created_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 14,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"test near expire item \",\"amount\":298,\"quantity\":2}",
+      "created_at": "2025-07-31 17:54:38"
+    },
+    {
+      "id": 15,
+      "user_id": 2,
+      "username": "salesman",
+      "action": "sale",
+      "details": "{\"product\":\"item 1 test \",\"amount\":300,\"quantity\":1}",
+      "created_at": "2025-07-31 18:15:08"
+    },
+    {
+      "id": 16,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"data enter sample test \",\"amount\":700,\"quantity\":1}",
+      "created_at": "2025-08-01 01:54:18"
+    },
+    {
+      "id": 17,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"data enter sample test \",\"amount\":700,\"quantity\":1}",
+      "created_at": "2025-08-02 05:27:40"
+    },
+    {
+      "id": 18,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"data enter sample test \",\"amount\":700,\"quantity\":1}",
+      "created_at": "2025-08-02 05:28:19"
+    },
+    {
+      "id": 19,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"data enter sample test \",\"amount\":700,\"quantity\":1}",
+      "created_at": "2025-08-02 17:22:55"
+    },
+    {
+      "id": 20,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"test item demo\",\"amount\":500,\"quantity\":1}",
+      "created_at": "2025-08-02 17:23:31"
+    },
+    {
+      "id": 21,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"test item 07\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-08-02 17:24:50"
+    },
+    {
+      "id": 22,
+      "user_id": 2,
+      "username": "salesman",
+      "action": "sale",
+      "details": "{\"product\":\"test item 07\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-08-02 17:27:00"
+    },
+    {
+      "id": 23,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"data enter sample test \",\"amount\":700,\"quantity\":1}",
+      "created_at": "2025-08-04 05:31:14"
+    },
+    {
+      "id": 24,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"data enter sample test \",\"amount\":700,\"quantity\":1}",
+      "created_at": "2025-08-04 05:35:30"
+    },
+    {
+      "id": 25,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"data enter test \",\"amount\":300,\"quantity\":1}",
+      "created_at": "2025-08-04 05:36:42"
+    },
+    {
+      "id": 26,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"data enter test \",\"amount\":300,\"quantity\":1}",
+      "created_at": "2025-08-04 05:37:20"
+    },
+    {
+      "id": 27,
+      "user_id": 2,
+      "username": "salesman",
+      "action": "sale",
+      "details": "{\"product\":\"data enter test \",\"amount\":300,\"quantity\":1}",
+      "created_at": "2025-08-04 07:19:52"
+    },
+    {
+      "id": 28,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"test item 07\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-09-30 07:41:15"
+    },
+    {
+      "id": 29,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"test item 07\",\"amount\":200,\"quantity\":1}",
+      "created_at": "2025-09-30 07:41:33"
+    },
+    {
+      "id": 30,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"client bar code \",\"amount\":500,\"quantity\":1}",
+      "created_at": "2025-10-02 15:40:31"
+    },
+    {
+      "id": 31,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"client bar code \",\"amount\":500,\"quantity\":3}",
+      "created_at": "2025-10-03 04:43:28"
+    },
+    {
+      "id": 32,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":1}",
+      "created_at": "2025-10-11 05:22:44"
+    },
+    {
+      "id": 33,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":1}",
+      "created_at": "2025-10-11 05:23:14"
+    },
+    {
+      "id": 34,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":1}",
+      "created_at": "2025-10-11 05:23:20"
+    },
+    {
+      "id": 35,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":7}",
+      "created_at": "2025-10-11 05:23:38"
+    },
+    {
+      "id": 36,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":11}",
+      "created_at": "2025-10-11 05:29:11"
+    },
+    {
+      "id": 37,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":1}",
+      "created_at": "2025-10-20 03:30:22"
+    },
+    {
+      "id": 38,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":3}",
+      "created_at": "2025-10-20 03:42:36"
+    },
+    {
+      "id": 39,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":8}",
+      "created_at": "2025-10-20 03:43:38"
+    },
+    {
+      "id": 40,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"client bar code \",\"amount\":500,\"quantity\":3}",
+      "created_at": "2025-10-20 03:46:03"
+    },
+    {
+      "id": 41,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"kasun\",\"amount\":400,\"quantity\":1}",
+      "created_at": "2025-10-20 03:46:03"
+    },
+    {
+      "id": 42,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"client bar code \",\"amount\":500,\"quantity\":3}",
+      "created_at": "2025-10-20 05:41:08"
+    },
+    {
+      "id": 43,
+      "user_id": 1,
+      "username": "admin",
+      "action": "sale",
+      "details": "{\"product\":\"peper\",\"amount\":500,\"quantity\":1}",
+      "created_at": "2025-10-20 06:20:41"
+    },
+    {
+      "id": 44,
+      "user_id": 14,
+      "username": "hardware_admin",
+      "action": "sale",
+      "details": "{\"product\":\"peper\",\"amount\":500,\"quantity\":1}",
+      "created_at": "2025-10-23 04:46:19"
+    },
+    {
+      "id": 45,
+      "user_id": 14,
+      "username": "hardware_admin",
+      "action": "sale",
+      "details": "{\"product\":\"peper\",\"amount\":500,\"quantity\":1}",
+      "created_at": "2025-10-23 04:47:35"
+    },
+    {
+      "id": 46,
+      "user_id": 14,
+      "username": "hardware_admin",
+      "action": "sale",
+      "details": "{\"product\":\"peper\",\"amount\":500,\"quantity\":4}",
+      "created_at": "2025-10-23 05:01:36"
+    },
+    {
+      "id": 47,
+      "user_id": 14,
+      "username": "hardware_admin",
+      "action": "sale",
+      "details": "{\"product\":\"scanner\",\"amount\":500,\"quantity\":1}",
+      "created_at": "2025-10-23 06:29:52"
+    }
+  ]
+}
